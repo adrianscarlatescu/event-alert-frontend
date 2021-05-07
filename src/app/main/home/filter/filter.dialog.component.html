@@ -1,0 +1,81 @@
+<div class="filter_page_div">
+
+  <form [formGroup]="filterForm" (ngSubmit)="onSaveClicked()">
+    <mat-form-field class="filter_item">
+      <mat-label>Radius (km)</mat-label>
+      <input matInput formControlName="radius" value="{{filterOptions.radius}}" required>
+      <mat-error *ngIf="filterForm.get('radius').invalid">{{getRadiusErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field class="filter_item">
+      <mat-label>Start date</mat-label>
+      <input matInput formControlName="startDate" value="{{filterOptions.startDate}}" [matDatepicker]="startPicker"
+             required>
+      <mat-error *ngIf="filterForm.get('startDate').invalid">{{getStartDateErrorMessage()}}</mat-error>
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field class="filter_item">
+      <mat-label>End date</mat-label>
+      <input matInput formControlName="endDate" value="{{filterOptions.endDate}}" [matDatepicker]="endPicker" required>
+      <mat-error *ngIf="filterForm.get('endDate').invalid">{{getEndDateErrorMessage()}}</mat-error>
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field appearance="fill" class="filter_item" style="width: 80%">
+      <mat-label>Tags</mat-label>
+      <mat-select multiple formControlName="selectedTags" (selectionChange)="onTagsSelectionChange($event)" required>
+
+        <mat-option *ngFor="let tag of tags" [value]="tag" style="height: 60px;">
+          <div class="filter_tag_option_div">
+            <img [src]="getImage(tag.imagePath)" class="filter_tag_option_image">
+            {{tag.name}}
+          </div>
+          <mat-divider></mat-divider>
+        </mat-option>
+
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('selectedTags').invalid">{{getTagsErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox color="primary" style="margin-left: 20px" [checked]="isAllTags" (change)="onAllTagsChanged()">All
+    </mat-checkbox>
+
+    <br>
+
+    <mat-form-field appearance="fill" class="filter_item" style="width: 80%">
+      <mat-label>Severities</mat-label>
+      <mat-select multiple formControlName="selectedSeverities" (selectionChange)="onSeveritiesSelectionChange($event)"
+                  required>
+
+        <mat-option *ngFor="let severity of severities" [value]="severity" style="height: 60px;">
+          <div class="filter_severity_option_div">
+            <mat-card class="filter_severity_mat_card"
+                      [ngStyle]="{'background-color': '#' + severity.color.toString(16)}"></mat-card>
+            {{severity.name}}
+          </div>
+          <mat-divider></mat-divider>
+        </mat-option>
+
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('selectedSeverities').invalid">{{getSeveritiesErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox color="primary" style="margin-left: 20px" [checked]="isAllSeverities"
+                  (change)="onAllSeveritiesChanged()">All
+    </mat-checkbox>
+
+    <br>
+
+    <button mat-mini-fab color="primary" style="float: right" type="submit">
+      <mat-icon>check</mat-icon>
+    </button>
+  </form>
+
+</div>

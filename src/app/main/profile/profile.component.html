@@ -1,0 +1,100 @@
+<div id="profile_page_div">
+  <form [formGroup]="profileForm" (ngSubmit)="onSaveClicked()">
+
+    <div id="profile_main_div">
+      <div class="profile_category_div">
+        <mat-card class="profile_image">
+          <img *ngIf="profileImage" [src]="profileImage" class="profile_image">
+        </mat-card>
+
+        <br>
+
+        <div style="text-align: center">
+          <button type="button" color="primary" mat-raised-button (click)="fileInput.click()" style="min-width: 150px">
+            Change image
+          </button>
+          <input hidden (change)="onImageChanged($event)" #fileInput type="file" accept="image/*">
+        </div>
+      </div>
+
+      <div class="profile_category_div">
+        <mat-form-field>
+          <mat-label>First name</mat-label>
+          <input matInput formControlName="firstName" value="{{user.firstName}}" required>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Last name</mat-label>
+          <input matInput formControlName="lastName" value="{{user.lastName}}" required>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Gender</mat-label>
+          <mat-select [(value)]=user.gender formControlName="gender">
+            <mat-option value="MALE">Male</mat-option>
+            <mat-option value="FEMALE">Female</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Date of birth</mat-label>
+          <input matInput formControlName="dateOfBirth" value="{{user.dateOfBirth}}" [matDatepicker]="picker">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Phone number</mat-label>
+          <input matInput formControlName="phoneNumber" value="{{user.phoneNumber}}">
+        </mat-form-field>
+      </div>
+
+      <div class="profile_category_div">
+        <mat-form-field>
+          <mat-label>ID</mat-label>
+          <input matInput disabled value="{{user.id}}">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput disabled value="{{user.email}}">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput disabled value="********">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field *ngIf="user.joinDateTime">
+          <mat-label>Join date</mat-label>
+          <input matInput disabled value="{{user.joinDateTime.toString().replace('T', ' ')}}">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Reports number</mat-label>
+          <input matInput disabled value="{{user.reportsNumber}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <button mat-raised-button type="submit" color="primary" id="profile_save_button">Save</button>
+
+  </form>
+</div>
+

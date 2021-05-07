@@ -1,0 +1,58 @@
+.map_user_overlay {
+  width: 40px;
+  height: 65px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  bottom: 40px;
+  right: 10px;
+}
+
+.map_marker_overlay {
+  width: 80px;
+  height: 80px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 60px;
+  background-position-y: 5px;
+  position: relative;
+  bottom: 60px;
+  right: 30px;
+}
+
+.map_event_info_div {
+  border-radius: 10px;
+  padding: 10px;
+  position: absolute;
+  top: 40%;
+  margin-left: 25px;
+  background-color: white;
+  width: 250px;
+  transform: translateY(-40%);
+}
+
+.map_event_info_text {
+  line-height: 12px;
+}
+
+.map_event_info_image {
+  width: 250px;
+  height: 250px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.map_event_info_view_button {
+  min-width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  margin-top: 10px;
+}
+
+.map_event_info_close_button {
+  position: absolute;
+  right: -15px;
+  top: -15px;
+}

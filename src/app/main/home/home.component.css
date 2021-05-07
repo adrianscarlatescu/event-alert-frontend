@@ -1,0 +1,50 @@
+.mat-card {
+  padding: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  text-align: center;
+  float: left;
+  width: fit-content;
+  background-color: #f0ecf9C0;
+}
+
+.home_top_info_div {
+  display: flex;
+  margin-left: 75px;
+  margin-top: 25px;
+  position: fixed;
+}
+
+.home_map_info_bar_mat_divider {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.home_map_info_bar_text {
+  margin: 0;
+  padding: 0;
+  line-height: 22px;
+}
+
+.home_bottom_bar_div {
+  position: fixed;
+  margin-left: 25px;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home_page_switch_text {
+  margin: 0 2px;
+  line-height: 22px;
+}
+
+.home_main_bar_button {
+  width: 130px;
+}
+
+.home_map_bar_button {
+  width: 120px;
+}
+

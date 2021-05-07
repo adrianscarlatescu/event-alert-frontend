@@ -1,0 +1,57 @@
+<div id="auth_card_div">
+  <mat-card style="background-color: #673AB7;">
+    <h2 style="color: white;">Event Alert</h2>
+  </mat-card>
+</div>
+
+<mat-tab-group>
+  <mat-tab label="Login">
+    <br><br>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <mat-form-field appearance="fill">
+        <mat-label>Enter your email</mat-label>
+        <input matInput formControlName="email" required>
+        <mat-error *ngIf="loginForm.invalid">{{getLoginEmailErrorMessage()}}</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Enter your password</mat-label>
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" required>
+        <mat-error *ngIf="loginForm.invalid">{{getLoginPasswordErrorMessage()}}</mat-error>
+        <button type="button" mat-icon-button matSuffix
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+      <br><br>
+      <button mat-raised-button type="submit" color="primary" class="auth_button">Login</button>
+    </form>
+  </mat-tab>
+
+  <mat-tab label="Register">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <br><br>
+      <mat-form-field appearance="fill">
+        <mat-label>Enter your email</mat-label>
+        <input matInput formControlName="email" required>
+        <mat-error *ngIf="registerForm.invalid">{{getRegisterEmailErrorMessage()}}</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Enter your password</mat-label>
+        <input matInput formControlName="password" type="password" required>
+        <mat-error *ngIf="registerForm.invalid">{{getRegisterPasswordErrorMessage()}}</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Confirm your password</mat-label>
+        <input matInput formControlName="confirmPassword" type="password" required>
+        <mat-error *ngIf="registerForm.invalid">{{getRegisterConfirmPasswordErrorMessage()}}</mat-error>
+      </mat-form-field>
+      <br><br>
+      <button mat-raised-button type="submit" color="primary" class="auth_button">Register</button>
+    </form>
+  </mat-tab>
+</mat-tab-group>

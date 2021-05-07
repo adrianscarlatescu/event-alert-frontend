@@ -1,0 +1,38 @@
+.filter_page_div {
+  width: 60vh;
+  min-width: 400px;
+  text-align: start;
+  padding: 10px;
+}
+
+.filter_tag_option_div {
+  display: flex;
+  vertical-align: center;
+  padding: 5px 20px;
+}
+
+.filter_tag_option_image {
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+}
+
+.filter_severity_option_div {
+  display: flex;
+  vertical-align: center;
+  padding: 5px 0;
+}
+
+.filter_severity_mat_card {
+  border-radius: 24px;
+  width: 8px;
+  height: 8px;
+  margin-right: 20px;
+}
+
+.filter_item {
+  width: 60%;
+  min-width: 100px;
+  margin: 5px;
+}
+

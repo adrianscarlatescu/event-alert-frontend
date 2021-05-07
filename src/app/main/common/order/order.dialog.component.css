@@ -1,0 +1,9 @@
+.order_item_div {
+  display: flex;
+  align-items: center;
+}
+
+.order_name_text {
+  padding-left: 15px;
+  padding-top: 15px;
+}

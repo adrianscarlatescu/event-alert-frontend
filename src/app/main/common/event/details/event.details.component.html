@@ -1,0 +1,93 @@
+<div style="margin: 50px 75px">
+
+  <div id="event_details_div">
+    <mat-card class="event_details_mat_card">
+
+      <mat-card-header>
+        <div class="event_details_avatar_mat_card" mat-card-avatar
+             [ngStyle]="{'background-image': eventUserImage}"></div>
+        <mat-card-title *ngIf="event">
+          {{event.user.firstName + ' ' + event.user.lastName}}
+        </mat-card-title>
+        <mat-card-subtitle *ngIf="event">
+          {{event.dateTime.toString().replace('T', ' ')}}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <div class="event_details_map_div">
+        <img *ngIf="eventImage" [src]="eventImage" class="event_details_event_image">
+        <agm-map *ngIf="event" [latitude]="event.latitude" [longitude]="event.longitude" [zoom]="mapZoom"
+                 class="event_details_map" [styles]="mapStyle">
+
+          <agm-marker>
+            <agm-overlay
+              [latitude]="event.latitude"
+              [longitude]="event.longitude">
+
+              <div class="event_details_marker_overlay"
+                   style="-webkit-mask-box-image: url('../../../../../assets/event_marker.png');"
+                   [ngStyle]="{'background-image': tagImage, 'background-color': severityColor + 'C0'}">
+              </div>
+              <img src="assets/event_marker_border.png" class="event_details_marker_overlay"
+                   style="position: absolute"/>
+
+            </agm-overlay>
+          </agm-marker>
+
+        </agm-map>
+      </div>
+
+      <mat-card-header style="margin-top: 10px;">
+        <div *ngIf="tagImage && severityColor" class="event_details_tag_mat_card" mat-card-avatar
+             [ngStyle]="{'background-image': tagImage, 'background-color': severityColor}"></div>
+        <mat-card-title *ngIf="event">
+          {{event.tag.name}}
+        </mat-card-title>
+        <mat-card-subtitle>
+          <div *ngIf="event">
+            {{event.severity.name}}
+          </div>
+          <div *ngIf="eventAddress">
+            {{eventAddress}}
+          </div>
+          <div *ngIf="event && event.description">
+            {{event.description}}
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+    </mat-card>
+  </div>
+
+  <div>
+    <div id="event_details_comments_div">
+      <button mat-raised-button type="button" color="primary" (click)="onNewCommentClicked()" style="min-width: 150px">
+        New comment
+      </button>
+
+      <mat-card class="event_details_comments_number_mat_card">
+        <p>{{comments.length}} comments</p>
+      </mat-card>
+    </div>
+
+    <div>
+      <p *ngIf="comments.length === 0" style="margin-top: 10px">No comments posted yet</p>
+    </div>
+
+    <div>
+      <mat-list *ngIf="comments.length > 0">
+        <mat-list-item *ngFor="let comment of comments">
+          <img matListAvatar [src]="getEventCommentUserImage(comment.id)"/>
+          <h3 matLine>{{comment.user.firstName + ' ' + comment.user.lastName}}</h3>
+          <p matLine>
+            <span style="color: grey">{{comment.dateTime.toString().replace('T', ' ')}}</span>
+            <br>
+            <span style="color: dimgrey">{{comment.comment}}</span>
+          </p>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+
+</div>

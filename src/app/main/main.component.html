@@ -1,0 +1,45 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav class="sidenav mat-elevation-z10" mode="side" opened>
+    <mat-toolbar color="primary">Event Alert</mat-toolbar>
+    <mat-nav-list>
+
+      <a matLine mat-list-item routerLink="home" routerLinkActive="active-list-item" (click)="onHome()">
+        <span>Home</span>
+        <mat-icon aria-hidden="false" color="primary">map</mat-icon>
+      </a>
+
+      <a matLine mat-list-item routerLink="creator" routerLinkActive="active-list-item" (click)="onCreator()">
+        <span>Creator</span>
+        <mat-icon aria-hidden="false" color="primary">create</mat-icon>
+      </a>
+
+      <a matLine mat-list-item routerLink="admin" routerLinkActive="active-list-item" *ngIf="isAdmin"
+         (click)="onAdmin()">
+        <span>Admin</span>
+        <mat-icon aria-hidden="false" color="primary">people</mat-icon>
+      </a>
+
+      <a matLine mat-list-item routerLink="profile" routerLinkActive="active-list-item" (click)="onProfile()">
+        <span>Profile</span>
+        <mat-icon aria-hidden="false" color="primary">person</mat-icon>
+      </a>
+
+      <a matLine (click)="onLogout()">
+        <mat-list-item>
+          <span>Logout</span>
+          <mat-icon aria-hidden="false" color="primary">exit_to_app</mat-icon>
+        </mat-list-item>
+      </a>
+
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <div class="sidenav-content">
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+    <button mat-mini-fab color="primary" id="main_menu_fab" (click)="toggleSidenav()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+</mat-sidenav-container>

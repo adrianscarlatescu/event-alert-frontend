@@ -1,0 +1,11 @@
+<div style="min-width: 350px">
+  <h1 mat-dialog-title>New comment</h1>
+  <div mat-dialog-content>
+    <mat-form-field style="width: 100%">
+      <textarea #commentTextarea matInput placeholder="Type below..." style="min-height: 50px"></textarea>
+    </mat-form-field>
+  </div>
+  <button mat-mini-fab color="primary" style="float: right" (click)="onValidateClicked()">
+    <mat-icon>check</mat-icon>
+  </button>
+</div>
