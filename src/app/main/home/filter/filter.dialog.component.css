@@ -20,7 +20,7 @@
 .filter_severity_option_div {
   display: flex;
   vertical-align: center;
-  padding: 5px 0;
+  padding: 5px 20px;
 }
 
 .filter_severity_mat_card {
