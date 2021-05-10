@@ -77,7 +77,10 @@ export class MapComponent implements OnInit {
     const radius = Math.max(...distances);
 
     this.zoom = 16 - Math.log(radius) / Math.log(2);
-    this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
+    setTimeout(() => {
+      this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
+    }, 500);
+
   }
 
 }
