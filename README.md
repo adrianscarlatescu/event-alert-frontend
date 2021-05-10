@@ -14,4 +14,4 @@ The purpose of this project is to demonstrate the usage of the endpoints provide
 By using this application, a user can update his profile, report incidents in his area, check his incidents, search for incidents reported by others and much more.
 
 ## Video demonstration
-The YouTube link is available [here](https://youtu.be/eN_Y_9-OMzk).
+The YouTube link is available [here](https://youtu.be/fSBhlbBAsOg).
