@@ -1,23 +1,22 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {SessionService} from '../../../service/session.service';
-import {DomSanitizer} from '@angular/platform-browser';
 import {EventTag} from '../../../model/event.tag';
+import {Event} from '../../../model/event';
 import {EventSeverity} from '../../../model/event.severity';
-import {ToastrService} from 'ngx-toastr';
-import {FileService} from '../../../service/file.service';
-import {EventService} from '../../../service/event.service';
 import {FormControl, Validators} from '@angular/forms';
-import {Location} from '@angular/common';
-import {Router} from '@angular/router';
+import {FileService} from '../../../service/file.service';
+import {SessionService} from '../../../service/session.service';
+import {EventService} from '../../../service/event.service';
+import {ToastrService} from 'ngx-toastr';
+import {DomSanitizer} from '@angular/platform-browser';
 import {NewEventBody} from '../../../service/body/new.event.body';
+import {MatDialogRef} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-new-event',
-  templateUrl: './new.event.component.html',
-  styleUrls: ['./new.event.component.css']
+  selector: 'app-new-event-dialog',
+  templateUrl: './new-event-dialog.component.html',
+  styleUrls: ['./new-event-dialog.component.css']
 })
-export class NewEventComponent implements OnInit {
-
+export class NewEventDialogComponent implements OnInit {
   @ViewChild('newEventDescriptionTextArea') description: ElementRef;
 
   latitude: number;
@@ -32,27 +31,21 @@ export class NewEventComponent implements OnInit {
   tagControl: FormControl;
   severityControl: FormControl;
 
+  newEvent: Event;
+
   constructor(private fileService: FileService,
               private sessionService: SessionService,
               private eventService: EventService,
               private toast: ToastrService,
-              private router: Router,
-              private webLocation: Location,
-              private domSanitizer: DomSanitizer) {
+              private domSanitizer: DomSanitizer,
+              private dialogRef: MatDialogRef<NewEventDialogComponent>) {
 
-    const nav = this.router.getCurrentNavigation();
-    if (!nav) {
-      console.log('Wrong path to resource');
-      this.webLocation.back();
-      return;
-    }
-
-    this.latitude = nav.extras.state.latitude;
-    this.longitude = nav.extras.state.longitude;
+    this.latitude = this.sessionService.getLatitude();
+    this.longitude = this.sessionService.getLongitude();
 
     if (!this.latitude || !this.longitude) {
       console.log('Location not provided');
-      this.webLocation.back();
+      this.dialogRef.close();
       return;
     }
 
@@ -108,11 +101,11 @@ export class NewEventComponent implements OnInit {
           .subscribe(event => {
             if (event) {
               this.toast.success('Event successfully reported');
-              this.router.navigate(['creator']);
+              this.newEvent = event;
+              this.dialogRef.close();
             }
           });
       });
-
   }
 
   getTagErrorMessage() {

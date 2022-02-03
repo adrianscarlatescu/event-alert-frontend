@@ -8,6 +8,7 @@ import {EventTagService} from './event.tag.service';
 import {EventSeverityService} from './event.severity.service';
 import {EventTag} from '../model/event.tag';
 import {EventSeverity} from '../model/event.severity';
+import {Sort} from '@angular/material/sort';
 
 @Injectable({
   providedIn: 'root'

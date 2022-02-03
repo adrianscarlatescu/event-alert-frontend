@@ -9,9 +9,8 @@
 }
 
 .home_top_info_div {
-  display: flex;
-  margin-left: 75px;
-  margin-top: 25px;
+  margin-left: 5px;
+  margin-top: 65px;
   position: fixed;
 }
 
@@ -28,7 +27,7 @@
 
 .home_bottom_bar_div {
   position: fixed;
-  margin-left: 25px;
+  margin-left: 10px;
   bottom: 25px;
   display: flex;
   flex-direction: column;

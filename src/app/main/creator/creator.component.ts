@@ -6,7 +6,9 @@ import {FileService} from '../../service/file.service';
 import {Router} from '@angular/router';
 import {Event} from '../../model/event';
 import {ToastrService} from 'ngx-toastr';
-import {MatTable} from '@angular/material/table';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {MatDialog} from '@angular/material/dialog';
+import {NewEventDialogComponent} from './new/new-event-dialog.component';
 
 @Component({
   selector: 'app-creator',
@@ -17,14 +19,15 @@ export class CreatorComponent implements OnInit {
 
   @ViewChild(MatTable) table: MatTable<any>;
 
-  events: Event[] = [];
-  displayedColumns: string[] = ['thumbnail', 'tag', 'severity', 'dateTime'];
+  dataSource: MatTableDataSource<Element> = new MatTableDataSource([]);
+  displayedColumns: string[] = ['thumbnail', 'tagName', 'severityName', 'dateTime'];
 
   constructor(private eventService: EventService,
               private fileService: FileService,
               private sessionService: SessionService,
               private toast: ToastrService,
               private domSanitizer: DomSanitizer,
+              private dialog: MatDialog,
               private router: Router) {
 
   }
@@ -32,13 +35,17 @@ export class CreatorComponent implements OnInit {
   ngOnInit(): void {
     this.eventService.getByUserId(this.sessionService.getUser().id)
       .subscribe(events => {
-        this.events = events;
+        const data: Element[] = [];
+        events.map(event => {
+          const element: Element = this.getElementFromEvent(event);
+          data.push(element);
+        });
+        this.dataSource.data = data;
       });
   }
 
-
-  onRowClicked(index: number) {
-    this.router.navigate(['event/details'], {state: {id: this.events[index].id}});
+  onRowClicked(eventId: number) {
+    this.router.navigate(['event/details'], {state: {id: eventId}});
   }
 
   onNewEventClicked() {
@@ -46,13 +53,40 @@ export class CreatorComponent implements OnInit {
       this.toast.warning('Location not provided');
       return;
     }
-    this.router.navigate(['event/new'], {
-      state:
-        {
-          latitude: this.sessionService.getLatitude(),
-          longitude: this.sessionService.getLongitude()
-        }
+
+    const dialogRef = this.dialog.open(NewEventDialogComponent);
+    dialogRef.afterClosed().subscribe(() => {
+      const newEvent: Event = dialogRef.componentInstance.newEvent;
+      if (!newEvent) {
+        return;
+      }
+
+      const elements: Element[] = this.dataSource.data;
+      elements.unshift(this.getElementFromEvent(newEvent));
+      this.dataSource.data = elements;
     });
   }
+
+  private getElementFromEvent(event: Event): Element {
+    const element: Element = new Element();
+    element.eventId = event.id;
+    element.tagName = event.tag.name;
+    element.tagImagePath = event.tag.imagePath;
+    element.severityName = event.severity.name;
+    element.severityColor = event.severity.color;
+    element.dateTime = event.dateTime;
+    return element;
+  }
+
+}
+
+class Element {
+
+  eventId: number;
+  tagName: string;
+  tagImagePath: string;
+  severityName: string;
+  severityColor: number;
+  dateTime: Date;
 
 }

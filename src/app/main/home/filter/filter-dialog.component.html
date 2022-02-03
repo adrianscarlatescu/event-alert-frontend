@@ -30,16 +30,15 @@
 
     <br>
 
-    <mat-form-field appearance="fill" class="filter_item" style="width: 80%">
+    <mat-form-field appearance="fill" style="width: 80%">
       <mat-label>Tags</mat-label>
       <mat-select multiple formControlName="selectedTags" (selectionChange)="onTagsSelectionChange($event)" required>
 
-        <mat-option *ngFor="let tag of tags" [value]="tag" style="height: 60px;">
+        <mat-option *ngFor="let tag of tags" [value]="tag">
           <div class="filter_tag_option_div">
             <img [src]="getImage(tag.imagePath)" class="filter_tag_option_image">
             {{tag.name}}
           </div>
-          <mat-divider></mat-divider>
         </mat-option>
 
       </mat-select>
@@ -50,18 +49,17 @@
 
     <br>
 
-    <mat-form-field appearance="fill" class="filter_item" style="width: 80%">
+    <mat-form-field appearance="fill" style="width: 80%">
       <mat-label>Severities</mat-label>
       <mat-select multiple formControlName="selectedSeverities" (selectionChange)="onSeveritiesSelectionChange($event)"
                   required>
 
-        <mat-option *ngFor="let severity of severities" [value]="severity" style="height: 60px;">
+        <mat-option *ngFor="let severity of severities" [value]="severity">
           <div class="filter_severity_option_div">
             <mat-card class="filter_severity_mat_card"
                       [ngStyle]="{'background-color': '#' + severity.color.toString(16)}"></mat-card>
             {{severity.name}}
           </div>
-          <mat-divider></mat-divider>
         </mat-option>
 
       </mat-select>

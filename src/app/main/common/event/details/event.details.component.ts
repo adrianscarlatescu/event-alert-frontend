@@ -10,7 +10,7 @@ import {SessionService} from '../../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
 import {mapTheme} from '../../map.style';
 import {MatDialog} from '@angular/material/dialog';
-import {CommentDialogComponent} from '../comment/comment.dialog.component';
+import {CommentDialogComponent} from '../comment/comment-dialog.component';
 import {Location} from '@angular/common';
 import {map, mergeMap} from 'rxjs/operators';
 import {from} from 'rxjs';

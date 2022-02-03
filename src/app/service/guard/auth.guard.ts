@@ -14,15 +14,15 @@ export class AuthGuard implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const isToken = this.sessionService.getAccessToken();
-    if (isToken && !this.jwtHelper.isTokenExpired(isToken)) {
-      // logged in, continue
+    const accessToken: string = this.sessionService.getAccessToken();
+    const refreshToken: string = this.sessionService.getRefreshToken();
+    if (accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken)) {
+      // logged in with valid tokens, continue
       return true;
     }
 
-    // if the token is expired, should request a new one using the refresh token
-    // otherwise redirect
     this.router.navigate(['/auth'], {queryParams: {returnUrl: state.url}});
     return false;
   }
+
 }

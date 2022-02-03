@@ -14,18 +14,33 @@ import {SharedModule} from '../shared/shared.module';
 import {AgmCoreModule} from '@agm/core';
 import {EventDetailsComponent} from './common/event/details/event.details.component';
 import {AgmOverlays} from 'agm-overlays';
-import {CommentDialogComponent} from './common/event/comment/comment.dialog.component';
-import {NewEventComponent} from './creator/new/new.event.component';
+import {CommentDialogComponent} from './common/event/comment/comment-dialog.component';
 import {MapComponent} from './home/map/map.component';
 import {ListComponent} from './home/list/list.component';
-import {FilterDialogComponent} from './home/filter/filter.dialog.component';
+import {FilterDialogComponent} from './home/filter/filter-dialog.component';
 import {OrderDialogComponent} from './common/order/order.dialog.component';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
-import { NotificationsComponent } from './notifications/notifications.component';
+import {NotificationsComponent} from './notifications/notifications.component';
+import {MAT_DATE_LOCALE} from '@angular/material/core';
+import {NewEventDialogComponent} from './creator/new/new-event-dialog.component';
 
 
 @NgModule({
-  declarations: [MainComponent, HomeComponent, CreatorComponent, AdminComponent, ProfileComponent, EventDetailsComponent, CommentDialogComponent, NewEventComponent, MapComponent, ListComponent, FilterDialogComponent, OrderDialogComponent, NotificationsComponent],
+  declarations: [
+    MainComponent,
+    HomeComponent,
+    CreatorComponent,
+    AdminComponent,
+    ProfileComponent,
+    EventDetailsComponent,
+    NewEventDialogComponent,
+    CommentDialogComponent,
+    MapComponent,
+    ListComponent,
+    FilterDialogComponent,
+    OrderDialogComponent,
+    NotificationsComponent
+  ],
   imports: [
     CommonModule,
     AgmCoreModule.forRoot({
@@ -46,13 +61,13 @@ import { NotificationsComponent } from './notifications/notifications.component'
           {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
           {path: '', redirectTo: 'home', pathMatch: 'full'},
 
-          {path: 'event/details', component: EventDetailsComponent, canActivate: [AuthGuard]},
-          {path: 'event/new', component: NewEventComponent, canActivate: [AuthGuard]}
+          {path: 'event/details', component: EventDetailsComponent, canActivate: [AuthGuard]}
         ]
       }
     ])],
   providers: [
     {provide: RouteReuseStrategy, useClass: CustomReuseStrategy},
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}
   ]
 })
 

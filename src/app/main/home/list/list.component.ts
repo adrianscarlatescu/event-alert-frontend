@@ -32,8 +32,8 @@ export class ListComponent implements OnInit {
     this.index = pageIndex;
   }
 
-  onRowClicked(index: number) {
-    this.router.navigate(['event/details'], {state: {id: this.events[index].id}});
+  onRowClicked(eventId: number) {
+    this.router.navigate(['event/details'], {state: {id: eventId}});
   }
 
   onPageChanged(pageEvent: PageEvent) {

@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FilterOptions} from './filter.options';
-import {Router} from '@angular/router';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {SessionService} from '../../../service/session.service';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -11,9 +10,9 @@ import {ToastrService} from 'ngx-toastr';
 import {MatSelectChange} from '@angular/material/select';
 
 @Component({
-  selector: 'app-filter.dialog',
-  templateUrl: './filter.dialog.component.html',
-  styleUrls: ['./filter.dialog.component.css']
+  selector: 'app-filter-dialog',
+  templateUrl: './filter-dialog.component.html',
+  styleUrls: ['./filter-dialog.component.css']
 })
 export class FilterDialogComponent implements OnInit {
 
@@ -30,7 +29,6 @@ export class FilterDialogComponent implements OnInit {
 
   constructor(private sessionService: SessionService,
               private toast: ToastrService,
-              private router: Router,
               private formBuilder: FormBuilder,
               private domSanitizer: DomSanitizer,
               private dialogRef: MatDialogRef<FilterDialogComponent>,

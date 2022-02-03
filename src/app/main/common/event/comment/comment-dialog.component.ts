@@ -6,9 +6,9 @@ import {EventCommentBody} from '../../../../service/body/event.comment.body';
 import {EventComment} from '../../../../model/event.comment';
 
 @Component({
-  selector: 'app-comment.dialog',
-  templateUrl: './comment.dialog.component.html',
-  styleUrls: ['./comment.dialog.component.css']
+  selector: 'app-comment-dialog',
+  templateUrl: './comment-dialog.component.html',
+  styleUrls: ['./comment-dialog.component.css']
 })
 export class CommentDialogComponent implements OnInit {
 

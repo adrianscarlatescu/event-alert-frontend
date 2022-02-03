@@ -4,7 +4,7 @@ import {SessionService} from '../../service/session.service';
 import {MapComponent} from './map/map.component';
 import {FilterOptions} from './filter/filter.options';
 import {MatDialog} from '@angular/material/dialog';
-import {FilterDialogComponent} from './filter/filter.dialog.component';
+import {FilterDialogComponent} from './filter/filter-dialog.component';
 import {EventFilterBody} from '../../service/body/event.filter.body';
 import {EventService} from '../../service/event.service';
 import {Order} from '../../model/order';
