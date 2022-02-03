@@ -1,7 +1,7 @@
 import {UserRole} from './user.role';
 import {Gender} from './gender';
 
-export class User {
+export interface User {
   id: number;
   joinDateTime: Date;
   email: string;

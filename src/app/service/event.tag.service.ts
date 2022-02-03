@@ -16,5 +16,4 @@ export class EventTagService {
     return this.http.get<EventTag[]>(`${baseUrl}/tags`);
   }
 
-
 }

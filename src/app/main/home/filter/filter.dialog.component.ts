@@ -50,14 +50,10 @@ export class FilterDialogComponent implements OnInit {
   ngOnInit(): void {
     this.filterForm = this.formBuilder.group({
       radius: [this.filterOptions.radius, [Validators.required, Validators.min(1), Validators.max(10000)]],
-      selectedTags: [this.tags
-        .filter(tag =>
-          this.filterOptions.tags
-            .find(filterTag => filterTag.id === tag.id)), [Validators.required]],
-      selectedSeverities: [this.severities
-        .filter(severity =>
-          this.filterOptions.severities
-            .find(filterSeverity => filterSeverity.id === severity.id)), [Validators.required]],
+      selectedTags: [this.tags.filter(tag =>
+        this.filterOptions.tags.find(filterTag => filterTag.id === tag.id)), [Validators.required]],
+      selectedSeverities: [this.severities.filter(severity =>
+        this.filterOptions.severities.find(filterSeverity => filterSeverity.id === severity.id)), [Validators.required]],
       startDate: [this.filterOptions.startDate, [Validators.required]],
       endDate: [this.filterOptions.endDate, [Validators.required]],
     }, {

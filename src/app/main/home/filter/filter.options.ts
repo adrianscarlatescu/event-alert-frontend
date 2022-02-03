@@ -11,13 +11,19 @@ export class FilterOptions {
 
   constructor() {
     this.radius = 1000;
-    this.endDate = new Date(Date.now());
-    this.startDate = new Date(Date.now());
-    this.startDate.setFullYear((this.endDate.getFullYear() - 1));
-    this.startDate.setMonth(0);
-    this.startDate.setDate(1);
     this.tags = [];
     this.severities = [];
+
+    // Cover the events recorded in the database
+    this.startDate = new Date(Date.now());
+    this.startDate.setFullYear(2020);
+    this.startDate.setMonth(0);
+    this.startDate.setDate(1);
+
+    this.endDate = new Date(Date.now());
+    this.endDate.setFullYear(2020);
+    this.endDate.setMonth(11);
+    this.endDate.setDate(31);
   }
 
 }

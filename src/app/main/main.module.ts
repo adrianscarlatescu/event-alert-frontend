@@ -21,10 +21,11 @@ import {ListComponent} from './home/list/list.component';
 import {FilterDialogComponent} from './home/filter/filter.dialog.component';
 import {OrderDialogComponent} from './common/order/order.dialog.component';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 
 @NgModule({
-  declarations: [MainComponent, HomeComponent, CreatorComponent, AdminComponent, ProfileComponent, EventDetailsComponent, CommentDialogComponent, NewEventComponent, MapComponent, ListComponent, FilterDialogComponent, OrderDialogComponent],
+  declarations: [MainComponent, HomeComponent, CreatorComponent, AdminComponent, ProfileComponent, EventDetailsComponent, CommentDialogComponent, NewEventComponent, MapComponent, ListComponent, FilterDialogComponent, OrderDialogComponent, NotificationsComponent],
   imports: [
     CommonModule,
     AgmCoreModule.forRoot({
@@ -40,8 +41,9 @@ import {CustomReuseStrategy} from './common/custom.reuse.strategy';
         children: [
           {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
           {path: 'creator', component: CreatorComponent, canActivate: [AuthGuard]},
-          {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
+          {path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard]},
           {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+          {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
           {path: '', redirectTo: 'home', pathMatch: 'full'},
 
           {path: 'event/details', component: EventDetailsComponent, canActivate: [AuthGuard]},

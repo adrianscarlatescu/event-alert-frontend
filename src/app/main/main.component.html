@@ -13,15 +13,20 @@
         <mat-icon aria-hidden="false" color="primary">create</mat-icon>
       </a>
 
-      <a matLine mat-list-item routerLink="admin" routerLinkActive="active-list-item" *ngIf="isAdmin"
-         (click)="onAdmin()">
-        <span>Admin</span>
-        <mat-icon aria-hidden="false" color="primary">people</mat-icon>
+      <a matLine mat-list-item routerLink="notifications" routerLinkActive="active-list-item" (click)="onNotifications()">
+        <span>Notifications</span>
+        <mat-icon aria-hidden="false" color="primary">notifications</mat-icon>
       </a>
 
       <a matLine mat-list-item routerLink="profile" routerLinkActive="active-list-item" (click)="onProfile()">
         <span>Profile</span>
         <mat-icon aria-hidden="false" color="primary">person</mat-icon>
+      </a>
+
+      <a matLine mat-list-item routerLink="admin" routerLinkActive="active-list-item" *ngIf="isAdmin"
+         (click)="onAdmin()">
+        <span>Admin</span>
+        <mat-icon aria-hidden="false" color="primary">people</mat-icon>
       </a>
 
       <a matLine (click)="onLogout()">

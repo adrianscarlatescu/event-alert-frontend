@@ -1,6 +1,6 @@
 import {User} from './user';
 
-export class EventComment {
+export interface EventComment {
   id: number;
   dateTime: Date;
   comment: string;

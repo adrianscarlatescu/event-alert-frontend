@@ -1,4 +1,4 @@
-export class EventTag {
+export interface EventTag {
   id: number;
   name: string;
   imagePath: string;

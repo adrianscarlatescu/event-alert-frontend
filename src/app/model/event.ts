@@ -2,7 +2,7 @@ import {EventSeverity} from './event.severity';
 import {EventTag} from './event.tag';
 import {User} from './user';
 
-export class Event {
+export interface Event {
   id: number;
   dateTime: Date;
   latitude: number;
