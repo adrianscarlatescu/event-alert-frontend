@@ -39,11 +39,14 @@
   line-height: 22px;
 }
 
-.home_main_bar_button {
-  width: 130px;
+.home_bottom_bar_mat_card {
+  display: flex;
+  padding: 0;
+  width: 100%;
+  justify-content: center;
 }
 
-.home_map_bar_button {
-  width: 120px;
+.home_main_bar_button {
+  width: 125px;
 }
 

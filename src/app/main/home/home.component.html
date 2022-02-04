@@ -14,31 +14,31 @@
 </div>
 
 <div class="home_bottom_bar_div">
-  <mat-card [ngStyle]="{'visibility': homePage === 'map' ? 'visible' : 'hidden'}"
-            style="display: flex; padding: 0; margin-bottom: 10px; width: 100%; justify-content: center">
+  <mat-card class="home_bottom_bar_mat_card" style="margin-bottom: 10px"
+            [ngStyle]="{'visibility': homePage === 'map' ? 'visible' : 'hidden'}">
 
-    <button mat-icon-button class="home_map_bar_button" (click)="onPreviousClicked()">
+    <button mat-icon-button class="home_main_bar_button" (click)="onPreviousClicked()">
       <mat-icon>chevron_left</mat-icon>
       Previous
     </button>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <button mat-icon-button class="home_map_bar_button" (click)="onLocationClicked()">
+    <button mat-icon-button class="home_main_bar_button" (click)="onLocationClicked()">
       <mat-icon>person_pin_circle</mat-icon>
       Location
     </button>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <button mat-icon-button class="home_map_bar_button" (click)="onNextClicked()">
+    <button mat-icon-button class="home_main_bar_button" (click)="onNextClicked()">
       Next
       <mat-icon>chevron_right</mat-icon>
     </button>
 
   </mat-card>
 
-  <mat-card style="display: flex; width: 100%; padding: 0; justify-content: center">
+  <mat-card class="home_bottom_bar_mat_card">
 
     <button mat-icon-button class="home_main_bar_button" (click)="onFilterClicked()">
       <mat-icon>filter_list</mat-icon>

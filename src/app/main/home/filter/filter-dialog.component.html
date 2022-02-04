@@ -1,7 +1,7 @@
 <div class="filter_page_div">
 
   <form [formGroup]="filterForm" (ngSubmit)="onSaveClicked()">
-    <mat-form-field class="filter_item">
+    <mat-form-field style="min-width: 60%">
       <mat-label>Radius (km)</mat-label>
       <input matInput formControlName="radius" value="{{filterOptions.radius}}" required>
       <mat-error *ngIf="filterForm.get('radius').invalid">{{getRadiusErrorMessage()}}</mat-error>
@@ -9,7 +9,7 @@
 
     <br>
 
-    <mat-form-field class="filter_item">
+    <mat-form-field style="min-width: 60%">
       <mat-label>Start date</mat-label>
       <input matInput formControlName="startDate" value="{{filterOptions.startDate}}" [matDatepicker]="startPicker"
              required>
@@ -20,7 +20,7 @@
 
     <br>
 
-    <mat-form-field class="filter_item">
+    <mat-form-field style="min-width: 60%">
       <mat-label>End date</mat-label>
       <input matInput formControlName="endDate" value="{{filterOptions.endDate}}" [matDatepicker]="endPicker" required>
       <mat-error *ngIf="filterForm.get('endDate').invalid">{{getEndDateErrorMessage()}}</mat-error>

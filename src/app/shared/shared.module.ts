@@ -35,9 +35,17 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
+import {SpinnerComponent} from './spinner/spinner.component';
+import {CommonModule} from '@angular/common';
+import {BrowserModule} from '@angular/platform-browser';
 
 @NgModule({
-  declarations: [],
+  declarations: [SpinnerComponent],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    MatProgressSpinnerModule
+  ],
   exports: [
     MatAutocompleteModule,
     MatCheckboxModule,
@@ -74,7 +82,8 @@ import {MatTableModule} from '@angular/material/table';
     MatTooltipModule,
     MatPaginatorModule,
     MatSortModule,
-    MatTableModule
+    MatTableModule,
+    SpinnerComponent
   ]
 })
 export class SharedModule {

@@ -9,6 +9,8 @@ import {ToastrService} from 'ngx-toastr';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatDialog} from '@angular/material/dialog';
 import {NewEventDialogComponent} from './new/new-event-dialog.component';
+import {SpinnerService} from '../../shared/spinner/spinner.service';
+import {timeout} from 'rxjs/operators';
 
 @Component({
   selector: 'app-creator',
@@ -25,6 +27,7 @@ export class CreatorComponent implements OnInit {
   constructor(private eventService: EventService,
               private fileService: FileService,
               private sessionService: SessionService,
+              private spinnerService: SpinnerService,
               private toast: ToastrService,
               private domSanitizer: DomSanitizer,
               private dialog: MatDialog,
@@ -33,6 +36,8 @@ export class CreatorComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.spinnerService.show();
+
     this.eventService.getByUserId(this.sessionService.getUser().id)
       .subscribe(events => {
         const data: Element[] = [];
@@ -40,7 +45,9 @@ export class CreatorComponent implements OnInit {
           const element: Element = this.getElementFromEvent(event);
           data.push(element);
         });
+
         this.dataSource.data = data;
+        this.spinnerService.close();
       });
   }
 

@@ -24,7 +24,6 @@ import {NotificationsComponent} from './notifications/notifications.component';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
 import {NewEventDialogComponent} from './creator/new/new-event-dialog.component';
 
-
 @NgModule({
   declarations: [
     MainComponent,

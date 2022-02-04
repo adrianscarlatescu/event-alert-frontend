@@ -80,7 +80,7 @@
           <img matListAvatar [src]="getEventCommentUserImage(comment.id)"/>
           <h3 matLine>{{comment.user.firstName + ' ' + comment.user.lastName}}</h3>
           <p matLine>
-            <span style="color: grey">{{comment.dateTime.toString().replace('T', ' ')}}</span>
+            <span style="color: grey">{{comment.dateTime | date: 'medium'}}</span>
             <br>
             <span style="color: dimgrey">{{comment.comment}}</span>
           </p>

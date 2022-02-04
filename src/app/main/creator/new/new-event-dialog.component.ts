@@ -10,6 +10,7 @@ import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer} from '@angular/platform-browser';
 import {NewEventBody} from '../../../service/body/new.event.body';
 import {MatDialogRef} from '@angular/material/dialog';
+import {SpinnerService} from '../../../shared/spinner/spinner.service';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -36,6 +37,7 @@ export class NewEventDialogComponent implements OnInit {
   constructor(private fileService: FileService,
               private sessionService: SessionService,
               private eventService: EventService,
+              private spinnerService: SpinnerService,
               private toast: ToastrService,
               private domSanitizer: DomSanitizer,
               private dialogRef: MatDialogRef<NewEventDialogComponent>) {
@@ -86,6 +88,7 @@ export class NewEventDialogComponent implements OnInit {
       return;
     }
 
+    this.spinnerService.show();
     this.fileService.postImage(this.file, 'event_')
       .subscribe(imagePath => {
         const body = new NewEventBody();
@@ -103,6 +106,7 @@ export class NewEventDialogComponent implements OnInit {
               this.toast.success('Event successfully reported');
               this.newEvent = event;
               this.dialogRef.close();
+              this.spinnerService.close();
             }
           });
       });

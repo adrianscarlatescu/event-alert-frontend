@@ -8,6 +8,7 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import {DomSanitizer} from '@angular/platform-browser';
 import {SessionService} from '../service/session.service';
 import {CustomReuseStrategy} from '../main/common/custom.reuse.strategy';
+import {SpinnerService} from '../shared/spinner/spinner.service';
 
 @Component({
   selector: 'app-auth',
@@ -31,13 +32,16 @@ export class AuthComponent implements OnInit {
               private domSanitizer: DomSanitizer,
               private toast: ToastrService,
               private authService: AuthService,
+              private spinnerService: SpinnerService,
               private sessionService: SessionService) {
 
     if (this.sessionService.getAccessToken() && !this.jwtHelper.isTokenExpired(this.sessionService.getRefreshToken())) {
+      this.spinnerService.show();
       this.sessionService.sync()
         .subscribe(() => {
           console.log('Sync completed');
           this.router.navigate(['/home']);
+          this.spinnerService.close();
         });
     } else {
       localStorage.removeItem('accessToken');
@@ -103,6 +107,8 @@ export class AuthComponent implements OnInit {
   }
 
   onLogin(): Subscription {
+    this.spinnerService.show();
+
     if (this.loginForm.valid) {
       return this.authService.login(this.loginForm.value)
         .subscribe(token => {
@@ -115,6 +121,7 @@ export class AuthComponent implements OnInit {
 
                 console.log('Sync completed');
                 this.router.navigate(['/home']);
+                this.spinnerService.close();
               });
           }
         });
@@ -122,11 +129,14 @@ export class AuthComponent implements OnInit {
   }
 
   onRegister(): Subscription {
+    this.spinnerService.show();
+
     if (this.registerForm.valid) {
       return this.authService.register(this.registerForm.value)
         .subscribe(user => {
           if (user.id) {
             this.toast.success('Registration successful');
+            this.spinnerService.close();
           }
         });
     }

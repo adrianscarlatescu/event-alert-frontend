@@ -12,6 +12,7 @@ import {ToastrService} from 'ngx-toastr';
 import {OrderDialogComponent} from '../common/order/order.dialog.component';
 import {ListComponent} from './list/list.component';
 import {PageEvent} from '@angular/material/paginator';
+import {SpinnerService} from '../../shared/spinner/spinner.service';
 
 @Component({
   selector: 'app-home',
@@ -37,6 +38,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private eventService: EventService,
               private sessionService: SessionService,
+              private spinnerService: SpinnerService,
               private toast: ToastrService,
               private dialog: MatDialog) {
 
@@ -139,9 +141,9 @@ export class HomeComponent implements OnInit {
   }
 
   private requestNewSearch() {
+    this.spinnerService.show();
     this.eventService.getByFilter(this.eventFilterBody, HomeComponent.PAGE_SIZE, this.pageIndex, this.order)
       .subscribe(page => {
-
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
 
@@ -151,6 +153,8 @@ export class HomeComponent implements OnInit {
         if (this.totalEvents === 0) {
           this.toast.info('No events found');
         }
+
+        this.spinnerService.close();
       });
   }
 

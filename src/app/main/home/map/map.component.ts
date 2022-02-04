@@ -15,7 +15,7 @@ export class MapComponent implements OnInit {
 
   mapStyle = mapTheme;
   zoom = 13;
-  map: any;
+  map: google.maps.Map;
 
   events: Event[];
 
@@ -37,7 +37,7 @@ export class MapComponent implements OnInit {
     this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
   }
 
-  mapReady(map: any) {
+  mapReady(map: google.maps.Map) {
     this.map = map;
   }
 
@@ -76,11 +76,12 @@ export class MapComponent implements OnInit {
     const distances: number[] = this.events.map(event => event.distance);
     const radius = Math.max(...distances);
 
-    this.zoom = 16 - Math.log(radius) / Math.log(2);
     setTimeout(() => {
-      this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
-    }, 500);
 
+      this.zoom = 16 - Math.log(radius) / Math.log(2);
+      this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
+
+    }, 1000);
   }
 
 }
