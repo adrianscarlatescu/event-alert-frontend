@@ -81,7 +81,7 @@
 
         <mat-form-field *ngIf="user.joinDateTime">
           <mat-label>Join date</mat-label>
-          <input matInput disabled value="{{user.joinDateTime.toString().replace('T', ' ')}}">
+          <input matInput disabled value="{{user.joinDateTime | date: 'medium'}}">
         </mat-form-field>
 
         <br>

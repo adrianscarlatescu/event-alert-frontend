@@ -47,7 +47,7 @@
     <img *ngIf="selectedEventImage" [src]="selectedEventImage" class="map_event_info_image">
     <p class="map_event_info_text" style="font-size: 16px; margin-top: 10px">{{selectedEvent.tag.name}}</p>
     <p class="map_event_info_text">{{selectedEvent.severity.name}}</p>
-    <p class="map_event_info_text">{{selectedEvent.dateTime.toString().replace('T', ' ')}}</p>
+    <p class="map_event_info_text">{{selectedEvent.dateTime | date: 'medium'}}</p>
     <p class="map_event_info_text">
       {{selectedEvent.distance.toString()
       .substr(0, selectedEvent.distance.toString().indexOf('.'))}} km away from your location

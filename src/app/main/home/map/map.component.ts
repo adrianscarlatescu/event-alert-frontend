@@ -78,7 +78,7 @@ export class MapComponent implements OnInit {
 
     setTimeout(() => {
 
-      this.zoom = 16 - Math.log(radius) / Math.log(2);
+      this.zoom = 15.5 - Math.log(radius) / Math.log(2);
       this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
 
     }, 1000);

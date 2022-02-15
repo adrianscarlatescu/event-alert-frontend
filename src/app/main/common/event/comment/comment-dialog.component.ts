@@ -4,6 +4,7 @@ import {ToastrService} from 'ngx-toastr';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EventCommentBody} from '../../../../service/body/event.comment.body';
 import {EventComment} from '../../../../model/event.comment';
+import {SpinnerService} from '../../../../shared/spinner/spinner.service';
 
 @Component({
   selector: 'app-comment-dialog',
@@ -18,6 +19,7 @@ export class CommentDialogComponent implements OnInit {
 
   constructor(private eventCommentService: EventCommentService,
               private toast: ToastrService,
+              private spinnerService: SpinnerService,
               private dialogRef: MatDialogRef<CommentDialogComponent>,
               @Inject(MAT_DIALOG_DATA) private data: DialogData) {
   }
@@ -37,12 +39,14 @@ export class CommentDialogComponent implements OnInit {
       return;
     }
 
+    this.spinnerService.show();
     const body = new EventCommentBody();
     body.comment = comment;
     body.eventId = this.data.eventId;
     body.userId = this.data.userId;
     this.eventCommentService.postComment(body)
       .subscribe(eventComment => {
+        this.spinnerService.close();
         if (eventComment) {
           this.toast.success('Comment posted');
           this.newEventComment = eventComment;

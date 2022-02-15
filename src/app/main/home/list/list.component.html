@@ -28,9 +28,7 @@
       <ng-container matColumnDef="dateTime">
         <th mat-header-cell *matHeaderCellDef>Date</th>
         <td mat-cell
-            *matCellDef="let e"> {{e.dateTime.toString().includes('.') ?
-          e.dateTime.toString().replace('T', ' ').substr(0, e.dateTime.indexOf('.')) :
-          e.dateTime.toString().replace('T', ' ')}}
+            *matCellDef="let e"> {{e.dateTime | date: 'medium'}}
         </td>
       </ng-container>
 

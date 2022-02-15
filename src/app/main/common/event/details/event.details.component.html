@@ -10,7 +10,7 @@
           {{event.user.firstName + ' ' + event.user.lastName}}
         </mat-card-title>
         <mat-card-subtitle *ngIf="event">
-          {{event.dateTime.toString().replace('T', ' ')}}
+          {{event.dateTime | date: 'medium'}}
         </mat-card-subtitle>
       </mat-card-header>
 
