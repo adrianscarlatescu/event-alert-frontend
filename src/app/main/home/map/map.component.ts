@@ -5,6 +5,7 @@ import {Event} from '../../../model/event';
 import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
 import {DomSanitizer} from '@angular/platform-browser';
+import {interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -78,10 +79,27 @@ export class MapComponent implements OnInit {
 
     setTimeout(() => {
 
-      this.zoom = 15.5 - Math.log(radius) / Math.log(2);
+      const targetZoom: number = 15.5 - Math.log(radius) / Math.log(2);
+      const intervalSub: Subscription = interval(500).subscribe(() => {
+
+        console.log(this.zoom);
+        if (targetZoom - this.zoom >= 2) {
+          this.zoom += 2;
+        } else if (this.zoom - targetZoom >= 2) {
+          this.zoom -= 2;
+        } else if (targetZoom - this.zoom >= 1) {
+          this.zoom += 1;
+        } else if (this.zoom - targetZoom >= 1) {
+          this.zoom -= 1;
+        } else {
+          intervalSub.unsubscribe();
+        }
+
+      });
+
       this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
 
-    }, 1000);
+    }, 500);
   }
 
 }
