@@ -19,13 +19,4 @@ In order to run the application locally, the following steps must be set:
 * If the server IP is different, it must be set in [environment.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/environments/environment.ts#L9).
 
 ## Video demonstration
-The YouTube link is available [here](https://youtu.be/fSBhlbBAsOg).
-
-## Screenshots
-<div align="center">
-<img src="https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/assets/screenshots/screenshot_01.png" width="800">
-<img src="https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/assets/screenshots/screenshot_02.png" width="800">
-<img src="https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/assets/screenshots/screenshot_03.png" width="800">
-<img src="https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/assets/screenshots/screenshot_04.png" width="800">
-<img src="https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/assets/screenshots/screenshot_05.png" width="800">
-</div>
+The YouTube link is available [here](https://youtu.be/AutvBfRmnWM).
