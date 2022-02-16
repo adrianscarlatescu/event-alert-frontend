@@ -27,39 +27,20 @@
 .event_details_event_image {
   width: 400px;
   height: 400px;
-  margin-right: 5px;
+  object-fit: cover;
 }
 
-.event_details_map {
-  margin-left: 5px;
-  height: 400px;
-  width: 400px;
+#event_details_map_button {
+  margin-right: 0;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 #event_details_comments_div {
   display: flex;
   height: fit-content;
   margin-top: 25px;
-}
-
-.event_details_map_div {
-  display: flex;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-@media all and (max-width: 1200px) {
-  .event_details_map_div {
-    display: block;
-  }
-
-  .event_details_event_image {
-    margin-right: 0;
-  }
-
-  .event_details_map {
-    margin-left: 0;
-  }
 }
 
 .event_details_comments_number_mat_card {
@@ -69,18 +50,6 @@
   width: fit-content;
   padding: 10px;
   background-color: #f0ecf9C0;
-}
-
-.event_details_marker_overlay {
-  width: 80px;
-  height: 80px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 60px;
-  background-position-y: 5px;
-  position: relative;
-  bottom: 60px;
-  right: 30px;
 }
 
 .mat-list-item:hover {

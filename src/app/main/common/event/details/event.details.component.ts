@@ -2,18 +2,18 @@ import {Component, NgZone, OnInit} from '@angular/core';
 import {Event} from '../../../../model/event';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FileService} from '../../../../service/file.service';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {EventComment} from '../../../../model/event.comment';
 import {EventCommentService} from '../../../../service/event.comment.service';
 import {EventService} from '../../../../service/event.service';
 import {SessionService} from '../../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
-import {mapTheme} from '../../map.style';
 import {MatDialog} from '@angular/material/dialog';
 import {CommentDialogComponent} from '../comment/comment-dialog.component';
 import {Location} from '@angular/common';
 import {map, mergeMap} from 'rxjs/operators';
 import {from} from 'rxjs';
+import {MapViewDialogComponent} from './map/map-view-dialog.component';
 
 @Component({
   selector: 'app-event.details',
@@ -22,17 +22,14 @@ import {from} from 'rxjs';
 })
 export class EventDetailsComponent implements OnInit {
 
-  mapStyle = mapTheme;
-  mapZoom: number = 15;
-
   eventId: number;
   event: Event;
-  eventImage;
-  eventUserImage;
-  eventAddress;
+  eventImage: SafeUrl;
+  eventUserImage: string;
+  eventAddress: string;
 
-  tagImage;
-  severityColor;
+  tagImage: string;
+  severityColor: string;
 
   comments: EventComment[] = [];
   commentsUsersImages: CommentUserImage[] = [];
@@ -130,7 +127,7 @@ export class EventDetailsComponent implements OnInit {
     }
   }
 
-  onNewCommentClicked() {
+  onNewCommentClicked(): void {
     const dialogRef = this.dialog.open(CommentDialogComponent, {
       data: {
         eventId: this.event.id,
@@ -156,6 +153,17 @@ export class EventDetailsComponent implements OnInit {
             this.commentsUsersImages.unshift(userImage);
           });
       });
+  }
+
+  onMapViewClicked(): void {
+    this.dialog.open(MapViewDialogComponent, {
+      data: {
+        latitude: this.event.latitude,
+        longitude: this.event.longitude,
+        tagImage: this.tagImage,
+        severityColor: this.severityColor
+      }
+    });
   }
 
 }

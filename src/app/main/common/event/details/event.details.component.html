@@ -14,47 +14,35 @@
         </mat-card-subtitle>
       </mat-card-header>
 
-      <div class="event_details_map_div">
+      <div>
         <img *ngIf="eventImage" [src]="eventImage" class="event_details_event_image">
-        <agm-map *ngIf="event" [latitude]="event.latitude" [longitude]="event.longitude" [zoom]="mapZoom"
-                 class="event_details_map" [styles]="mapStyle">
-
-          <agm-marker>
-            <agm-overlay
-              [latitude]="event.latitude"
-              [longitude]="event.longitude">
-
-              <div class="event_details_marker_overlay"
-                   style="-webkit-mask-box-image: url('../../../../../assets/event_marker.png');"
-                   [ngStyle]="{'background-image': tagImage, 'background-color': severityColor + 'C0'}">
-              </div>
-              <img src="assets/event_marker_border.png" class="event_details_marker_overlay"
-                   style="position: absolute"/>
-
-            </agm-overlay>
-          </agm-marker>
-
-        </agm-map>
       </div>
 
-      <mat-card-header style="margin-top: 10px;">
-        <div *ngIf="tagImage && severityColor" class="event_details_tag_mat_card" mat-card-avatar
-             [ngStyle]="{'background-image': tagImage, 'background-color': severityColor}"></div>
-        <mat-card-title *ngIf="event">
-          {{event.tag.name}}
-        </mat-card-title>
-        <mat-card-subtitle>
-          <div *ngIf="event">
-            {{event.severity.name}}
+      <div style="display: flex;">
+        <mat-card-header style="margin-top: 10px;">
+          <div *ngIf="tagImage && severityColor" class="event_details_tag_mat_card" mat-card-avatar
+               [ngStyle]="{'background-image': tagImage, 'background-color': severityColor}">
           </div>
-          <div *ngIf="eventAddress">
-            {{eventAddress}}
-          </div>
-          <div *ngIf="event && event.description">
-            {{event.description}}
-          </div>
-        </mat-card-subtitle>
-      </mat-card-header>
+          <mat-card-title *ngIf="event">
+            {{event.tag.name}}
+          </mat-card-title>
+          <mat-card-subtitle>
+            <div *ngIf="event">
+              {{event.severity.name}}
+            </div>
+            <div *ngIf="eventAddress">
+              {{eventAddress}}
+            </div>
+            <div *ngIf="event && event.description">
+              {{event.description}}
+            </div>
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <button mat-icon-button id="event_details_map_button" (click)="onMapViewClicked()">
+          <mat-icon>map</mat-icon>
+        </button>
+      </div>
 
     </mat-card>
   </div>

@@ -82,7 +82,6 @@ export class MapComponent implements OnInit {
       const targetZoom: number = 15.5 - Math.log(radius) / Math.log(2);
       const intervalSub: Subscription = interval(500).subscribe(() => {
 
-        console.log(this.zoom);
         if (targetZoom - this.zoom >= 2) {
           this.zoom += 2;
         } else if (this.zoom - targetZoom >= 2) {

@@ -10,7 +10,6 @@ import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatDialog} from '@angular/material/dialog';
 import {NewEventDialogComponent} from './new/new-event-dialog.component';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {timeout} from 'rxjs/operators';
 
 @Component({
   selector: 'app-creator',
