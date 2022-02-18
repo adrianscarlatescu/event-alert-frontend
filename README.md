@@ -15,7 +15,7 @@ By using this application, a user can update his profile, report incidents in hi
 
 ## Run prerequisites
 In order to run the application locally, the following steps must be set:
-* A Google Maps API key must be generated and put in [main.module.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/app/main/main.module.ts#L31).
+* A Google Maps API key must be generated and put in [main.module.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/app/main/main.module.ts#L48).
 * If the server IP is different, it must be set in [environment.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/environments/environment.ts#L9).
 
 ## Video demonstration
