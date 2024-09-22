@@ -1,5 +1,5 @@
 import {UserRole} from './user.role';
-import {Gender} from './gender';
+import {Gender} from '../enums/gender';
 
 export interface User {
   id: number;

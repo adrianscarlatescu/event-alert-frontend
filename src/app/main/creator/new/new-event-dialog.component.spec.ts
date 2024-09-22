@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NewEventDialogComponent } from './new-event-dialog.component';
+import {NewEventDialogComponent} from './new-event-dialog.component';
 
 describe('NewEventDialogComponent', () => {
   let component: NewEventDialogComponent;

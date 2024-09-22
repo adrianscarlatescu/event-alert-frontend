@@ -16,43 +16,40 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request)
       .pipe(
         catchError((errorResponse: HttpErrorResponse) => {
-          let errorMessage = `${defaultError}`;
+          let errorMessage: string = `${defaultError}`;
           if (errorResponse.error instanceof ErrorEvent) {
             // client-side error
             errorMessage = errorResponse.error.message;
-
           } else {
             // server-side error
             errorMessage = this.getErrorMessage(errorResponse);
           }
-          console.log(errorResponse);
-          this.toast.error(errorMessage);
+
+          console.error(errorResponse);
+          this.toast.error(errorMessage, '',{enableHtml: true});
           return throwError(errorMessage);
         }));
   }
 
   getErrorMessage(errorResponse: HttpErrorResponse): string {
-    const apiErrors: DefaultApiError = errorResponse.error;
-    if (apiErrors.errors !== undefined) {
-      return apiErrors.errors[0].code + ': ' + apiErrors.errors[0].message;
+    const apiFailure: ApiFailure = errorResponse.error;
+
+    if (apiFailure.errors !== undefined && apiFailure.errors.length > 0) {
+      let apiErrorMessage: string = '';
+      for (let i = 0; i < apiFailure.errors.length; i++) {
+        apiErrorMessage += apiFailure.errors[i].message;
+        if (i < apiFailure.errors.length - 1) {
+          apiErrorMessage += '<hr/>';
+        }
+      }
+      return apiErrorMessage;
     }
-    const springError: DefaultError = errorResponse.error;
-    if (springError.status !== undefined && springError.message !== undefined) {
-      return springError.status + ': ' + springError.message;
-    }
-    return errorResponse.message;
+
+    return 'An error has occurred';
   }
 }
 
-export class DefaultError {
-  error: string;
-  message: string;
-  path: string;
-  status: number;
-  timestamp: string;
-}
-
-export class DefaultApiError {
+export class ApiFailure {
   errors: ApiError[];
 }
 

@@ -5,10 +5,12 @@ import {DetachedRouteHandle, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ToastrService} from 'ngx-toastr';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {DomSanitizer} from '@angular/platform-browser';
 import {SessionService} from '../service/session.service';
 import {CustomReuseStrategy} from '../main/common/custom.reuse.strategy';
 import {SpinnerService} from '../shared/spinner/spinner.service';
+import {concatMap} from 'rxjs/operators';
+import {LoginRequest} from '../model/request/login.request';
+import {RegisterRequest} from '../model/request/register.request';
 
 @Component({
   selector: 'app-auth',
@@ -29,7 +31,6 @@ export class AuthComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private domSanitizer: DomSanitizer,
               private toast: ToastrService,
               private authService: AuthService,
               private spinnerService: SpinnerService,
@@ -42,7 +43,7 @@ export class AuthComponent implements OnInit {
           console.log('Sync completed');
           this.router.navigate(['/home']);
           this.spinnerService.close();
-        });
+        }, () => this.spinnerService.close());
     } else {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
@@ -107,38 +108,46 @@ export class AuthComponent implements OnInit {
   }
 
   onLogin(): Subscription {
-    this.spinnerService.show();
-
     if (this.loginForm.valid) {
-      return this.authService.login(this.loginForm.value)
-        .subscribe(token => {
-          if (token.accessToken && !this.jwtHelper.isTokenExpired(token.refreshToken)) {
-            this.sessionService.sync()
-              .subscribe(() => {
-                const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
-                reuseStrategy.routesToCache = ['home'];
-                reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
+      this.spinnerService.show();
 
-                console.log('Sync completed');
-                this.router.navigate(['/home']);
-                this.spinnerService.close();
-              });
-          }
-        });
+      const loginRequest: LoginRequest = new LoginRequest();
+      loginRequest.email = this.loginForm.value.email;
+      loginRequest.password = this.loginForm.value.password;
+
+      return this.authService.login(loginRequest)
+        .pipe(concatMap(tokens => {
+          this.sessionService.setTokens(tokens);
+          return this.sessionService.sync();
+        }))
+        .subscribe(() => {
+          const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
+          reuseStrategy.routesToCache = ['home'];
+          reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
+
+          console.log('Sync completed');
+          this.router.navigate(['/home']);
+          this.spinnerService.close();
+        }, () => this.spinnerService.close());
     }
   }
 
   onRegister(): Subscription {
-    this.spinnerService.show();
-
     if (this.registerForm.valid) {
-      return this.authService.register(this.registerForm.value)
+      this.spinnerService.show();
+
+      const registerRequest: RegisterRequest = new RegisterRequest();
+      registerRequest.email = this.registerForm.value.email;
+      registerRequest.password = this.registerForm.value.password;
+      registerRequest.confirmPassword = this.registerForm.value.confirmPassword;
+
+      return this.authService.register(registerRequest)
         .subscribe(user => {
           if (user.id) {
             this.toast.success('Registration successful');
             this.spinnerService.close();
           }
-        });
+        }, () => this.spinnerService.close());
     }
   }
 

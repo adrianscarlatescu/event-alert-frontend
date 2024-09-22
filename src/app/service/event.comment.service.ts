@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {EventComment} from '../model/event.comment';
 import {baseUrl} from '../../environments/environment';
-import {EventCommentBody} from './body/event.comment.body';
+import {EventCommentRequest} from '../model/request/event.comment.request';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,8 @@ export class EventCommentService {
     return this.http.get<EventComment[]>(`${baseUrl}/comments/${eventId}`);
   }
 
-  postComment(body: EventCommentBody): Observable<EventComment> {
-    return this.http.post<EventComment>(`${baseUrl}/comments`, body);
+  postComment(commentRequest: EventCommentRequest): Observable<EventComment> {
+    return this.http.post<EventComment>(`${baseUrl}/comments`, commentRequest);
   }
 
 }

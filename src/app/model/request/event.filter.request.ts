@@ -1,4 +1,4 @@
-export class EventFilterBody {
+export class EventFilterRequest {
 
   radius: number;
   startDate: Date;

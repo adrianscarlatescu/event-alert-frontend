@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Order} from '../../../model/order';
+import {Order} from '../../../enums/order';
 
 @Component({
   selector: 'app-order.dialog',

@@ -55,7 +55,7 @@ export class CreatorComponent implements OnInit {
   }
 
   onNewEventClicked() {
-    if (!this.sessionService.getLatitude() || !this.sessionService.getLongitude()) {
+    if (!this.sessionService.getUserLatitude() || !this.sessionService.getUserLongitude()) {
       this.toast.warning('Location not provided');
       return;
     }
