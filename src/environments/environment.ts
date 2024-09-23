@@ -7,7 +7,6 @@ export const environment = {
 };
 
 export const baseUrl = 'http://localhost:8081/api';
-export const defaultError = 'An error has occurred';
 
 /*
  * For easier debugging in development mode, you can import the following file

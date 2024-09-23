@@ -47,7 +47,7 @@ export class CreatorComponent implements OnInit {
 
         this.dataSource.data = data;
         this.spinnerService.close();
-      });
+      }, () => this.spinnerService.close());
   }
 
   onRowClicked(eventId: number) {

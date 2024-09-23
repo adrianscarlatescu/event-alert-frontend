@@ -108,7 +108,7 @@ export class NewEventDialogComponent implements OnInit {
               this.dialogRef.close();
               this.spinnerService.close();
             }
-          });
+          }, () => this.spinnerService.close());
       });
   }
 

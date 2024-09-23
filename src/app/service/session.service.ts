@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {User} from '../model/user';
 import {FileService} from './file.service';
 import {EMPTY, forkJoin, from, Observable} from 'rxjs';
-import {concatMap, map, mergeMap} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import {UserService} from './user.service';
 import {EventTagService} from './event.tag.service';
 import {EventSeverityService} from './event.severity.service';

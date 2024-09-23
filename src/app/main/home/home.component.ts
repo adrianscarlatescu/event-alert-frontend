@@ -154,7 +154,7 @@ export class HomeComponent implements OnInit {
         }
 
         this.spinnerService.close();
-      });
+      }, () => this.spinnerService.close());
   }
 
   onPageChanged(pageEvent: PageEvent) {

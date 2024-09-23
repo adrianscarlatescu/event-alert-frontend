@@ -53,7 +53,7 @@ export class CommentDialogComponent implements OnInit {
           this.newEventComment = eventComment;
           this.dialogRef.close();
         }
-      });
+      }, () => this.spinnerService.close());
   }
 
 }

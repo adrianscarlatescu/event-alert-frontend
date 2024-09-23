@@ -5,7 +5,6 @@ import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
-import {defaultError} from '../../../environments/environment';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -16,7 +15,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request)
       .pipe(
         catchError((errorResponse: HttpErrorResponse) => {
-          let errorMessage: string = `${defaultError}`;
+          let errorMessage: string;
           if (errorResponse.error instanceof ErrorEvent) {
             // client-side error
             errorMessage = errorResponse.error.message;
@@ -32,17 +31,20 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   getErrorMessage(errorResponse: HttpErrorResponse): string {
-    const apiFailure: ApiFailure = errorResponse.error;
+    if (errorResponse && errorResponse.error) {
+      const apiFailure: ApiFailure = errorResponse.error;
 
-    if (apiFailure.errors !== undefined && apiFailure.errors.length > 0) {
-      let apiErrorMessage: string = '';
-      for (let i = 0; i < apiFailure.errors.length; i++) {
-        apiErrorMessage += apiFailure.errors[i].message;
-        if (i < apiFailure.errors.length - 1) {
-          apiErrorMessage += '<hr/>';
+      if (apiFailure.errors !== undefined && apiFailure.errors.length > 0) {
+        let apiErrorMessage: string = '';
+        for (let i = 0; i < apiFailure.errors.length; i++) {
+          apiErrorMessage += apiFailure.errors[i].message;
+          if (i < apiFailure.errors.length - 1) {
+            apiErrorMessage += '<hr/>';
+          }
         }
+        return apiErrorMessage;
       }
-      return apiErrorMessage;
+
     }
 
     return 'An error has occurred';

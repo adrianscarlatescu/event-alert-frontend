@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {AuthService} from '../service/auth.service';
-import {DetachedRouteHandle, Router} from '@angular/router';
+import {ActivatedRoute, DetachedRouteHandle, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ToastrService} from 'ngx-toastr';
 import {JwtHelperService} from '@auth0/angular-jwt';
@@ -28,9 +28,11 @@ export class AuthComponent implements OnInit {
   loginForm: FormGroup;
   registerForm: FormGroup;
   hidePassword = true;
+  returnUrl;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
+              private activatedRoute: ActivatedRoute,
               private toast: ToastrService,
               private authService: AuthService,
               private spinnerService: SpinnerService,
@@ -45,9 +47,12 @@ export class AuthComponent implements OnInit {
           this.spinnerService.close();
         }, () => this.spinnerService.close());
     } else {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.clear();
     }
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.returnUrl = params['returnUrl'];
+    });
 
   }
 
@@ -121,12 +126,13 @@ export class AuthComponent implements OnInit {
           return this.sessionService.sync();
         }))
         .subscribe(() => {
+          console.log('Sync completed');
+
           const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
           reuseStrategy.routesToCache = ['home'];
           reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
 
-          console.log('Sync completed');
-          this.router.navigate(['/home']);
+          this.router.navigate([this.returnUrl ? this.returnUrl : '/home']);
           this.spinnerService.close();
         }, () => this.spinnerService.close());
     }
