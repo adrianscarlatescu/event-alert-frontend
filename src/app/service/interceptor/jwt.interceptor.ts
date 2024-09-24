@@ -54,7 +54,7 @@ export class JwtInterceptor implements HttpInterceptor {
         }));
     }
 
-    if (this.jwtHelper.isTokenExpired(refreshToken)) {
+    if (isRefreshTokenExpired) {
       localStorage.clear();
       this.toast.warning('Authorization expired');
       this.router.navigate(['/auth'], {queryParams: {returnUrl: this.router.routerState.snapshot.url}});
