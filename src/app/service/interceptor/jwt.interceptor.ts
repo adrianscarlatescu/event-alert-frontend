@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {AuthService} from '../auth.service';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {concatMap} from 'rxjs/operators';
@@ -23,20 +23,27 @@ export class JwtInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const accessToken: string = this.sessionService.getAccessToken();
     const refreshToken: string = this.sessionService.getRefreshToken();
+    const isRefreshTokenRequest: boolean = request.url.endsWith('/auth/refresh');
 
     if (!accessToken || !refreshToken) {
       return next.handle(request);
     }
 
-    if (this.jwtHelper.isTokenExpired(refreshToken)) {
-      localStorage.clear();
-      this.toast.warning('Authorization expired');
-      this.router.navigate(['/auth'], {queryParams: {returnUrl: this.router.routerState.snapshot.url}});
+    const isAccessTokenExpired: boolean = this.jwtHelper.isTokenExpired(accessToken);
+    const isRefreshTokenExpired: boolean = this.jwtHelper.isTokenExpired(refreshToken);
+
+    if (!isAccessTokenExpired && !isRefreshTokenRequest) {
+      request = this.addToken(request, accessToken);
+      return next.handle(request);
+    }
+
+    if (!isRefreshTokenExpired && isRefreshTokenRequest) {
+      request = this.addToken(request, refreshToken);
       return next.handle(request);
     }
 
     // Request new token if the current one it is expired
-    if (this.jwtHelper.isTokenExpired(accessToken) && !this.jwtHelper.isTokenExpired(refreshToken) && !this.isRefreshing) {
+    if (isAccessTokenExpired && !isRefreshTokenExpired && !this.isRefreshing) {
       this.isRefreshing = true;
       return this.authService.refresh()
         .pipe(concatMap(tokens => {
@@ -47,9 +54,13 @@ export class JwtInterceptor implements HttpInterceptor {
         }));
     }
 
-    const token = request.url.endsWith('/auth/refresh') ? refreshToken : accessToken;
-    request = this.addToken(request, token);
-    return next.handle(request);
+    if (this.jwtHelper.isTokenExpired(refreshToken)) {
+      localStorage.clear();
+      this.toast.warning('Authorization expired');
+      this.router.navigate(['/auth'], {queryParams: {returnUrl: this.router.routerState.snapshot.url}});
+    }
+
+    return of();
   }
 
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
