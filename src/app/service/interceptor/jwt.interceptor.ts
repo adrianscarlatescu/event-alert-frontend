@@ -7,6 +7,8 @@ import {concatMap} from 'rxjs/operators';
 import {SessionService} from '../session.service';
 import {Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
+import {JWT_OFFSET_SECONDS} from '../../defaults/constants';
+import {SpinnerService} from '../../shared/spinner/spinner.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -16,6 +18,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   constructor(private router: Router,
               private toast: ToastrService,
+              private spinnerService: SpinnerService,
               private sessionService: SessionService,
               private authService: AuthService) {
   }
@@ -29,8 +32,8 @@ export class JwtInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    const isAccessTokenExpired: boolean = this.jwtHelper.isTokenExpired(accessToken);
-    const isRefreshTokenExpired: boolean = this.jwtHelper.isTokenExpired(refreshToken);
+    const isAccessTokenExpired: boolean = this.jwtHelper.isTokenExpired(accessToken, JWT_OFFSET_SECONDS);
+    const isRefreshTokenExpired: boolean = this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS);
 
     if (!isAccessTokenExpired && !isRefreshTokenRequest) {
       request = this.addToken(request, accessToken);
@@ -56,6 +59,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (isRefreshTokenExpired) {
       localStorage.clear();
+      this.spinnerService.close();
       this.toast.warning('Authorization expired');
       this.router.navigate(['/auth'], {queryParams: {returnUrl: this.router.routerState.snapshot.url}});
     }

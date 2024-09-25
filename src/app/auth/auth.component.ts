@@ -11,6 +11,7 @@ import {SpinnerService} from '../shared/spinner/spinner.service';
 import {concatMap} from 'rxjs/operators';
 import {LoginRequest} from '../model/request/login.request';
 import {RegisterRequest} from '../model/request/register.request';
+import {JWT_OFFSET_SECONDS} from '../defaults/constants';
 
 @Component({
   selector: 'app-auth',
@@ -41,7 +42,7 @@ export class AuthComponent implements OnInit {
     const accessToken: string = this.sessionService.getAccessToken();
     const refreshToken: string = this.sessionService.getRefreshToken();
 
-    if (accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken)) {
+    if (accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS)) {
       this.spinnerService.show();
       this.sessionService.sync()
         .subscribe(() => {
