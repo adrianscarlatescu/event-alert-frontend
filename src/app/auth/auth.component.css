@@ -14,5 +14,10 @@
 }
 
 .auth_button {
+  min-width: 100px;
   width: 20%;
+}
+
+.mat-form-field {
+  min-width: 250px;
 }

@@ -30,3 +30,9 @@
 .profile_category_div {
   margin: 15px 20px;
 }
+
+@media all and (max-width: 1200px) {
+  #profile_main_div {
+    display: block;
+  }
+}
