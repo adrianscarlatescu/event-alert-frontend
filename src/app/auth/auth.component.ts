@@ -153,10 +153,8 @@ export class AuthComponent implements OnInit {
 
       return this.authService.register(registerRequest)
         .subscribe(user => {
-          if (user.id) {
-            this.toast.success('Registration successful');
-            this.spinnerService.close();
-          }
+          this.toast.success('Registration successful');
+          this.spinnerService.close();
         }, () => this.spinnerService.close());
     }
   }

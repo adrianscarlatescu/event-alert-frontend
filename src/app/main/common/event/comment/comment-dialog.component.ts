@@ -48,11 +48,9 @@ export class CommentDialogComponent implements OnInit {
     this.eventCommentService.postComment(commentRequest)
       .subscribe(eventComment => {
         this.spinnerService.close();
-        if (eventComment) {
-          this.toast.success('Comment posted');
-          this.newEventComment = eventComment;
-          this.dialogRef.close();
-        }
+        this.toast.success('Comment posted');
+        this.newEventComment = eventComment;
+        this.dialogRef.close();
       }, () => this.spinnerService.close());
   }
 

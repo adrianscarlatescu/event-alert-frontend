@@ -102,12 +102,10 @@ export class NewEventDialogComponent implements OnInit {
 
         this.eventService.postEvent(eventRequest)
           .subscribe(event => {
-            if (event) {
-              this.toast.success('Event successfully reported');
-              this.newEvent = event;
-              this.dialogRef.close();
-              this.spinnerService.close();
-            }
+            this.toast.success('Event successfully reported');
+            this.newEvent = event;
+            this.dialogRef.close();
+            this.spinnerService.close();
           }, () => this.spinnerService.close());
       });
   }

@@ -83,10 +83,8 @@ export class ProfileComponent implements OnInit {
 
     this.userService.putProfile(userRequest)
       .subscribe(user => {
-        if (user) {
-          this.toast.success('Profile updated');
-          this.sessionService.setUser(user);
-        }
+        this.toast.success('Profile updated');
+        this.sessionService.setUser(user);
       });
   }
 
