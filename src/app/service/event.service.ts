@@ -3,10 +3,10 @@ import {HttpClient} from '@angular/common/http';
 import {Event} from '../model/event';
 import {Observable} from 'rxjs';
 import {baseUrl} from '../../environments/environment';
-import {NewEventBody} from './body/new.event.body';
-import {EventFilterBody} from './body/event.filter.body';
-import {Order} from '../model/order';
 import {Page} from '../model/page';
+import {Order} from '../enums/order';
+import {EventRequest} from '../model/request/event.request';
+import {EventFilterRequest} from '../model/request/event.filter.request';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +24,12 @@ export class EventService {
     return this.http.get<Event[]>(`${baseUrl}/events`, {params: {'userId': userId.toString()}});
   }
 
-  postEvent(body: NewEventBody): Observable<Event> {
-    return this.http.post<Event>(`${baseUrl}/events`, body);
+  postEvent(eventRequest: EventRequest): Observable<Event> {
+    return this.http.post<Event>(`${baseUrl}/events`, eventRequest);
   }
 
-  getByFilter(body: EventFilterBody, pageSize: number, pageNumber: number, order: Order): Observable<Page<Event>> {
-    return this.http.post<Page<Event>>(`${baseUrl}/events/filter`, body,
+  getByFilter(filterRequest: EventFilterRequest, pageSize: number, pageNumber: number, order: Order): Observable<Page<Event>> {
+    return this.http.post<Page<Event>>(`${baseUrl}/events/filter`, filterRequest,
       {
         params: {
           'pageSize': pageSize.toString(),

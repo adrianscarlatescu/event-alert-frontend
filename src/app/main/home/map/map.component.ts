@@ -35,7 +35,7 @@ export class MapComponent implements OnInit {
 
   setDefaultViewValues() {
     this.zoom = 15;
-    this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
+    this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
   }
 
   mapReady(map: google.maps.Map) {
@@ -96,7 +96,7 @@ export class MapComponent implements OnInit {
 
       });
 
-      this.map.panTo({lat: this.sessionService.getLatitude(), lng: this.sessionService.getLongitude()});
+      this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
 
     }, 500);
   }

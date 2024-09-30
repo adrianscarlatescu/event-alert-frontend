@@ -1,6 +1,6 @@
 import {EventSeverity} from './event.severity';
 import {EventTag} from './event.tag';
-import {User} from './user';
+import {UserBase} from './user.base';
 
 export interface Event {
   id: number;
@@ -11,6 +11,6 @@ export interface Event {
   description: string;
   severity: EventSeverity;
   tag: EventTag;
-  user: User;
+  user: UserBase;
   distance: number;
 }

@@ -5,6 +5,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
 import {SessionService} from '../../service/session.service';
+import {UserRequest} from '../../model/request/user.request';
+import {User} from '../../model/user';
 
 @Component({
   selector: 'app-profile',
@@ -13,7 +15,7 @@ import {SessionService} from '../../service/session.service';
 })
 export class ProfileComponent implements OnInit {
 
-  user;
+  user: User;
   profileImage;
   profileForm: FormGroup;
   file: File;
@@ -70,12 +72,19 @@ export class ProfileComponent implements OnInit {
   }
 
   private updateUser(): void {
-    this.userService.putProfile(this.user)
+    const userRequest: UserRequest = new UserRequest();
+    userRequest.firstName = this.profileForm.value.firstName;
+    userRequest.lastName = this.profileForm.value.lastName;
+    userRequest.dateOfBirth = this.profileForm.value.dateOfBirth;
+    userRequest.phoneNumber = this.profileForm.value.phoneNumber;
+    userRequest.gender = this.profileForm.value.gender;
+    userRequest.imagePath = this.user.imagePath;
+    userRequest.roles = this.user.userRoles.map(userRole => userRole.name);
+
+    this.userService.putProfile(userRequest)
       .subscribe(user => {
-        if (user) {
-          this.toast.success('Profile updated');
-          this.sessionService.setUser(user);
-        }
+        this.toast.success('Profile updated');
+        this.sessionService.setUser(user);
       });
   }
 

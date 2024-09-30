@@ -1,14 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {AuthService} from '../service/auth.service';
-import {DetachedRouteHandle, Router} from '@angular/router';
+import {ActivatedRoute, DetachedRouteHandle, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {ToastrService} from 'ngx-toastr';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {DomSanitizer} from '@angular/platform-browser';
 import {SessionService} from '../service/session.service';
 import {CustomReuseStrategy} from '../main/common/custom.reuse.strategy';
 import {SpinnerService} from '../shared/spinner/spinner.service';
+import {concatMap} from 'rxjs/operators';
+import {LoginRequest} from '../model/request/login.request';
+import {RegisterRequest} from '../model/request/register.request';
+import {JWT_OFFSET_SECONDS} from '../defaults/constants';
 
 @Component({
   selector: 'app-auth',
@@ -26,27 +29,34 @@ export class AuthComponent implements OnInit {
   loginForm: FormGroup;
   registerForm: FormGroup;
   hidePassword = true;
+  returnUrl;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private domSanitizer: DomSanitizer,
+              private activatedRoute: ActivatedRoute,
               private toast: ToastrService,
               private authService: AuthService,
               private spinnerService: SpinnerService,
               private sessionService: SessionService) {
 
-    if (this.sessionService.getAccessToken() && !this.jwtHelper.isTokenExpired(this.sessionService.getRefreshToken())) {
+    const accessToken: string = this.sessionService.getAccessToken();
+    const refreshToken: string = this.sessionService.getRefreshToken();
+
+    if (accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS)) {
       this.spinnerService.show();
       this.sessionService.sync()
         .subscribe(() => {
           console.log('Sync completed');
           this.router.navigate(['/home']);
           this.spinnerService.close();
-        });
+        }, () => this.spinnerService.close());
     } else {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.clear();
     }
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.returnUrl = params['returnUrl'];
+    });
 
   }
 
@@ -107,38 +117,45 @@ export class AuthComponent implements OnInit {
   }
 
   onLogin(): Subscription {
-    this.spinnerService.show();
-
     if (this.loginForm.valid) {
-      return this.authService.login(this.loginForm.value)
-        .subscribe(token => {
-          if (token.accessToken && !this.jwtHelper.isTokenExpired(token.refreshToken)) {
-            this.sessionService.sync()
-              .subscribe(() => {
-                const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
-                reuseStrategy.routesToCache = ['home'];
-                reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
+      this.spinnerService.show();
 
-                console.log('Sync completed');
-                this.router.navigate(['/home']);
-                this.spinnerService.close();
-              });
-          }
-        });
+      const loginRequest: LoginRequest = new LoginRequest();
+      loginRequest.email = this.loginForm.value.email;
+      loginRequest.password = this.loginForm.value.password;
+
+      return this.authService.login(loginRequest)
+        .pipe(concatMap(tokens => {
+          this.sessionService.setTokens(tokens);
+          return this.sessionService.sync();
+        }))
+        .subscribe(() => {
+          console.log('Sync completed');
+
+          const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
+          reuseStrategy.routesToCache = ['home'];
+          reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
+
+          this.router.navigate([this.returnUrl ? this.returnUrl : '/home']);
+          this.spinnerService.close();
+        }, () => this.spinnerService.close());
     }
   }
 
   onRegister(): Subscription {
-    this.spinnerService.show();
-
     if (this.registerForm.valid) {
-      return this.authService.register(this.registerForm.value)
+      this.spinnerService.show();
+
+      const registerRequest: RegisterRequest = new RegisterRequest();
+      registerRequest.email = this.registerForm.value.email;
+      registerRequest.password = this.registerForm.value.password;
+      registerRequest.confirmPassword = this.registerForm.value.confirmPassword;
+
+      return this.authService.register(registerRequest)
         .subscribe(user => {
-          if (user.id) {
-            this.toast.success('Registration successful');
-            this.spinnerService.close();
-          }
-        });
+          this.toast.success('Registration successful');
+          this.spinnerService.close();
+        }, () => this.spinnerService.close());
     }
   }
 

@@ -1,18 +1,17 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {mapTheme} from '../common/map.style';
 import {SessionService} from '../../service/session.service';
 import {MapComponent} from './map/map.component';
 import {FilterOptions} from './filter/filter.options';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterDialogComponent} from './filter/filter-dialog.component';
-import {EventFilterBody} from '../../service/body/event.filter.body';
 import {EventService} from '../../service/event.service';
-import {Order} from '../../model/order';
 import {ToastrService} from 'ngx-toastr';
 import {OrderDialogComponent} from '../common/order/order.dialog.component';
 import {ListComponent} from './list/list.component';
 import {PageEvent} from '@angular/material/paginator';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
+import {Order} from '../../enums/order';
+import {EventFilterRequest} from '../../model/request/event.filter.request';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +32,7 @@ export class HomeComponent implements OnInit {
   homePage: HomePage;
 
   filterOptions: FilterOptions;
-  eventFilterBody: EventFilterBody;
+  filterRequest: EventFilterRequest;
   order: Order;
 
   constructor(private eventService: EventService,
@@ -46,7 +45,7 @@ export class HomeComponent implements OnInit {
     this.filterOptions.tags = this.sessionService.getTags();
     this.filterOptions.severities = this.sessionService.getSeverities();
 
-    this.eventFilterBody = new EventFilterBody();
+    this.filterRequest = new EventFilterRequest();
 
     this.totalEvents = 0;
     this.totalPages = 0;
@@ -101,13 +100,13 @@ export class HomeComponent implements OnInit {
       if (!isNewSearch) {
         return;
       }
-      this.eventFilterBody.radius = this.filterOptions.radius;
-      this.eventFilterBody.startDate = this.filterOptions.startDate;
-      this.eventFilterBody.endDate = this.filterOptions.endDate;
-      this.eventFilterBody.latitude = this.sessionService.getLatitude();
-      this.eventFilterBody.longitude = this.sessionService.getLongitude();
-      this.eventFilterBody.tagsIds = this.filterOptions.tags.map(tag => tag.id);
-      this.eventFilterBody.severitiesIds = this.filterOptions.severities.map(severity => severity.id);
+      this.filterRequest.radius = this.filterOptions.radius;
+      this.filterRequest.startDate = this.filterOptions.startDate;
+      this.filterRequest.endDate = this.filterOptions.endDate;
+      this.filterRequest.latitude = this.sessionService.getUserLatitude();
+      this.filterRequest.longitude = this.sessionService.getUserLongitude();
+      this.filterRequest.tagsIds = this.filterOptions.tags.map(tag => tag.id);
+      this.filterRequest.severitiesIds = this.filterOptions.severities.map(severity => severity.id);
 
       this.pageIndex = 0;
       this.requestNewSearch();
@@ -142,7 +141,7 @@ export class HomeComponent implements OnInit {
 
   private requestNewSearch() {
     this.spinnerService.show();
-    this.eventService.getByFilter(this.eventFilterBody, HomeComponent.PAGE_SIZE, this.pageIndex, this.order)
+    this.eventService.getByFilter(this.filterRequest, HomeComponent.PAGE_SIZE, this.pageIndex, this.order)
       .subscribe(page => {
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
@@ -155,7 +154,7 @@ export class HomeComponent implements OnInit {
         }
 
         this.spinnerService.close();
-      });
+      }, () => this.spinnerService.close());
   }
 
   onPageChanged(pageEvent: PageEvent) {

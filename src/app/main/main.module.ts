@@ -23,7 +23,7 @@ import {CustomReuseStrategy} from './common/custom.reuse.strategy';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
 import {NewEventDialogComponent} from './creator/new/new-event-dialog.component';
-import { MapViewDialogComponent } from './common/event/details/map/map-view-dialog.component';
+import {MapViewDialogComponent} from './common/event/details/map/map-view-dialog.component';
 
 @NgModule({
   declarations: [

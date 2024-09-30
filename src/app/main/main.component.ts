@@ -3,9 +3,9 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {AuthService} from '../service/auth.service';
 import {Router} from '@angular/router';
 import {SessionService} from '../service/session.service';
-import {Role} from '../model/role';
 import {ToastrService} from 'ngx-toastr';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
+import {Role} from '../enums/role';
 
 @Component({
   selector: 'app-main',
@@ -39,8 +39,8 @@ export class MainComponent implements OnInit, OnDestroy {
           position => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            this.sessionService.setLatitude(latitude);
-            this.sessionService.setLongitude(longitude);
+            this.sessionService.setUserLatitude(latitude);
+            this.sessionService.setUserLongitude(longitude);
             console.log('Location updated');
           },
           positionError => {

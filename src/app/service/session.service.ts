@@ -8,7 +8,7 @@ import {EventTagService} from './event.tag.service';
 import {EventSeverityService} from './event.severity.service';
 import {EventTag} from '../model/event.tag';
 import {EventSeverity} from '../model/event.severity';
-import {Sort} from '@angular/material/sort';
+import {Token} from '../model/token';
 
 @Injectable({
   providedIn: 'root'
@@ -29,20 +29,20 @@ export class SessionService {
     return JSON.parse(localStorage.getItem('user'));
   }
 
-  public setLatitude(latitude: number) {
-    localStorage.setItem('latitude', latitude.toString());
+  public setUserLatitude(latitude: number) {
+    localStorage.setItem('userLatitude', latitude.toString());
   }
 
-  public getLatitude(): number {
-    return +localStorage.getItem('latitude');
+  public getUserLatitude(): number {
+    return +localStorage.getItem('userLatitude');
   }
 
-  public setLongitude(longitude: number) {
-    localStorage.setItem('longitude', longitude.toString());
+  public setUserLongitude(longitude: number) {
+    localStorage.setItem('userLongitude', longitude.toString());
   }
 
-  public getLongitude(): number {
-    return +localStorage.getItem('longitude');
+  public getUserLongitude(): number {
+    return +localStorage.getItem('userLongitude');
   }
 
   public setTags(tags: EventTag[]) {
@@ -61,16 +61,13 @@ export class SessionService {
     return JSON.parse(localStorage.getItem('severities'));
   }
 
-  public setAccessToken(accessToken: string) {
-    localStorage.setItem('accessToken', accessToken);
+  public setTokens(token: Token): void {
+    localStorage.setItem('accessToken', token.accessToken);
+    localStorage.setItem('refreshToken', token.refreshToken);
   }
 
   public getAccessToken(): string {
     return localStorage.getItem('accessToken');
-  }
-
-  public setRefreshToken(refreshToken: string) {
-    localStorage.setItem('refreshToken', refreshToken);
   }
 
   public getRefreshToken(): string {

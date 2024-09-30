@@ -2,9 +2,9 @@ import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {EventCommentService} from '../../../../service/event.comment.service';
 import {ToastrService} from 'ngx-toastr';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {EventCommentBody} from '../../../../service/body/event.comment.body';
 import {EventComment} from '../../../../model/event.comment';
 import {SpinnerService} from '../../../../shared/spinner/spinner.service';
+import {EventCommentRequest} from '../../../../model/request/event.comment.request';
 
 @Component({
   selector: 'app-comment-dialog',
@@ -40,19 +40,18 @@ export class CommentDialogComponent implements OnInit {
     }
 
     this.spinnerService.show();
-    const body = new EventCommentBody();
-    body.comment = comment;
-    body.eventId = this.data.eventId;
-    body.userId = this.data.userId;
-    this.eventCommentService.postComment(body)
+    const commentRequest: EventCommentRequest = new EventCommentRequest();
+    commentRequest.comment = comment;
+    commentRequest.eventId = this.data.eventId;
+    commentRequest.userId = this.data.userId;
+
+    this.eventCommentService.postComment(commentRequest)
       .subscribe(eventComment => {
         this.spinnerService.close();
-        if (eventComment) {
-          this.toast.success('Comment posted');
-          this.newEventComment = eventComment;
-          this.dialogRef.close();
-        }
-      });
+        this.toast.success('Comment posted');
+        this.newEventComment = eventComment;
+        this.dialogRef.close();
+      }, () => this.spinnerService.close());
   }
 
 }

@@ -5,8 +5,9 @@ import {baseUrl} from '../../environments/environment';
 import {map} from 'rxjs/operators';
 import {Token} from '../model/token';
 import {User} from '../model/user';
-import {NewToken} from '../model/new.token';
 import {SessionService} from './session.service';
+import {RegisterRequest} from '../model/request/register.request';
+import {LoginRequest} from '../model/request/login.request';
 
 @Injectable({
   providedIn: 'root'
@@ -17,25 +18,24 @@ export class AuthService {
 
   }
 
-  register(data): Observable<User> {
-    return this.http.post<User>(`${baseUrl}/auth/register`, data);
+  register(registerRequest: RegisterRequest): Observable<User> {
+    return this.http.post<User>(`${baseUrl}/auth/register`, registerRequest);
   }
 
-  login(data): Observable<Token> {
-    return this.http.post<Token>(`${baseUrl}/auth/login`, data)
-      .pipe(map(token => {
-        this.sessionService.setAccessToken(token.accessToken);
-        this.sessionService.setRefreshToken(token.refreshToken);
-        return token;
+  login(loginRequest: LoginRequest): Observable<Token> {
+    return this.http.post<Token>(`${baseUrl}/auth/login`, loginRequest)
+      .pipe(map(tokens => {
+        this.sessionService.setTokens(tokens);
+        return tokens;
       }));
   }
 
-  refresh(): Observable<NewToken> {
-    return this.http.get<NewToken>(`${baseUrl}/auth/refresh`)
-      .pipe(map(response => {
-        console.log('New access token received');
-        this.sessionService.setAccessToken(response.accessToken);
-        return response;
+  refresh(): Observable<Token> {
+    return this.http.get<Token>(`${baseUrl}/auth/refresh`)
+      .pipe(map(tokens => {
+        console.log('Access token refreshed');
+        this.sessionService.setTokens(tokens);
+        return tokens;
       }));
   }
 

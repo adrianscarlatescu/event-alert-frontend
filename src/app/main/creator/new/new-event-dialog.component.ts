@@ -8,9 +8,9 @@ import {SessionService} from '../../../service/session.service';
 import {EventService} from '../../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer} from '@angular/platform-browser';
-import {NewEventBody} from '../../../service/body/new.event.body';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SpinnerService} from '../../../shared/spinner/spinner.service';
+import {EventRequest} from '../../../model/request/event.request';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -42,8 +42,8 @@ export class NewEventDialogComponent implements OnInit {
               private domSanitizer: DomSanitizer,
               private dialogRef: MatDialogRef<NewEventDialogComponent>) {
 
-    this.latitude = this.sessionService.getLatitude();
-    this.longitude = this.sessionService.getLongitude();
+    this.latitude = this.sessionService.getUserLatitude();
+    this.longitude = this.sessionService.getUserLongitude();
 
     if (!this.latitude || !this.longitude) {
       console.log('Location not provided');
@@ -91,24 +91,22 @@ export class NewEventDialogComponent implements OnInit {
     this.spinnerService.show();
     this.fileService.postImage(this.file, 'event_')
       .subscribe(imagePath => {
-        const body = new NewEventBody();
-        body.latitude = this.latitude;
-        body.longitude = this.longitude;
-        body.userId = this.sessionService.getUser().id;
-        body.tagId = this.tagControl.value;
-        body.severityId = this.severityControl.value;
-        body.imagePath = imagePath.toString();
-        body.description = this.description.nativeElement.value;
+        const eventRequest: EventRequest = new EventRequest();
+        eventRequest.latitude = this.latitude;
+        eventRequest.longitude = this.longitude;
+        eventRequest.userId = this.sessionService.getUser().id;
+        eventRequest.tagId = this.tagControl.value;
+        eventRequest.severityId = this.severityControl.value;
+        eventRequest.imagePath = imagePath.toString();
+        eventRequest.description = this.description.nativeElement.value;
 
-        this.eventService.postEvent(body)
+        this.eventService.postEvent(eventRequest)
           .subscribe(event => {
-            if (event) {
-              this.toast.success('Event successfully reported');
-              this.newEvent = event;
-              this.dialogRef.close();
-              this.spinnerService.close();
-            }
-          });
+            this.toast.success('Event successfully reported');
+            this.newEvent = event;
+            this.dialogRef.close();
+            this.spinnerService.close();
+          }, () => this.spinnerService.close());
       });
   }
 

@@ -1,4 +1,4 @@
-export class NewEventBody {
+export class EventRequest {
 
   latitude: number;
   longitude: number;
