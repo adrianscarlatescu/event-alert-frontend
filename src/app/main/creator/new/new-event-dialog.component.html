@@ -11,9 +11,9 @@
 
   <br>
 
-  <mat-form-field appearance="fill" style="width: 80%">
+  <mat-form-field appearance="fill">
     <mat-label>Tag</mat-label>
-    <mat-select [formControl]="tagControl" required style="top:0">
+    <mat-select [formControl]="tagControl" required style="top: 0">
 
       <mat-option *ngFor="let tag of tags" [value]="tag.id">
         <div class="new_event_tag_option_div">
@@ -28,7 +28,7 @@
 
   <br>
 
-  <mat-form-field appearance="fill" style="width: 80%">
+  <mat-form-field appearance="fill">
     <mat-label>Severity</mat-label>
     <mat-select [formControl]="severityControl" required>
 
@@ -46,7 +46,7 @@
 
   <br>
 
-  <mat-form-field style="width: 80%">
+  <mat-form-field>
       <textarea #newEventDescriptionTextArea matInput placeholder="Add description..."
                 style="min-height: 50px"></textarea>
   </mat-form-field>

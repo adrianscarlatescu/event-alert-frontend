@@ -19,7 +19,7 @@
       <td mat-cell *matCellDef="let e">
         <mat-card class="creator_mat_card_thumbnail"
                   [ngStyle]="{'background-color': '#' + e.severityColor.toString(16)}">
-          <div [ngStyle]="{'background-image': 'url(' + this.sessionService.getCacheImageByUrl(e.tagImagePath) + ')'}"
+          <div [ngStyle]="{'background-image': 'url(' + getCacheImage(e.tagImagePath) + ')'}"
                class="creator_thumbnail_image"></div>
         </mat-card>
       </td>

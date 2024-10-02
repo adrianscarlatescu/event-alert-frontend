@@ -7,7 +7,7 @@ import {FileService} from '../../../service/file.service';
 import {SessionService} from '../../../service/session.service';
 import {EventService} from '../../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SpinnerService} from '../../../shared/spinner/spinner.service';
 import {EventRequest} from '../../../model/request/event.request';
@@ -18,13 +18,13 @@ import {EventRequest} from '../../../model/request/event.request';
   styleUrls: ['./new-event-dialog.component.css']
 })
 export class NewEventDialogComponent implements OnInit {
-  @ViewChild('newEventDescriptionTextArea') description: ElementRef;
+  @ViewChild('newEventDescriptionTextArea') descriptionElementRef: ElementRef;
 
   latitude: number;
   longitude: number;
 
   file: File;
-  eventImage;
+  eventImage: SafeUrl;
 
   tags: EventTag[] = [];
   severities: EventSeverity[] = [];
@@ -62,15 +62,15 @@ export class NewEventDialogComponent implements OnInit {
 
   }
 
-  onImageChanged(event): void {
+  onImageChanged(event: any): void {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
-      const url = URL.createObjectURL(this.file);
+      const url: string = URL.createObjectURL(this.file);
       this.eventImage = this.domSanitizer.bypassSecurityTrustUrl(url);
     }
   }
 
-  getImage(imagePath: string) {
+  getImage(imagePath: string): SafeUrl {
     if (!imagePath) {
       return '../../../../assets/favicon.png';
     }
@@ -78,9 +78,11 @@ export class NewEventDialogComponent implements OnInit {
     return this.domSanitizer.bypassSecurityTrustUrl(url);
   }
 
-  onSaveClicked() {
+  onSaveClicked(): void {
     if (this.tagControl.invalid || this.severityControl.invalid) {
-      this.toast.warning('Conditions not met');
+      this.toast.warning('Invalid form');
+      this.tagControl.markAsTouched();
+      this.severityControl.markAsTouched();
       return;
     }
     if (!this.file) {
@@ -98,7 +100,7 @@ export class NewEventDialogComponent implements OnInit {
         eventRequest.tagId = this.tagControl.value;
         eventRequest.severityId = this.severityControl.value;
         eventRequest.imagePath = imagePath.toString();
-        eventRequest.description = this.description.nativeElement.value;
+        eventRequest.description = this.descriptionElementRef.nativeElement.value;
 
         this.eventService.postEvent(eventRequest)
           .subscribe(event => {
@@ -110,13 +112,13 @@ export class NewEventDialogComponent implements OnInit {
       });
   }
 
-  getTagErrorMessage() {
+  getTagErrorMessage(): string {
     if (this.tagControl.hasError('required')) {
       return 'The tag is required';
     }
   }
 
-  getSeverityErrorMessage() {
+  getSeverityErrorMessage(): string {
     if (this.severityControl.hasError('required')) {
       return 'The severity is required';
     }

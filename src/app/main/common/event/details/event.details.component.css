@@ -1,4 +1,4 @@
-#event_details_div {
+.event_details_div {
   display: flex;
   justify-content: center;
 }
@@ -30,14 +30,14 @@
   object-fit: cover;
 }
 
-#event_details_map_button {
+.event_details_map_button {
   margin-right: 0;
   margin-left: auto;
   display: flex;
   flex-direction: column;
 }
 
-#event_details_comments_div {
+.event_details_comments_div {
   display: flex;
   height: fit-content;
   margin-top: 25px;

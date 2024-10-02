@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {FilterOptions} from './filter.options';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {SessionService} from '../../../service/session.service';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {EventTag} from '../../../model/event.tag';
 import {EventSeverity} from '../../../model/event.severity';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -59,7 +59,7 @@ export class FilterDialogComponent implements OnInit {
     });
   }
 
-  getImage(imagePath: string) {
+  getImage(imagePath: string): SafeUrl {
     if (!imagePath) {
       return '../../../../assets/favicon.png';
     }
@@ -67,9 +67,10 @@ export class FilterDialogComponent implements OnInit {
     return this.domSanitizer.bypassSecurityTrustUrl(url);
   }
 
-  onSaveClicked() {
+  onSaveClicked(): void {
     if (this.filterForm.invalid) {
-      this.toast.warning('Conditions not met');
+      this.toast.warning('Invalid form');
+      this.filterForm.markAsTouched();
       return;
     }
 
@@ -85,7 +86,7 @@ export class FilterDialogComponent implements OnInit {
   }
 
   getRadiusErrorMessage(): string {
-    const radius = this.filterForm.get('radius');
+    const radius: AbstractControl = this.filterForm.get('radius');
     if (radius.hasError('required')) {
       return 'The radius is required';
     }
@@ -95,53 +96,52 @@ export class FilterDialogComponent implements OnInit {
     return '';
   }
 
-  getStartDateErrorMessage() {
-    const startDate = this.filterForm.get('startDate');
+  getStartDateErrorMessage(): string {
+    const startDate: AbstractControl = this.filterForm.get('startDate');
     if (startDate.hasError('required')) {
       return 'The start date is required';
     }
     return '';
   }
 
-  getEndDateErrorMessage() {
-    const startDate = this.filterForm.get('startDate');
-    if (startDate.hasError('required')) {
+  getEndDateErrorMessage(): string {
+    const endDate: AbstractControl = this.filterForm.get('endDate');
+    if (endDate.hasError('required')) {
       return 'The end date is required';
     }
 
-    const endDate = this.filterForm.get('endDate');
-    if (endDate.hasError('required')) {
-      return 'The end date must be after start date';
+    if (endDate.hasError('after')) {
+      return 'The end date must be after the start date';
     }
 
-    if (endDate.hasError('after')) {
+    if (endDate.hasError('year_limit')) {
       return 'Only one year difference allowed between start date and end date';
     }
 
     return '';
   }
 
-  getTagsErrorMessage() {
-    const selectedTags = this.filterForm.get('selectedTags');
+  getTagsErrorMessage(): string {
+    const selectedTags: AbstractControl = this.filterForm.get('selectedTags');
     if (selectedTags.hasError('required')) {
       return 'At least one tag is required';
     }
     return '';
   }
 
-  getSeveritiesErrorMessage() {
-    const selectedSeverities = this.filterForm.get('selectedSeverities');
+  getSeveritiesErrorMessage(): string {
+    const selectedSeverities: AbstractControl = this.filterForm.get('selectedSeverities');
     if (selectedSeverities.hasError('required')) {
       return 'At least one severity is required';
     }
     return '';
   }
 
-  onTagsSelectionChange(tags: MatSelectChange) {
+  onTagsSelectionChange(tags: MatSelectChange): void {
     this.isAllTags = tags.value.length === this.tags.length;
   }
 
-  onAllTagsChanged() {
+  onAllTagsChanged(): void {
     this.isAllTags = !this.isAllTags;
     if (this.isAllTags) {
       this.filterForm.get('selectedTags').setValue(this.tags);
@@ -150,11 +150,11 @@ export class FilterDialogComponent implements OnInit {
     }
   }
 
-  onSeveritiesSelectionChange(severities: MatSelectChange) {
+  onSeveritiesSelectionChange(severities: MatSelectChange): void {
     this.isAllSeverities = severities.value.length === this.severities.length;
   }
 
-  onAllSeveritiesChanged() {
+  onAllSeveritiesChanged(): void {
     this.isAllSeverities = !this.isAllSeverities;
     if (this.isAllSeverities) {
       this.filterForm.get('selectedSeverities').setValue(this.severities);
@@ -166,16 +166,27 @@ export class FilterDialogComponent implements OnInit {
 }
 
 class DateValidator {
-  static validate(control: AbstractControl): ValidationErrors | null {
+  static validate(control: AbstractControl): ValidationErrors {
     const startDate: Date = control.get('startDate')?.value;
     const endDate: Date = control.get('endDate')?.value;
-    if (startDate > endDate) {
+
+    if (!startDate) {
+      control.get('startDate')?.setErrors({required: true});
+      return ({required: true});
+    }
+
+    if (!endDate) {
+      control.get('endDate')?.setErrors({required: true});
+      return ({required: true});
+    }
+
+    if (startDate.getTime() > endDate.getTime()) {
       control.get('endDate')?.setErrors({after: true});
       return ({after: true});
     } else if (endDate.getFullYear() - startDate.getFullYear() > 1) {
       control.get('endDate')?.setErrors({year_limit: true});
       return ({year_limit: true});
     }
-    return null;
+
   }
 }

@@ -13,7 +13,7 @@ import {EventCommentRequest} from '../../../../model/request/event.comment.reque
 })
 export class CommentDialogComponent implements OnInit {
 
-  @ViewChild('commentTextarea') text: ElementRef;
+  @ViewChild('commentTextarea') textElementRef: ElementRef;
 
   newEventComment: EventComment;
 
@@ -27,9 +27,9 @@ export class CommentDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onValidateClicked() {
-    const comment = this.text.nativeElement.value;
-    if (comment.length == 0) {
+  onValidateClicked(): void {
+    const comment = this.textElementRef.nativeElement.value;
+    if (comment.trim().length == 0) {
       this.toast.warning('The comment could not be empty');
       return;
     }

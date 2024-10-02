@@ -22,14 +22,15 @@ export class AuthComponent implements OnInit {
 
   jwtHelper: JwtHelperService = new JwtHelperService();
 
-  errMsgMandatoryField = 'You must enter a value';
-  errMsgInvalidEmail = 'Not a valid email';
-  errMsgPasswordLength = 'The length must have between 8 and 40 characters';
-  errMsgDifferentPasswords = 'The passwords do not match';
+  readonly errMsgMandatoryField: string = 'Field required';
+  readonly errMsgInvalidEmail: string = 'Invalid email';
+  readonly errMsgPasswordLength: string = 'The length must have between 8 and 40 characters';
+  readonly errMsgDifferentPasswords: string = 'The passwords do not match';
+
   loginForm: FormGroup;
   registerForm: FormGroup;
-  hidePassword = true;
-  returnUrl;
+  hidePassword: boolean = true;
+  returnUrl: string;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -132,7 +133,7 @@ export class AuthComponent implements OnInit {
         .subscribe(() => {
           console.log('Sync completed');
 
-          const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
+          const reuseStrategy: CustomReuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
           reuseStrategy.routesToCache = ['home'];
           reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
 
@@ -163,8 +164,8 @@ export class AuthComponent implements OnInit {
 
 class PasswordValidator {
   static validate(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
+    const password: string = control.get('password')?.value;
+    const confirmPassword: string = control.get('confirmPassword')?.value;
     if (password !== confirmPassword) {
       control.get('confirmPassword')?.setErrors({not_the_same: true});
       return ({not_the_same: true});

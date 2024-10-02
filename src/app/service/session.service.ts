@@ -8,7 +8,7 @@ import {EventTagService} from './event.tag.service';
 import {EventSeverityService} from './event.severity.service';
 import {EventTag} from '../model/event.tag';
 import {EventSeverity} from '../model/event.severity';
-import {Token} from '../model/token';
+import {Tokens} from '../model/tokens';
 
 @Injectable({
   providedIn: 'root'
@@ -61,7 +61,7 @@ export class SessionService {
     return JSON.parse(localStorage.getItem('severities'));
   }
 
-  public setTokens(token: Token): void {
+  public setTokens(token: Tokens): void {
     localStorage.setItem('accessToken', token.accessToken);
     localStorage.setItem('refreshToken', token.refreshToken);
   }
@@ -91,12 +91,12 @@ export class SessionService {
   }
 
   public sync(): Observable<any[]> {
-    const userObs = this.userService.getProfile()
+    const userObs: Observable<void> = this.userService.getProfile()
       .pipe(map(user => {
         this.setUser(user);
       }));
 
-    const tagsObs = this.tagService.getTags()
+    const tagsObs: Observable<void> = this.tagService.getTags()
       .pipe(mergeMap(tags => {
         this.setTags(tags);
 
@@ -105,7 +105,7 @@ export class SessionService {
             if (tag.imagePath) {
               return this.fileService.getImage(tag.imagePath)
                 .pipe(map(blob => {
-                  const reader = new FileReader();
+                  const reader: FileReader = new FileReader();
                   reader.readAsDataURL(blob);
                   reader.onloadend = () => {
                     this.setCacheImage(tag.imagePath, reader.result);
@@ -117,7 +117,7 @@ export class SessionService {
           }));
       }));
 
-    const severitiesObs = this.severityService.getSeverities()
+    const severitiesObs: Observable<void> = this.severityService.getSeverities()
       .pipe(map(severities => {
         this.setSeverities(severities);
       }));

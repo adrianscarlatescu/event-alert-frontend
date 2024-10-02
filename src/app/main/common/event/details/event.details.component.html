@@ -1,6 +1,6 @@
 <div style="margin: 50px 75px">
 
-  <div id="event_details_div">
+  <div class="event_details_div">
     <mat-card class="event_details_mat_card">
 
       <mat-card-header>
@@ -39,7 +39,7 @@
           </mat-card-subtitle>
         </mat-card-header>
 
-        <button mat-icon-button id="event_details_map_button" (click)="onMapViewClicked()">
+        <button mat-icon-button class="event_details_map_button" (click)="onMapViewClicked()">
           <mat-icon>map</mat-icon>
         </button>
       </div>
@@ -48,7 +48,7 @@
   </div>
 
   <div>
-    <div id="event_details_comments_div">
+    <div class="event_details_comments_div">
       <button mat-raised-button type="button" color="primary" (click)="onNewCommentClicked()" style="min-width: 150px">
         New comment
       </button>

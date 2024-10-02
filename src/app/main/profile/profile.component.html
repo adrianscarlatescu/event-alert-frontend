@@ -1,7 +1,7 @@
-<div id="profile_page_div">
+<div class="profile_page_div">
   <form [formGroup]="profileForm" (ngSubmit)="onSaveClicked()">
 
-    <div id="profile_main_div">
+    <div class="profile_main_div">
       <div class="profile_category_div">
         <mat-card class="profile_image">
           <img *ngIf="profileImage" [src]="profileImage" class="profile_image">
@@ -21,6 +21,7 @@
         <mat-form-field>
           <mat-label>First name</mat-label>
           <input matInput formControlName="firstName" required>
+          <mat-error *ngIf="profileForm.get('firstName').invalid">{{getFirstNameErrorMessage()}}</mat-error>
         </mat-form-field>
 
         <br>
@@ -28,6 +29,7 @@
         <mat-form-field>
           <mat-label>Last name</mat-label>
           <input matInput formControlName="lastName" required>
+          <mat-error *ngIf="profileForm.get('lastName').invalid">{{getLastNameErrorMessage()}}</mat-error>
         </mat-form-field>
 
         <br>
@@ -93,7 +95,7 @@
       </div>
     </div>
 
-    <button mat-raised-button type="submit" color="primary" id="profile_save_button">Save</button>
+    <button mat-raised-button type="submit" color="primary" class="profile_save_button">Save</button>
 
   </form>
 </div>

@@ -6,7 +6,7 @@
   width: 40%;
 }
 
-#auth_card_div {
+.auth_card_div {
   justify-content: center;
   padding-top: 2%;
   padding-left: 10%;
@@ -14,7 +14,7 @@
 }
 
 .auth_button {
-  min-width: 100px;
+  min-width: 150px;
   width: 20%;
 }
 

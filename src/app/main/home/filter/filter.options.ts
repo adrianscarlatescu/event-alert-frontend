@@ -15,15 +15,8 @@ export class FilterOptions {
     this.severities = [];
 
     // Cover the events recorded in the database
-    this.startDate = new Date(Date.now());
-    this.startDate.setFullYear(2020);
-    this.startDate.setMonth(0);
-    this.startDate.setDate(1);
-
-    this.endDate = new Date(Date.now());
-    this.endDate.setFullYear(2020);
-    this.endDate.setMonth(11);
-    this.endDate.setDate(31);
+    this.startDate = new Date(2020, 0, 1);
+    this.endDate = new Date(2020, 11, 31);
   }
 
 }

@@ -8,12 +8,13 @@ import {EventCommentService} from '../../../../service/event.comment.service';
 import {EventService} from '../../../../service/event.service';
 import {SessionService} from '../../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CommentDialogComponent} from '../comment/comment-dialog.component';
 import {Location} from '@angular/common';
 import {map, mergeMap} from 'rxjs/operators';
 import {from} from 'rxjs';
 import {MapViewDialogComponent} from './map/map-view-dialog.component';
+import {SpinnerService} from '../../../../shared/spinner/spinner.service';
 
 @Component({
   selector: 'app-event.details',
@@ -38,6 +39,7 @@ export class EventDetailsComponent implements OnInit {
               private eventService: EventService,
               private sessionService: SessionService,
               private eventCommentService: EventCommentService,
+              private spinnerService: SpinnerService,
               private domSanitizer: DomSanitizer,
               private mapsApiLoader: MapsAPILoader,
               private router: Router,
@@ -55,7 +57,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.eventService.getById(this.eventId)
+    this.eventService.getEventById(this.eventId)
       .pipe(map(event => {
         this.event = event;
         this.tagImage = 'url(' + this.sessionService.getCacheImageByUrl(this.event.tag.imagePath) + ')';
@@ -82,14 +84,14 @@ export class EventDetailsComponent implements OnInit {
       .pipe(mergeMap(() => {
         return this.fileService.getImage(this.event.imagePath)
           .pipe(map(blob => {
-            const url = URL.createObjectURL(blob);
+            const url: string = URL.createObjectURL(blob);
             this.eventImage = this.domSanitizer.bypassSecurityTrustUrl(url);
           }));
       }))
       .pipe(mergeMap(() => {
         return this.fileService.getImage(this.event.user.imagePath)
           .pipe(map(blob => {
-            const reader = new FileReader();
+            const reader: FileReader = new FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => {
               this.eventUserImage = 'url(' + reader.result + ')';
@@ -104,7 +106,7 @@ export class EventDetailsComponent implements OnInit {
             return from(this.comments)
               .pipe(mergeMap(comment => {
                 return this.fileService.getImage(comment.user.imagePath).pipe(map(blob => {
-                  const url = URL.createObjectURL(blob);
+                  const url: string = URL.createObjectURL(blob);
                   const userImage: CommentUserImage = {
                     commentId: comment.id,
                     url: url
@@ -118,8 +120,8 @@ export class EventDetailsComponent implements OnInit {
       .subscribe();
   }
 
-  getEventCommentUserImage(commentId: number) {
-    const eventCommentUserImage = this.commentsUsersImages.find(image => {
+  getEventCommentUserImage(commentId: number): SafeUrl {
+    const eventCommentUserImage: CommentUserImage = this.commentsUsersImages.find(image => {
       return image.commentId === commentId;
     });
     if (eventCommentUserImage) {
@@ -128,7 +130,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   onNewCommentClicked(): void {
-    const dialogRef = this.dialog.open(CommentDialogComponent, {
+    const dialogRef: MatDialogRef<CommentDialogComponent> = this.dialog.open(CommentDialogComponent, {
       data: {
         eventId: this.event.id,
         userId: this.sessionService.getUser().id
@@ -137,7 +139,7 @@ export class EventDetailsComponent implements OnInit {
 
     dialogRef.afterClosed()
       .subscribe(() => {
-        const newComment = dialogRef.componentInstance.newEventComment;
+        const newComment: EventComment = dialogRef.componentInstance.newEventComment;
         if (!newComment) {
           return;
         }
@@ -145,7 +147,7 @@ export class EventDetailsComponent implements OnInit {
         this.comments.unshift(newComment);
         this.fileService.getImage(newComment.user.imagePath)
           .subscribe(blob => {
-            const url = URL.createObjectURL(blob);
+            const url: string = URL.createObjectURL(blob);
             const userImage: CommentUserImage = {
               commentId: newComment.id,
               url: url

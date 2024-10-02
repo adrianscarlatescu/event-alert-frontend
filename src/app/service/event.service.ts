@@ -16,11 +16,11 @@ export class EventService {
   constructor(private http: HttpClient) {
   }
 
-  getById(id: number): Observable<Event> {
+  getEventById(id: number): Observable<Event> {
     return this.http.get<Event>(`${baseUrl}/events/${id}`);
   }
 
-  getByUserId(userId: number): Observable<Event[]> {
+  getEventsByUserId(userId: number): Observable<Event[]> {
     return this.http.get<Event[]>(`${baseUrl}/events`, {params: {'userId': userId.toString()}});
   }
 
@@ -28,7 +28,7 @@ export class EventService {
     return this.http.post<Event>(`${baseUrl}/events`, eventRequest);
   }
 
-  getByFilter(filterRequest: EventFilterRequest, pageSize: number, pageNumber: number, order: Order): Observable<Page<Event>> {
+  getEventsByFilter(filterRequest: EventFilterRequest, pageSize: number, pageNumber: number, order: Order): Observable<Page<Event>> {
     return this.http.post<Page<Event>>(`${baseUrl}/events/filter`, filterRequest,
       {
         params: {

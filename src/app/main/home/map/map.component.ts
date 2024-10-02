@@ -4,7 +4,7 @@ import {mapTheme} from '../../common/map.style';
 import {Event} from '../../../model/event';
 import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {interval, Subscription} from 'rxjs';
 
 @Component({
@@ -15,13 +15,13 @@ import {interval, Subscription} from 'rxjs';
 export class MapComponent implements OnInit {
 
   mapStyle = mapTheme;
-  zoom = 13;
+  zoom: number = 13;
   map: google.maps.Map;
 
   events: Event[];
 
   selectedEvent: Event;
-  selectedEventImage;
+  selectedEventImage: SafeUrl;
 
   constructor(private router: Router,
               private domSanitizer: DomSanitizer,
@@ -33,41 +33,41 @@ export class MapComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  setDefaultViewValues() {
+  setDefaultViewValues(): void {
     this.zoom = 15;
     this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
   }
 
-  mapReady(map: google.maps.Map) {
+  mapReady(map: google.maps.Map): void {
     this.map = map;
   }
 
-  zoomChange(value: number) {
+  zoomChange(value: number): void {
     this.zoom = value;
   }
 
-  onMarkerClicked(event: Event) {
+  onMarkerClicked(event: Event): void {
     this.map.panTo({lat: event.latitude, lng: event.longitude});
 
     this.selectedEvent = event;
     this.fileService.getImage(event.imagePath)
       .subscribe(blob => {
-        const url = URL.createObjectURL(blob);
+        const url: string = URL.createObjectURL(blob);
         this.selectedEventImage = this.domSanitizer.bypassSecurityTrustUrl(url);
       });
   }
 
-  onEventInfoViewClicked() {
+  onEventInfoViewClicked(): void {
     this.router.navigate(['event/details'], {state: {id: this.selectedEvent.id}});
   }
 
-  onEventInfoCloseClicked() {
+  onEventInfoCloseClicked(): void {
     setTimeout(() => {
       this.selectedEvent = null;
     }, 250);
   }
 
-  public setEvents(events: Event[]) {
+  public setEvents(events: Event[]): void {
     this.events = events;
 
     if (this.events.length === 0) {
@@ -75,7 +75,7 @@ export class MapComponent implements OnInit {
     }
 
     const distances: number[] = this.events.map(event => event.distance);
-    const radius = Math.max(...distances);
+    const radius: number = Math.max(...distances);
 
     setTimeout(() => {
 

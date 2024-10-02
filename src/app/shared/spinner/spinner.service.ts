@@ -15,11 +15,11 @@ export class SpinnerService {
     return this.spinner;
   }
 
-  show() {
+  show(): void {
     this.spinner.next(true);
   }
 
-  close() {
+  close(): void {
     this.spinner.next(false);
   }
 

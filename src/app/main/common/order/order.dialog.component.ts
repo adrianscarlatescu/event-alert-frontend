@@ -21,7 +21,7 @@ export class OrderDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onValidateClicked() {
+  onValidateClicked(): void {
     this.dialogRef.close(this.order);
   }
 }

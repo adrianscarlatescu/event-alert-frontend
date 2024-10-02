@@ -11,7 +11,7 @@ import {Router} from '@angular/router';
 })
 export class ListComponent implements OnInit {
 
-  @Output() pageEventEmitter = new EventEmitter<PageEvent>();
+  @Output() pageEventEmitter: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   events: Event[];
   length: number;
@@ -26,17 +26,17 @@ export class ListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public setData(events: Event[], totalEvents: number, pageIndex: number) {
+  public setData(events: Event[], totalEvents: number, pageIndex: number): void {
     this.events = events;
     this.length = totalEvents;
     this.index = pageIndex;
   }
 
-  onRowClicked(eventId: number) {
+  onRowClicked(eventId: number): void {
     this.router.navigate(['event/details'], {state: {id: eventId}});
   }
 
-  onPageChanged(pageEvent: PageEvent) {
+  onPageChanged(pageEvent: PageEvent): void {
     this.pageEventEmitter.emit(pageEvent);
   }
 

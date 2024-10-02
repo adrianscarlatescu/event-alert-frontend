@@ -21,7 +21,7 @@
   margin-left: auto;
 }
 
-#main_menu_fab {
+.main_menu_fab {
   margin: 10px;
   position: fixed;
 }

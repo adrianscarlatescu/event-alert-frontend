@@ -14,7 +14,6 @@ import {SpinnerService} from '../../shared/spinner/spinner.service';
 export class JwtInterceptor implements HttpInterceptor {
 
   private jwtHelper: JwtHelperService = new JwtHelperService();
-  private isRefreshing: boolean = false;
 
   constructor(private router: Router,
               private toast: ToastrService,
@@ -36,23 +35,20 @@ export class JwtInterceptor implements HttpInterceptor {
     const isRefreshTokenExpired: boolean = this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS);
 
     if (!isAccessTokenExpired && !isRefreshTokenRequest) {
-      request = this.addToken(request, accessToken);
+      request = this.addTokenHeader(request, accessToken);
       return next.handle(request);
     }
 
     if (!isRefreshTokenExpired && isRefreshTokenRequest) {
-      request = this.addToken(request, refreshToken);
+      request = this.addTokenHeader(request, refreshToken);
       return next.handle(request);
     }
 
-    // Request new token if the current one it is expired
-    if (isAccessTokenExpired && !isRefreshTokenExpired && !this.isRefreshing) {
-      this.isRefreshing = true;
+    if (isAccessTokenExpired && !isRefreshTokenExpired) {
       return this.authService.refresh()
         .pipe(concatMap(tokens => {
           console.log('Using new access token for current request');
-          this.isRefreshing = false;
-          request = this.addToken(request, tokens.accessToken);
+          request = this.addTokenHeader(request, tokens.accessToken);
           return next.handle(request);
         }));
     }
@@ -60,14 +56,14 @@ export class JwtInterceptor implements HttpInterceptor {
     if (isRefreshTokenExpired) {
       localStorage.clear();
       this.spinnerService.close();
-      this.toast.warning('Authorization expired');
+      this.toast.warning('Authorization expired, please re-login');
       this.router.navigate(['/auth'], {queryParams: {returnUrl: this.router.routerState.snapshot.url}});
     }
 
     return of();
   }
 
-  private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
+  private addTokenHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

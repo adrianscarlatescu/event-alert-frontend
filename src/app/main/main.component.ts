@@ -17,7 +17,7 @@ export class MainComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   isAdmin: boolean = false;
-  geoWatchId;
+  geoWatchId: number;
 
   constructor(private authService: AuthService,
               private sessionService: SessionService,
@@ -37,8 +37,8 @@ export class MainComponent implements OnInit, OnDestroy {
       if (result.state == 'granted' || result.state == 'prompt') {
         this.geoWatchId = navigator.geolocation.watchPosition(
           position => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+            const latitude: number = position.coords.latitude;
+            const longitude: number = position.coords.longitude;
             this.sessionService.setUserLatitude(latitude);
             this.sessionService.setUserLongitude(longitude);
             console.log('Location updated');
@@ -50,12 +50,10 @@ export class MainComponent implements OnInit, OnDestroy {
       } else if (result.state == 'denied') {
         this.toast.warning('Allow access to your location in order to find and report events');
       }
-
-
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     navigator.geolocation.clearWatch(this.geoWatchId);
   }
 
@@ -86,7 +84,7 @@ export class MainComponent implements OnInit, OnDestroy {
   onLogout(): void {
     this.authService.logout()
       .subscribe(() => {
-        const reuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
+        const reuseStrategy: CustomReuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
         reuseStrategy.routesToCache = [];
         reuseStrategy.storedRouteHandles.clear();
         this.router.navigate(['/auth']);

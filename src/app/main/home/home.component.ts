@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {SessionService} from '../../service/session.service';
 import {MapComponent} from './map/map.component';
 import {FilterOptions} from './filter/filter.options';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FilterDialogComponent} from './filter/filter-dialog.component';
 import {EventService} from '../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
@@ -20,8 +20,8 @@ import {EventFilterRequest} from '../../model/request/event.filter.request';
 })
 export class HomeComponent implements OnInit {
 
-  @ViewChild(MapComponent) mapComponent;
-  @ViewChild(ListComponent) listComponent;
+  @ViewChild(MapComponent) mapComponent: MapComponent;
+  @ViewChild(ListComponent) listComponent: ListComponent;
 
   private static PAGE_SIZE: number = 20;
 
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
 
     this.order = Order.BY_DATE_DESCENDING;
 
-    const storageHomePage = this.sessionService.getHomePage();
+    const storageHomePage: string = this.sessionService.getHomePage();
     this.homePage = storageHomePage == 'list' ? HomePage.LIST : HomePage.MAP;
 
   }
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  onPreviousClicked() {
+  onPreviousClicked(): void {
     if (this.totalPages <= 1) {
       return;
     }
@@ -74,11 +74,11 @@ export class HomeComponent implements OnInit {
     this.requestNewSearch();
   }
 
-  onLocationClicked() {
+  onLocationClicked(): void {
     this.mapComponent.setDefaultViewValues();
   }
 
-  onNextClicked() {
+  onNextClicked(): void {
     if (this.totalPages <= 1) {
       return;
     }
@@ -90,8 +90,8 @@ export class HomeComponent implements OnInit {
     this.requestNewSearch();
   }
 
-  onFilterClicked() {
-    const dialogRef = this.dialog.open(FilterDialogComponent, {
+  onFilterClicked(): void {
+    const dialogRef: MatDialogRef<FilterDialogComponent> = this.dialog.open(FilterDialogComponent, {
       data: this.filterOptions
     });
 
@@ -113,7 +113,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  onPageSwitchClicked() {
+  onPageSwitchClicked(): void {
     if (this.homePage == HomePage.MAP) {
       this.homePage = HomePage.LIST;
     } else if (this.homePage == HomePage.LIST) {
@@ -123,8 +123,8 @@ export class HomeComponent implements OnInit {
     this.sessionService.setHomePage(this.homePage);
   }
 
-  onOrderClicked() {
-    const dialogRef = this.dialog.open(OrderDialogComponent, {
+  onOrderClicked(): void {
+    const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
       data: this.order
     });
 
@@ -139,9 +139,9 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  private requestNewSearch() {
+  private requestNewSearch(): void {
     this.spinnerService.show();
-    this.eventService.getByFilter(this.filterRequest, HomeComponent.PAGE_SIZE, this.pageIndex, this.order)
+    this.eventService.getEventsByFilter(this.filterRequest, HomeComponent.PAGE_SIZE, this.pageIndex, this.order)
       .subscribe(page => {
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit {
       }, () => this.spinnerService.close());
   }
 
-  onPageChanged(pageEvent: PageEvent) {
+  onPageChanged(pageEvent: PageEvent): void {
     this.pageIndex = pageEvent.pageIndex;
     this.requestNewSearch();
   }

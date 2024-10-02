@@ -40,10 +40,8 @@
   </mat-sidenav>
 
   <div class="sidenav-content">
-    <div>
-      <router-outlet></router-outlet>
-    </div>
-    <button mat-mini-fab color="primary" id="main_menu_fab" (click)="toggleSidenav()">
+    <router-outlet></router-outlet>
+    <button mat-mini-fab color="primary" class="main_menu_fab" (click)="toggleSidenav()">
       <mat-icon>menu</mat-icon>
     </button>
   </div>
