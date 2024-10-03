@@ -12,6 +12,7 @@ import {PageEvent} from '@angular/material/paginator';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 import {Order} from '../../enums/order';
 import {EventFilterRequest} from '../../model/request/event.filter.request';
+import {PAGE_SIZE} from '../../defaults/constants';
 
 @Component({
   selector: 'app-home',
@@ -22,8 +23,6 @@ export class HomeComponent implements OnInit {
 
   @ViewChild(MapComponent) mapComponent: MapComponent;
   @ViewChild(ListComponent) listComponent: ListComponent;
-
-  private static PAGE_SIZE: number = 20;
 
   totalEvents: number;
   totalPages: number;
@@ -92,7 +91,8 @@ export class HomeComponent implements OnInit {
 
   onFilterClicked(): void {
     const dialogRef: MatDialogRef<FilterDialogComponent> = this.dialog.open(FilterDialogComponent, {
-      data: this.filterOptions
+      data: this.filterOptions,
+      autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe(() => {
@@ -141,7 +141,8 @@ export class HomeComponent implements OnInit {
 
   private requestNewSearch(): void {
     this.spinnerService.show();
-    this.eventService.getEventsByFilter(this.filterRequest, HomeComponent.PAGE_SIZE, this.pageIndex, this.order)
+    this.mapComponent.selectedEvent = undefined;
+    this.eventService.getEventsByFilter(this.filterRequest, PAGE_SIZE, this.pageIndex, this.order)
       .subscribe(page => {
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;

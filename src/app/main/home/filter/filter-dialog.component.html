@@ -3,7 +3,7 @@
   <form [formGroup]="filterForm" (ngSubmit)="onSaveClicked()">
     <mat-form-field style="min-width: 60%">
       <mat-label>Radius (km)</mat-label>
-      <input matInput formControlName="radius" value="{{filterOptions.radius}}" required>
+      <input matInput type="number" formControlName="radius" value="{{filterOptions.radius}}" required>
       <mat-error *ngIf="filterForm.get('radius').invalid">{{getRadiusErrorMessage()}}</mat-error>
     </mat-form-field>
 

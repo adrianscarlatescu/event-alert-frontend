@@ -134,7 +134,8 @@ export class EventDetailsComponent implements OnInit {
       data: {
         eventId: this.event.id,
         userId: this.sessionService.getUser().id
-      }
+      },
+      autoFocus: false
     });
 
     dialogRef.afterClosed()

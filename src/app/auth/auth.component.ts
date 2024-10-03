@@ -11,7 +11,15 @@ import {SpinnerService} from '../shared/spinner/spinner.service';
 import {concatMap} from 'rxjs/operators';
 import {LoginRequest} from '../model/request/login.request';
 import {RegisterRequest} from '../model/request/register.request';
-import {JWT_OFFSET_SECONDS} from '../defaults/constants';
+import {JWT_OFFSET_SECONDS, MAX_EMAIL_LENGTH, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH} from '../defaults/constants';
+
+const ERR_MSG_MANDATORY_FIELD: string = 'Field required';
+const ERR_MSG_INVALID_EMAIL: string = 'Invalid email';
+const ERR_MSG_EMAIL_LENGTH: string = 'The email must have at most ' + MAX_EMAIL_LENGTH + ' characters';
+const ERR_MSG_PASSWORD_LENGTH: string = 'The length must have between ' +
+  MIN_PASSWORD_LENGTH + ' and ' +
+  MAX_PASSWORD_LENGTH + ' characters';
+const ERR_MSG_DIFFERENT_PASSWORDS: string = 'The passwords do not match';
 
 @Component({
   selector: 'app-auth',
@@ -21,12 +29,6 @@ import {JWT_OFFSET_SECONDS} from '../defaults/constants';
 export class AuthComponent implements OnInit {
 
   jwtHelper: JwtHelperService = new JwtHelperService();
-
-  readonly errMsgMandatoryField: string = 'Field required';
-  readonly errMsgInvalidEmail: string = 'Invalid email';
-  readonly errMsgPasswordLength: string = 'The length must have between 8 and 40 characters';
-  readonly errMsgDifferentPasswords: string = 'The passwords do not match';
-
   loginForm: FormGroup;
   registerForm: FormGroup;
   hidePassword: boolean = true;
@@ -63,14 +65,14 @@ export class AuthComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(40)]],
+      email: [undefined, [Validators.required, Validators.email, Validators.maxLength(MAX_EMAIL_LENGTH)]],
+      password: [undefined, [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH), Validators.maxLength(MAX_PASSWORD_LENGTH)]],
     });
 
     this.registerForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(40)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(40)]]
+      email: [undefined, [Validators.required, Validators.email, Validators.maxLength(MAX_EMAIL_LENGTH)]],
+      password: [undefined, [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH), Validators.maxLength(MAX_PASSWORD_LENGTH)]],
+      confirmPassword: [undefined, [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH), Validators.maxLength(MAX_PASSWORD_LENGTH)]]
     }, {
       validators: [PasswordValidator.validate]
     });
@@ -78,43 +80,59 @@ export class AuthComponent implements OnInit {
 
   getLoginEmailErrorMessage(): string {
     if (this.loginForm.get('email').hasError('required')) {
-      return this.errMsgMandatoryField;
+      return ERR_MSG_MANDATORY_FIELD;
     }
-    return this.loginForm.get('email').hasError('email') ? this.errMsgInvalidEmail : '';
+    if (this.loginForm.get('email').hasError('email')) {
+      return ERR_MSG_INVALID_EMAIL;
+    }
+    if (this.registerForm.get('email').hasError('maxlength')) {
+      return ERR_MSG_EMAIL_LENGTH;
+    }
   }
 
   getLoginPasswordErrorMessage(): string {
     if (this.loginForm.get('password').hasError('required')) {
-      return this.errMsgMandatoryField;
+      return ERR_MSG_MANDATORY_FIELD;
     }
-    return this.loginForm.get('password').hasError('minlength') ||
-    this.loginForm.get('password').hasError('maxlength') ? this.errMsgPasswordLength : '';
+    if (this.loginForm.get('password').hasError('minlength') ||
+      this.loginForm.get('password').hasError('maxlength')) {
+      return ERR_MSG_PASSWORD_LENGTH;
+    }
   }
 
   getRegisterEmailErrorMessage(): string {
     if (this.registerForm.get('email').hasError('required')) {
-      return this.errMsgMandatoryField;
+      return ERR_MSG_MANDATORY_FIELD;
     }
-    return this.registerForm.get('email').hasError('email') ? this.errMsgInvalidEmail : '';
+    if (this.registerForm.get('email').hasError('email')) {
+      return ERR_MSG_INVALID_EMAIL;
+    }
+    if (this.registerForm.get('email').hasError('maxlength')) {
+      return ERR_MSG_EMAIL_LENGTH;
+    }
   }
 
   getRegisterPasswordErrorMessage(): string {
     if (this.registerForm.get('password').hasError('required')) {
-      return this.errMsgMandatoryField;
+      return ERR_MSG_MANDATORY_FIELD;
     }
-    return this.registerForm.get('password').hasError('minlength') ||
-    this.registerForm.get('password').hasError('maxlength') ? this.errMsgPasswordLength : '';
+    if (this.registerForm.get('password').hasError('minlength') ||
+      this.registerForm.get('password').hasError('maxlength')) {
+      return ERR_MSG_PASSWORD_LENGTH;
+    }
   }
 
   getRegisterConfirmPasswordErrorMessage(): string {
     if (this.registerForm.get('confirmPassword').hasError('required')) {
-      return this.errMsgMandatoryField;
+      return ERR_MSG_MANDATORY_FIELD;
     }
     if (this.registerForm.get('confirmPassword').hasError('minlength') ||
       this.registerForm.get('confirmPassword').hasError('maxlength')) {
-      return this.errMsgPasswordLength;
+      return ERR_MSG_PASSWORD_LENGTH;
     }
-    return this.registerForm.get('confirmPassword').hasError('not_the_same').valueOf() ? this.errMsgDifferentPasswords : '';
+    if (this.registerForm.get('confirmPassword').hasError('not_the_same')) {
+      return ERR_MSG_DIFFERENT_PASSWORDS;
+    }
   }
 
   onLogin(): Subscription {

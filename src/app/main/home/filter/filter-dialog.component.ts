@@ -8,6 +8,16 @@ import {EventSeverity} from '../../../model/event.severity';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ToastrService} from 'ngx-toastr';
 import {MatSelectChange} from '@angular/material/select';
+import {INVALID_FORM, MAX_RADIUS, MAX_YEARS_INTERVAL, MIN_RADIUS} from '../../../defaults/constants';
+
+const ERR_MSG_MANDATORY_RADIUS: string = 'The radius is required';
+const ERR_MSG_RADIUS_INTERVAL: string = 'The radius must be between ' + MIN_RADIUS + ' and ' + MAX_RADIUS;
+const ERR_MSG_MANDATORY_START_DATE: string = 'The start date is required';
+const ERR_MSG_MANDATORY_END_DATE: string = 'The end date is required';
+const ERR_MSG_END_DATE_AFTER_START_DATE: string = 'The end date must be after the start date';
+const ERR_MSG_YEARS_INTERVAL: string = 'Only ' + MAX_YEARS_INTERVAL + ' year(s) difference allowed between the start date and the end date';
+const ERR_MSG_MIN_TAG: string = 'At least one tag is required';
+const ERR_MSG_MIN_SEVERITY: string = 'At least one severity is required';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -47,7 +57,7 @@ export class FilterDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.filterForm = this.formBuilder.group({
-      radius: [this.filterOptions.radius, [Validators.required, Validators.min(1), Validators.max(10000)]],
+      radius: [this.filterOptions.radius, [Validators.required, Validators.min(MIN_RADIUS), Validators.max(MAX_RADIUS)]],
       selectedTags: [this.tags.filter(tag =>
         this.filterOptions.tags.find(filterTag => filterTag.id === tag.id)), [Validators.required]],
       selectedSeverities: [this.severities.filter(severity =>
@@ -66,7 +76,7 @@ export class FilterDialogComponent implements OnInit {
 
   onSaveClicked(): void {
     if (this.filterForm.invalid) {
-      this.toast.warning('Invalid form');
+      this.toast.warning(INVALID_FORM);
       this.filterForm.markAsTouched();
       return;
     }
@@ -85,53 +95,47 @@ export class FilterDialogComponent implements OnInit {
   getRadiusErrorMessage(): string {
     const radius: AbstractControl = this.filterForm.get('radius');
     if (radius.hasError('required')) {
-      return 'The radius is required';
+      return ERR_MSG_MANDATORY_RADIUS;
     }
     if (radius.hasError('min') || radius.hasError('max')) {
-      return 'The radius must be between 1 and 10000';
+      return ERR_MSG_RADIUS_INTERVAL;
     }
-    return '';
   }
 
   getStartDateErrorMessage(): string {
     const startDate: AbstractControl = this.filterForm.get('startDate');
     if (startDate.hasError('required')) {
-      return 'The start date is required';
+      return ERR_MSG_MANDATORY_START_DATE;
     }
-    return '';
   }
 
   getEndDateErrorMessage(): string {
     const endDate: AbstractControl = this.filterForm.get('endDate');
     if (endDate.hasError('required')) {
-      return 'The end date is required';
+      return ERR_MSG_MANDATORY_END_DATE;
     }
 
     if (endDate.hasError('after')) {
-      return 'The end date must be after the start date';
+      return ERR_MSG_END_DATE_AFTER_START_DATE;
     }
 
     if (endDate.hasError('year_limit')) {
-      return 'Only one year difference allowed between start date and end date';
+      return ERR_MSG_YEARS_INTERVAL;
     }
-
-    return '';
   }
 
   getTagsErrorMessage(): string {
     const selectedTags: AbstractControl = this.filterForm.get('selectedTags');
     if (selectedTags.hasError('required')) {
-      return 'At least one tag is required';
+      return ERR_MSG_MIN_TAG;
     }
-    return '';
   }
 
   getSeveritiesErrorMessage(): string {
     const selectedSeverities: AbstractControl = this.filterForm.get('selectedSeverities');
     if (selectedSeverities.hasError('required')) {
-      return 'At least one severity is required';
+      return ERR_MSG_MIN_SEVERITY;
     }
-    return '';
   }
 
   onTagsSelectionChange(tags: MatSelectChange): void {
@@ -180,7 +184,7 @@ class DateValidator {
     if (startDate.getTime() > endDate.getTime()) {
       control.get('endDate')?.setErrors({after: true});
       return ({after: true});
-    } else if (endDate.getFullYear() - startDate.getFullYear() > 1) {
+    } else if (endDate.getFullYear() - startDate.getFullYear() > MAX_YEARS_INTERVAL) {
       control.get('endDate')?.setErrors({year_limit: true});
       return ({year_limit: true});
     }

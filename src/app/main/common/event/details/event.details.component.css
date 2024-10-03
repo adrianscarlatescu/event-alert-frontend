@@ -52,6 +52,11 @@
   background-color: #f0ecf9C0;
 }
 
+.event_details_description_div {
+  word-wrap: break-word;
+  max-width: 400px;
+}
+
 .mat-list-item:hover {
   background-color: #f0ecf9C0;
 }

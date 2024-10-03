@@ -7,7 +7,7 @@ import {concatMap} from 'rxjs/operators';
 import {SessionService} from '../session.service';
 import {Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
-import {JWT_OFFSET_SECONDS, LOGIN_URL_REGEX, REFRESH_URL_REGEX, REGISTER_URL_REGEX} from '../../defaults/constants';
+import {JWT_OFFSET_SECONDS, LOGIN_URL_REGEX, REFRESH_TOKEN_URL_REGEX, REGISTER_URL_REGEX} from '../../defaults/constants';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 
 @Injectable()
@@ -23,9 +23,14 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const method: string = request.method;
     const url: string = request.url;
 
-    if (url.match(LOGIN_URL_REGEX) || url.match(REGISTER_URL_REGEX)) {
+    const isLoginRequest: boolean = 'POST' == method && LOGIN_URL_REGEX.test(url);
+    const isRegisterRequest: boolean = 'POST' == method && REGISTER_URL_REGEX.test(url);
+    const isRefreshTokenRequest: boolean = 'GET' == method && REFRESH_TOKEN_URL_REGEX.test(url);
+
+    if (isLoginRequest || isRegisterRequest) {
       return next.handle(request);
     }
 
@@ -41,7 +46,7 @@ export class JwtInterceptor implements HttpInterceptor {
     const isAccessTokenExpired: boolean = this.jwtHelper.isTokenExpired(accessToken, JWT_OFFSET_SECONDS);
     const isRefreshTokenExpired: boolean = this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS);
 
-    if (url.match(REFRESH_URL_REGEX)) {
+    if (isRefreshTokenRequest) {
       if (isRefreshTokenExpired) {
         this.toast.warning('Authorization expired, please re-login');
         this.clearAndRedirect();

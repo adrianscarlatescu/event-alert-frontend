@@ -48,6 +48,7 @@ export class MapComponent implements OnInit {
 
   onMarkerClicked(event: Event): void {
     this.map.panTo({lat: event.latitude, lng: event.longitude});
+    this.map.panBy(0, -230);
 
     this.selectedEvent = event;
     this.fileService.getImage(event.imagePath)

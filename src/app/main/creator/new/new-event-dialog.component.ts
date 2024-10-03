@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EventTag} from '../../../model/event.tag';
 import {Event} from '../../../model/event';
 import {EventSeverity} from '../../../model/event.severity';
-import {FormControl, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FileService} from '../../../service/file.service';
 import {SessionService} from '../../../service/session.service';
 import {EventService} from '../../../service/event.service';
@@ -11,6 +11,11 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SpinnerService} from '../../../shared/spinner/spinner.service';
 import {EventRequest} from '../../../model/request/event.request';
+import {EVENT_IMAGE_FILE_PREFIX, INVALID_FORM, MAX_DESCRIPTION_LENGTH} from '../../../defaults/constants';
+
+const ERR_MSG_MANDATORY_TAG: string = 'The tag is required';
+const ERR_MSG_MANDATORY_SEVERITY: string = 'The severity is required';
+const ERR_MSG_DESCRIPTION_LENGTH: string = 'The description must have at most ' + MAX_DESCRIPTION_LENGTH + ' characters';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -18,7 +23,6 @@ import {EventRequest} from '../../../model/request/event.request';
   styleUrls: ['./new-event-dialog.component.css']
 })
 export class NewEventDialogComponent implements OnInit {
-  @ViewChild('newEventDescriptionTextArea') descriptionElementRef: ElementRef;
 
   latitude: number;
   longitude: number;
@@ -29,12 +33,12 @@ export class NewEventDialogComponent implements OnInit {
   tags: EventTag[] = [];
   severities: EventSeverity[] = [];
 
-  tagControl: FormControl;
-  severityControl: FormControl;
+  newEventForm: FormGroup;
 
   newEvent: Event;
 
-  constructor(private fileService: FileService,
+  constructor(private formBuilder: FormBuilder,
+              private fileService: FileService,
               private sessionService: SessionService,
               private eventService: EventService,
               private spinnerService: SpinnerService,
@@ -54,8 +58,11 @@ export class NewEventDialogComponent implements OnInit {
     this.tags = sessionService.getTags().sort((a, b) => a.name.localeCompare(b.name));
     this.severities = sessionService.getSeverities();
 
-    this.tagControl = new FormControl(undefined, Validators.required);
-    this.severityControl = new FormControl(undefined, Validators.required);
+    this.newEventForm = this.formBuilder.group({
+      tag: [undefined, Validators.required],
+      severity: [undefined, Validators.required],
+      description: [undefined, Validators.maxLength(MAX_DESCRIPTION_LENGTH)]
+    });
   }
 
   ngOnInit(): void {
@@ -76,10 +83,9 @@ export class NewEventDialogComponent implements OnInit {
   }
 
   onSaveClicked(): void {
-    if (this.tagControl.invalid || this.severityControl.invalid) {
-      this.toast.warning('Invalid form');
-      this.tagControl.markAsTouched();
-      this.severityControl.markAsTouched();
+    if (this.newEventForm.invalid) {
+      this.toast.warning(INVALID_FORM);
+      this.newEventForm.markAsTouched();
       return;
     }
     if (!this.file) {
@@ -88,16 +94,16 @@ export class NewEventDialogComponent implements OnInit {
     }
 
     this.spinnerService.show();
-    this.fileService.postImage(this.file, 'event_')
+    this.fileService.postImage(this.file, EVENT_IMAGE_FILE_PREFIX)
       .subscribe(imagePath => {
         const eventRequest: EventRequest = new EventRequest();
         eventRequest.latitude = this.latitude;
         eventRequest.longitude = this.longitude;
         eventRequest.userId = this.sessionService.getUser().id;
-        eventRequest.tagId = this.tagControl.value;
-        eventRequest.severityId = this.severityControl.value;
+        eventRequest.tagId = this.newEventForm.get('tag').value;
+        eventRequest.severityId = this.newEventForm.get('severity').value;
         eventRequest.imagePath = imagePath.toString();
-        eventRequest.description = this.descriptionElementRef.nativeElement.value;
+        eventRequest.description = this.newEventForm.get('description').value;
 
         this.eventService.postEvent(eventRequest)
           .subscribe(event => {
@@ -110,14 +116,20 @@ export class NewEventDialogComponent implements OnInit {
   }
 
   getTagErrorMessage(): string {
-    if (this.tagControl.hasError('required')) {
-      return 'The tag is required';
+    if (this.newEventForm.get('tag').hasError('required')) {
+      return ERR_MSG_MANDATORY_TAG;
     }
   }
 
   getSeverityErrorMessage(): string {
-    if (this.severityControl.hasError('required')) {
-      return 'The severity is required';
+    if (this.newEventForm.get('severity').hasError('required')) {
+      return ERR_MSG_MANDATORY_SEVERITY;
+    }
+  }
+
+  getDescriptionErrorMessage(): string {
+    if (this.newEventForm.get('description').hasError('maxlength')) {
+      return ERR_MSG_DESCRIPTION_LENGTH;
     }
   }
 

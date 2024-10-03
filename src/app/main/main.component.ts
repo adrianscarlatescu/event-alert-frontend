@@ -14,7 +14,7 @@ import {Role} from '../enums/role';
 })
 export class MainComponent implements OnInit, OnDestroy {
 
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild(MatSidenav) sidenav: MatSidenav;
 
   isUserAdmin: boolean = false;
   geoWatchId: number;
