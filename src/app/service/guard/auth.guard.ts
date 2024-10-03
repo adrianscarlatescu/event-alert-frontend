@@ -1,28 +1,30 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
 import {SessionService} from '../session.service';
 import {ToastrService} from 'ngx-toastr';
+import {User} from '../../model/user';
+import {Role} from '../../enums/role';
 
 @Injectable({providedIn: 'root'})
 export class AuthGuard implements CanActivate {
 
   constructor(
-    private router: Router,
     private toast: ToastrService,
     private sessionService: SessionService) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const accessToken: string = this.sessionService.getAccessToken();
-    const refreshToken: string = this.sessionService.getRefreshToken();
-    if (accessToken && refreshToken) {
-      return true;
+    const user: User = this.sessionService.getUser();
+
+    const hasDefaultRole: boolean = user?.userRoles
+      .map(userRole => userRole.name)
+      .includes(Role.ROLE_USER);
+
+    if (!hasDefaultRole) {
+      this.toast.warning('Default role required');
     }
 
-    localStorage.clear();
-    this.toast.warning('Authorization tokens required');
-    this.router.navigate(['/auth'], {queryParams: {returnUrl: state.url}});
-    return false;
+    return hasDefaultRole;
   }
 
 }

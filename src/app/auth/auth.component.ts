@@ -126,10 +126,7 @@ export class AuthComponent implements OnInit {
       loginRequest.password = this.loginForm.value.password;
 
       return this.authService.login(loginRequest)
-        .pipe(concatMap(tokens => {
-          this.sessionService.setTokens(tokens);
-          return this.sessionService.sync();
-        }))
+        .pipe(concatMap(() => this.sessionService.sync()))
         .subscribe(() => {
           console.log('Sync completed');
 

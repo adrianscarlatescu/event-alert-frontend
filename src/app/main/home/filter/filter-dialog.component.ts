@@ -60,9 +60,6 @@ export class FilterDialogComponent implements OnInit {
   }
 
   getImage(imagePath: string): SafeUrl {
-    if (!imagePath) {
-      return '../../../../assets/favicon.png';
-    }
     const url: string = this.sessionService.getCacheImageByUrl(imagePath).toString();
     return this.domSanitizer.bypassSecurityTrustUrl(url);
   }

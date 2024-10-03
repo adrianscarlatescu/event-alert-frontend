@@ -82,11 +82,11 @@ export class SessionService {
     return JSON.parse(localStorage.getItem(url));
   }
 
-  public setHomePage(homePage: string) {
+  public setHomePage(homePage: string): void {
     localStorage.setItem('homePage', homePage);
   }
 
-  public getHomePage() {
+  public getHomePage(): string {
     return localStorage.getItem('homePage');
   }
 
@@ -125,7 +125,7 @@ export class SessionService {
     return forkJoin([userObs, tagsObs, severitiesObs]);
   }
 
-  public clearStorage() {
+  public clearStorage(): void {
     localStorage.clear();
   }
 

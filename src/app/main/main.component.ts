@@ -16,7 +16,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('sidenav') sidenav: MatSidenav;
 
-  isAdmin: boolean = false;
+  isUserAdmin: boolean = false;
   geoWatchId: number;
 
   constructor(private authService: AuthService,
@@ -24,7 +24,7 @@ export class MainComponent implements OnInit, OnDestroy {
               private toast: ToastrService,
               private router: Router) {
 
-    this.isAdmin = this.sessionService.getUser().userRoles
+    this.isUserAdmin = this.sessionService.getUser().userRoles
       .map(userRole => userRole.name)
       .includes(Role.ROLE_ADMIN);
 
