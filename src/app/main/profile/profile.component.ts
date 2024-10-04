@@ -8,13 +8,16 @@ import {SessionService} from '../../service/session.service';
 import {UserRequest} from '../../model/request/user.request';
 import {User} from '../../model/user';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {INVALID_FORM, MAX_USER_NAME_LENGTH, PHONE_NUMBER_REGEX, USER_IMAGE_FILE_PREFIX} from '../../defaults/constants';
+import {MAX_USER_NAME_LENGTH, PHONE_NUMBER_REGEX, USER_IMAGE_FILE_PREFIX} from '../../defaults/constants';
+import {
+  ERR_MSG_FIRST_NAME_LENGTH,
+  ERR_MSG_FIRST_NAME_REQUIRED,
+  ERR_MSG_LAST_NAME_LENGTH,
+  ERR_MSG_LAST_NAME_REQUIRED,
+  ERR_MSG_PHONE_NUMBER_REQUIRED,
+  ERR_MSG_PHONE_PATTERN
+} from '../../defaults/field-validation-messages';
 
-const ERR_MSG_MANDATORY_FIRST_NAME: string = 'The first name is required';
-const ERR_MSG_MANDATORY_LAST_NAME: string = 'The last name is required';
-const ERR_MSG_FIRST_NAME_LENGTH: string = 'The first name must have at most ' + MAX_USER_NAME_LENGTH + ' characters';
-const ERR_MSG_LAST_NAME_LENGTH: string = 'The last name must have at most ' + MAX_USER_NAME_LENGTH + ' characters';
-const ERR_MSG_PHONE_PATTERN: string = 'The phone number does not match the expected format';
 
 @Component({
   selector: 'app-profile',
@@ -46,7 +49,7 @@ export class ProfileComponent implements OnInit {
       lastName: [this.user.lastName, [Validators.required, Validators.maxLength(MAX_USER_NAME_LENGTH)]],
       gender: [this.user.gender],
       dateOfBirth: [this.user.dateOfBirth],
-      phoneNumber: [this.user.phoneNumber, Validators.pattern(PHONE_NUMBER_REGEX)]
+      phoneNumber: [this.user.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_REGEX)]]
     });
 
     if (this.user.imagePath) {
@@ -66,7 +69,7 @@ export class ProfileComponent implements OnInit {
 
   onSaveClicked(): void {
     if (!this.profileForm.valid) {
-      this.toast.warning(INVALID_FORM);
+      this.toast.error('Invalid form');
       this.profileForm.markAsTouched();
       return;
     }
@@ -108,7 +111,7 @@ export class ProfileComponent implements OnInit {
 
   getFirstNameErrorMessage(): string {
     if (this.profileForm.get('firstName').hasError('required')) {
-      return ERR_MSG_MANDATORY_FIRST_NAME;
+      return ERR_MSG_FIRST_NAME_REQUIRED;
     }
     if (this.profileForm.get('firstName').hasError('maxlength')) {
       return ERR_MSG_FIRST_NAME_LENGTH;
@@ -117,7 +120,7 @@ export class ProfileComponent implements OnInit {
 
   getLastNameErrorMessage(): string {
     if (this.profileForm.get('lastName').hasError('required')) {
-      return ERR_MSG_MANDATORY_LAST_NAME;
+      return ERR_MSG_LAST_NAME_REQUIRED;
     }
     if (this.profileForm.get('lastName').hasError('maxlength')) {
       return ERR_MSG_LAST_NAME_LENGTH;
@@ -125,6 +128,9 @@ export class ProfileComponent implements OnInit {
   }
 
   getPhoneNumberErrorMessage(): string {
+    if (this.profileForm.get('phoneNumber').hasError('required')) {
+      return ERR_MSG_PHONE_NUMBER_REQUIRED;
+    }
     if (this.profileForm.get('phoneNumber').hasError('pattern')) {
       return ERR_MSG_PHONE_PATTERN;
     }

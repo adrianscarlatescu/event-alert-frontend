@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {mapTheme} from '../../../map.style';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
@@ -7,7 +7,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
   templateUrl: './map-view-dialog.component.html',
   styleUrls: ['./map-view-dialog.component.css']
 })
-export class MapViewDialogComponent implements OnInit, AfterViewInit {
+export class MapViewDialogComponent implements OnInit {
 
   mapStyle = mapTheme;
   mapZoom: number = 14;
@@ -17,10 +17,6 @@ export class MapViewDialogComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    this.mapZoom = 14.5;
   }
 
 }

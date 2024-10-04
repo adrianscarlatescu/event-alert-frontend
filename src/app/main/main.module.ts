@@ -62,7 +62,7 @@ import {MapViewDialogComponent} from './common/event/details/map/map-view-dialog
           {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
           {path: '', redirectTo: 'home', pathMatch: 'full'},
 
-          {path: 'event/details', component: EventDetailsComponent, canActivate: [AuthGuard]}
+          {path: 'event/:id', component: EventDetailsComponent, canActivate: [AuthGuard]}
         ]
       }
     ])],

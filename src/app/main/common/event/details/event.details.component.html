@@ -1,4 +1,4 @@
-<div style="margin: 50px 75px">
+<div style="margin: 65px">
 
   <div class="event_details_div">
     <mat-card class="event_details_mat_card">
@@ -18,8 +18,8 @@
         <img *ngIf="eventImage" [src]="eventImage" class="event_details_event_image">
       </div>
 
-      <div style="display: flex;">
-        <mat-card-header style="margin-top: 10px;">
+      <div class="event_details_footer_div">
+        <mat-card-header class="event_details_footer_info_div">
           <div *ngIf="tagImage && severityColor" class="event_details_tag_mat_card" mat-card-avatar
                [ngStyle]="{'background-image': tagImage, 'background-color': severityColor}">
           </div>
@@ -64,13 +64,13 @@
 
     <div>
       <mat-list *ngIf="comments.length > 0">
-        <mat-list-item *ngFor="let comment of comments">
+        <mat-list-item *ngFor="let comment of comments" style="height: fit-content;">
           <img matListAvatar [src]="getEventCommentUserImage(comment.id)"/>
           <h3 matLine>{{comment.user.firstName + ' ' + comment.user.lastName}}</h3>
-          <p matLine class="event_details_text_div">
+          <p matLine>
             <span style="color: grey">{{comment.dateTime | date: 'medium'}}</span>
             <br>
-            <span style="color: dimgrey">{{comment.comment}}</span>
+            <span style="color: dimgrey; white-space: normal;">{{comment.comment}}</span>
           </p>
           <mat-divider></mat-divider>
         </mat-list-item>

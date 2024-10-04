@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
       .includes(Role.ROLE_USER);
 
     if (!hasDefaultRole) {
-      this.toast.warning('Default role required');
+      this.toast.error('Default role required');
     }
 
     return hasDefaultRole;

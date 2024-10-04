@@ -59,7 +59,7 @@ export class MapComponent implements OnInit {
   }
 
   onEventInfoViewClicked(): void {
-    this.router.navigate(['event/details'], {state: {id: this.selectedEvent.id}});
+    this.router.navigate(['event', this.selectedEvent.id]);
   }
 
   onEventInfoCloseClicked(): void {

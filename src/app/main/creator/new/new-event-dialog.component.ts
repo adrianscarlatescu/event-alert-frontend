@@ -11,11 +11,17 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SpinnerService} from '../../../shared/spinner/spinner.service';
 import {EventRequest} from '../../../model/request/event.request';
-import {EVENT_IMAGE_FILE_PREFIX, INVALID_FORM, MAX_DESCRIPTION_LENGTH} from '../../../defaults/constants';
-
-const ERR_MSG_MANDATORY_TAG: string = 'The tag is required';
-const ERR_MSG_MANDATORY_SEVERITY: string = 'The severity is required';
-const ERR_MSG_DESCRIPTION_LENGTH: string = 'The description must have at most ' + MAX_DESCRIPTION_LENGTH + ' characters';
+import {EVENT_IMAGE_FILE_PREFIX, MAX_DESCRIPTION_LENGTH} from '../../../defaults/constants';
+import {User} from '../../../model/user';
+import {
+  ERR_MSG_DESCRIPTION_LENGTH,
+  ERR_MSG_IMAGE_REQUIRED,
+  ERR_MSG_PROFILE_FIRST_NAME_REQUIRED,
+  ERR_MSG_PROFILE_LAST_NAME_REQUIRED,
+  ERR_MSG_PROFILE_PHONE_NUMBER_REQUIRED,
+  ERR_MSG_SEVERITY_REQUIRED,
+  ERR_MSG_TAG_REQUIRED
+} from '../../../defaults/field-validation-messages';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -84,12 +90,34 @@ export class NewEventDialogComponent implements OnInit {
 
   onSaveClicked(): void {
     if (this.newEventForm.invalid) {
-      this.toast.warning(INVALID_FORM);
+      this.toast.error('Invalid form');
       this.newEventForm.markAsTouched();
       return;
     }
     if (!this.file) {
-      this.toast.warning('Image not selected');
+      this.toast.error(ERR_MSG_IMAGE_REQUIRED);
+      return;
+    }
+
+    const user: User = this.sessionService.getUser();
+    let userRequiredDataErrorMessage: string = '';
+    if (!user.firstName) {
+      userRequiredDataErrorMessage += ERR_MSG_PROFILE_FIRST_NAME_REQUIRED;
+    }
+    if (!user.lastName) {
+      if (userRequiredDataErrorMessage) {
+        userRequiredDataErrorMessage += '<hr/>';
+      }
+      userRequiredDataErrorMessage += ERR_MSG_PROFILE_LAST_NAME_REQUIRED;
+    }
+    if (!user.phoneNumber) {
+      if (userRequiredDataErrorMessage) {
+        userRequiredDataErrorMessage += '<hr/>';
+      }
+      userRequiredDataErrorMessage += ERR_MSG_PROFILE_PHONE_NUMBER_REQUIRED;
+    }
+    if (userRequiredDataErrorMessage) {
+      this.toast.error(userRequiredDataErrorMessage, '',{enableHtml: true});
       return;
     }
 
@@ -117,13 +145,13 @@ export class NewEventDialogComponent implements OnInit {
 
   getTagErrorMessage(): string {
     if (this.newEventForm.get('tag').hasError('required')) {
-      return ERR_MSG_MANDATORY_TAG;
+      return ERR_MSG_TAG_REQUIRED;
     }
   }
 
   getSeverityErrorMessage(): string {
     if (this.newEventForm.get('severity').hasError('required')) {
-      return ERR_MSG_MANDATORY_SEVERITY;
+      return ERR_MSG_SEVERITY_REQUIRED;
     }
   }
 

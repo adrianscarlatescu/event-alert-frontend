@@ -8,16 +8,18 @@ import {EventSeverity} from '../../../model/event.severity';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ToastrService} from 'ngx-toastr';
 import {MatSelectChange} from '@angular/material/select';
-import {INVALID_FORM, MAX_RADIUS, MAX_YEARS_INTERVAL, MIN_RADIUS} from '../../../defaults/constants';
-
-const ERR_MSG_MANDATORY_RADIUS: string = 'The radius is required';
-const ERR_MSG_RADIUS_INTERVAL: string = 'The radius must be between ' + MIN_RADIUS + ' and ' + MAX_RADIUS;
-const ERR_MSG_MANDATORY_START_DATE: string = 'The start date is required';
-const ERR_MSG_MANDATORY_END_DATE: string = 'The end date is required';
-const ERR_MSG_END_DATE_AFTER_START_DATE: string = 'The end date must be after the start date';
-const ERR_MSG_YEARS_INTERVAL: string = 'Only ' + MAX_YEARS_INTERVAL + ' year(s) difference allowed between the start date and the end date';
-const ERR_MSG_MIN_TAG: string = 'At least one tag is required';
-const ERR_MSG_MIN_SEVERITY: string = 'At least one severity is required';
+import {MAX_RADIUS, MAX_YEARS_INTERVAL, MIN_RADIUS} from '../../../defaults/constants';
+import {
+  ERR_MSG_DATES_YEARS_INTERVAL,
+  ERR_MSG_END_DATE_AFTER_START_DATE,
+  ERR_MSG_END_DATE_REQUIRED,
+  ERR_MSG_MAX_RADIUS,
+  ERR_MSG_MIN_RADIUS,
+  ERR_MSG_MIN_SEVERITY_REQUIRED,
+  ERR_MSG_MIN_TAG_REQUIRED,
+  ERR_MSG_RADIUS_REQUIRED,
+  ERR_MSG_START_DATE_REQUIRED
+} from '../../../defaults/field-validation-messages';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -76,7 +78,7 @@ export class FilterDialogComponent implements OnInit {
 
   onSaveClicked(): void {
     if (this.filterForm.invalid) {
-      this.toast.warning(INVALID_FORM);
+      this.toast.error('Invalid form');
       this.filterForm.markAsTouched();
       return;
     }
@@ -95,24 +97,27 @@ export class FilterDialogComponent implements OnInit {
   getRadiusErrorMessage(): string {
     const radius: AbstractControl = this.filterForm.get('radius');
     if (radius.hasError('required')) {
-      return ERR_MSG_MANDATORY_RADIUS;
+      return ERR_MSG_RADIUS_REQUIRED;
     }
-    if (radius.hasError('min') || radius.hasError('max')) {
-      return ERR_MSG_RADIUS_INTERVAL;
+    if (radius.hasError('min')) {
+      return ERR_MSG_MIN_RADIUS;
+    }
+    if (radius.hasError('max')) {
+      return ERR_MSG_MAX_RADIUS;
     }
   }
 
   getStartDateErrorMessage(): string {
     const startDate: AbstractControl = this.filterForm.get('startDate');
     if (startDate.hasError('required')) {
-      return ERR_MSG_MANDATORY_START_DATE;
+      return ERR_MSG_START_DATE_REQUIRED;
     }
   }
 
   getEndDateErrorMessage(): string {
     const endDate: AbstractControl = this.filterForm.get('endDate');
     if (endDate.hasError('required')) {
-      return ERR_MSG_MANDATORY_END_DATE;
+      return ERR_MSG_END_DATE_REQUIRED;
     }
 
     if (endDate.hasError('after')) {
@@ -120,21 +125,21 @@ export class FilterDialogComponent implements OnInit {
     }
 
     if (endDate.hasError('year_limit')) {
-      return ERR_MSG_YEARS_INTERVAL;
+      return ERR_MSG_DATES_YEARS_INTERVAL;
     }
   }
 
   getTagsErrorMessage(): string {
     const selectedTags: AbstractControl = this.filterForm.get('selectedTags');
     if (selectedTags.hasError('required')) {
-      return ERR_MSG_MIN_TAG;
+      return ERR_MSG_MIN_TAG_REQUIRED;
     }
   }
 
   getSeveritiesErrorMessage(): string {
     const selectedSeverities: AbstractControl = this.filterForm.get('selectedSeverities');
     if (selectedSeverities.hasError('required')) {
-      return ERR_MSG_MIN_SEVERITY;
+      return ERR_MSG_MIN_SEVERITY_REQUIRED;
     }
   }
 

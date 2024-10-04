@@ -1,6 +1,6 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {Event} from '../../../../model/event';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {EventComment} from '../../../../model/event.comment';
@@ -10,11 +10,9 @@ import {SessionService} from '../../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CommentDialogComponent} from '../comment/comment-dialog.component';
-import {Location} from '@angular/common';
 import {map, mergeMap} from 'rxjs/operators';
 import {from} from 'rxjs';
 import {MapViewDialogComponent} from './map/map-view-dialog.component';
-import {SpinnerService} from '../../../../shared/spinner/spinner.service';
 
 @Component({
   selector: 'app-event.details',
@@ -35,24 +33,17 @@ export class EventDetailsComponent implements OnInit {
   comments: EventComment[] = [];
   commentsUsersImages: CommentUserImage[] = [];
 
-  constructor(private fileService: FileService,
+  constructor(activatedRoute: ActivatedRoute,
+              private fileService: FileService,
               private eventService: EventService,
               private sessionService: SessionService,
               private eventCommentService: EventCommentService,
-              private spinnerService: SpinnerService,
               private domSanitizer: DomSanitizer,
               private mapsApiLoader: MapsAPILoader,
-              private router: Router,
-              private activatedRoute: ActivatedRoute,
-              private webLocation: Location,
               private ngZone: NgZone,
               private dialog: MatDialog) {
 
-    const state = this.router.getCurrentNavigation().extras.state;
-    if (!state) {
-      webLocation.back();
-    }
-    this.eventId = state.id;
+    this.eventId = Number(activatedRoute.snapshot.paramMap.get('id'));
 
   }
 
@@ -134,8 +125,7 @@ export class EventDetailsComponent implements OnInit {
       data: {
         eventId: this.event.id,
         userId: this.sessionService.getUser().id
-      },
-      autoFocus: false
+      }
     });
 
     dialogRef.afterClosed()

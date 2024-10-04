@@ -5,11 +5,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EventComment} from '../../../../model/event.comment';
 import {SpinnerService} from '../../../../shared/spinner/spinner.service';
 import {EventCommentRequest} from '../../../../model/request/event.comment.request';
-import {INVALID_FORM, MAX_COMMENT_LENGTH} from '../../../../defaults/constants';
+import {MAX_COMMENT_LENGTH} from '../../../../defaults/constants';
 import {FormControl, Validators} from '@angular/forms';
+import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../../defaults/field-validation-messages';
 
-const ERR_MSG_MANDATORY_COMMENT: string = 'The comment is mandatory';
-const ERR_MSG_COMMENT_LENGTH: string = 'The comment must have at most ' + MAX_COMMENT_LENGTH + ' characters';
 
 @Component({
   selector: 'app-comment-dialog',
@@ -34,7 +33,7 @@ export class CommentDialogComponent implements OnInit {
 
   onValidateClicked(): void {
     if (this.commentControl.invalid) {
-      this.toast.warning(INVALID_FORM);
+      this.toast.error('Invalid form');
       this.commentControl.markAsTouched();
       return;
     }
@@ -56,7 +55,7 @@ export class CommentDialogComponent implements OnInit {
 
   getCommentErrorMessage(): string {
     if (this.commentControl.hasError('required')) {
-      return ERR_MSG_MANDATORY_COMMENT;
+      return ERR_MSG_COMMENT_REQUIRED;
     }
     if (this.commentControl.hasError('maxlength')) {
       return ERR_MSG_COMMENT_LENGTH;

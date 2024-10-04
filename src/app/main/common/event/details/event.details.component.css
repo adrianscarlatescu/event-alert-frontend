@@ -31,10 +31,7 @@
 }
 
 .event_details_map_button {
-  margin-right: 0;
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
+  text-align: right;
 }
 
 .event_details_comments_div {
@@ -53,8 +50,17 @@
 }
 
 .event_details_description_div {
-  word-wrap: break-word;
-  max-width: 400px;
+  word-break: break-word;
+}
+
+.event_details_footer_div {
+  display: flex;
+  width: 400px;
+}
+
+.event_details_footer_info_div {
+  margin-top: 10px;
+  width: 100%;
 }
 
 .mat-list-item:hover {

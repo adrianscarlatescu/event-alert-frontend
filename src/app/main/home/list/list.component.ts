@@ -33,7 +33,7 @@ export class ListComponent implements OnInit {
   }
 
   onRowClicked(eventId: number): void {
-    this.router.navigate(['event/details'], {state: {id: eventId}});
+    this.router.navigate(['event', eventId]);
   }
 
   onPageChanged(pageEvent: PageEvent): void {

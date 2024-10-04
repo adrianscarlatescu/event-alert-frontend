@@ -12,14 +12,15 @@ import {concatMap} from 'rxjs/operators';
 import {LoginRequest} from '../model/request/login.request';
 import {RegisterRequest} from '../model/request/register.request';
 import {JWT_OFFSET_SECONDS, MAX_EMAIL_LENGTH, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH} from '../defaults/constants';
-
-const ERR_MSG_MANDATORY_FIELD: string = 'Field required';
-const ERR_MSG_INVALID_EMAIL: string = 'Invalid email';
-const ERR_MSG_EMAIL_LENGTH: string = 'The email must have at most ' + MAX_EMAIL_LENGTH + ' characters';
-const ERR_MSG_PASSWORD_LENGTH: string = 'The length must have between ' +
-  MIN_PASSWORD_LENGTH + ' and ' +
-  MAX_PASSWORD_LENGTH + ' characters';
-const ERR_MSG_DIFFERENT_PASSWORDS: string = 'The passwords do not match';
+import {
+  ERR_MSG_CONFIRMATION_PASSWORD_REQUIRED,
+  ERR_MSG_DIFFERENT_PASSWORDS,
+  ERR_MSG_EMAIL_LENGTH,
+  ERR_MSG_EMAIL_REQUIRED,
+  ERR_MSG_INVALID_EMAIL,
+  ERR_MSG_PASSWORD_LENGTH,
+  ERR_MSG_PASSWORD_REQUIRED
+} from '../defaults/field-validation-messages';
 
 @Component({
   selector: 'app-auth',
@@ -34,9 +35,9 @@ export class AuthComponent implements OnInit {
   hidePassword: boolean = true;
   returnUrl: string;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(activatedRoute: ActivatedRoute,
+              private formBuilder: FormBuilder,
               private router: Router,
-              private activatedRoute: ActivatedRoute,
               private toast: ToastrService,
               private authService: AuthService,
               private spinnerService: SpinnerService,
@@ -57,16 +58,14 @@ export class AuthComponent implements OnInit {
       localStorage.clear();
     }
 
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.returnUrl = params['returnUrl'];
-    });
+    this.returnUrl = activatedRoute.snapshot.queryParams['returnUrl'];
 
   }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      email: [undefined, [Validators.required, Validators.email, Validators.maxLength(MAX_EMAIL_LENGTH)]],
-      password: [undefined, [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH), Validators.maxLength(MAX_PASSWORD_LENGTH)]],
+      email: [undefined, [Validators.required, Validators.email]],
+      password: [undefined, [Validators.required]],
     });
 
     this.registerForm = this.formBuilder.group({
@@ -80,29 +79,22 @@ export class AuthComponent implements OnInit {
 
   getLoginEmailErrorMessage(): string {
     if (this.loginForm.get('email').hasError('required')) {
-      return ERR_MSG_MANDATORY_FIELD;
+      return ERR_MSG_EMAIL_REQUIRED;
     }
     if (this.loginForm.get('email').hasError('email')) {
       return ERR_MSG_INVALID_EMAIL;
-    }
-    if (this.registerForm.get('email').hasError('maxlength')) {
-      return ERR_MSG_EMAIL_LENGTH;
     }
   }
 
   getLoginPasswordErrorMessage(): string {
     if (this.loginForm.get('password').hasError('required')) {
-      return ERR_MSG_MANDATORY_FIELD;
-    }
-    if (this.loginForm.get('password').hasError('minlength') ||
-      this.loginForm.get('password').hasError('maxlength')) {
-      return ERR_MSG_PASSWORD_LENGTH;
+      return ERR_MSG_PASSWORD_REQUIRED;
     }
   }
 
   getRegisterEmailErrorMessage(): string {
     if (this.registerForm.get('email').hasError('required')) {
-      return ERR_MSG_MANDATORY_FIELD;
+      return ERR_MSG_EMAIL_REQUIRED;
     }
     if (this.registerForm.get('email').hasError('email')) {
       return ERR_MSG_INVALID_EMAIL;
@@ -114,7 +106,7 @@ export class AuthComponent implements OnInit {
 
   getRegisterPasswordErrorMessage(): string {
     if (this.registerForm.get('password').hasError('required')) {
-      return ERR_MSG_MANDATORY_FIELD;
+      return ERR_MSG_PASSWORD_REQUIRED;
     }
     if (this.registerForm.get('password').hasError('minlength') ||
       this.registerForm.get('password').hasError('maxlength')) {
@@ -124,11 +116,7 @@ export class AuthComponent implements OnInit {
 
   getRegisterConfirmPasswordErrorMessage(): string {
     if (this.registerForm.get('confirmPassword').hasError('required')) {
-      return ERR_MSG_MANDATORY_FIELD;
-    }
-    if (this.registerForm.get('confirmPassword').hasError('minlength') ||
-      this.registerForm.get('confirmPassword').hasError('maxlength')) {
-      return ERR_MSG_PASSWORD_LENGTH;
+      return ERR_MSG_CONFIRMATION_PASSWORD_REQUIRED;
     }
     if (this.registerForm.get('confirmPassword').hasError('not_the_same')) {
       return ERR_MSG_DIFFERENT_PASSWORDS;
@@ -181,6 +169,9 @@ class PasswordValidator {
   static validate(control: AbstractControl): ValidationErrors | null {
     const password: string = control.get('password')?.value;
     const confirmPassword: string = control.get('confirmPassword')?.value;
+    if (!password || !confirmPassword) {
+      return null;
+    }
     if (password !== confirmPassword) {
       control.get('confirmPassword')?.setErrors({not_the_same: true});
       return ({not_the_same: true});
