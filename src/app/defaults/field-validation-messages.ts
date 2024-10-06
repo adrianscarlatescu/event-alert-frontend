@@ -43,7 +43,7 @@ export const ERR_MSG_MAX_RADIUS: string = 'The radius must be less or equal to '
 export const ERR_MSG_START_DATE_REQUIRED: string = 'The start date is required';
 export const ERR_MSG_END_DATE_REQUIRED: string = 'The end date is required';
 export const ERR_MSG_END_DATE_AFTER_START_DATE: string = 'The end date must be after the start date';
-export const ERR_MSG_DATES_YEARS_INTERVAL: string = 'The interval between the start date and the end date must not exceed ' + MAX_YEARS_INTERVAL + ' years';
+export const ERR_MSG_DATES_YEARS_INTERVAL: string = 'The time interval must not exceed ' + MAX_YEARS_INTERVAL + ' years';
 export const ERR_MSG_MIN_TAG_REQUIRED: string = 'At least one tag is required';
 export const ERR_MSG_MIN_SEVERITY_REQUIRED: string = 'At least one severity is required';
 
