@@ -25,7 +25,8 @@ export class AuthService {
   login(loginRequest: LoginRequest): Observable<Tokens> {
     return this.http.post<Tokens>(`${baseUrl}/auth/login`, loginRequest)
       .pipe(map(tokens => {
-        this.sessionService.setTokens(tokens);
+        this.sessionService.setAccessToken(tokens.accessToken);
+        this.sessionService.setRefreshToken(tokens.refreshToken);
         return tokens;
       }));
   }
@@ -34,7 +35,8 @@ export class AuthService {
     return this.http.get<Tokens>(`${baseUrl}/auth/refresh`)
       .pipe(map(tokens => {
         console.log('Access token refreshed');
-        this.sessionService.setTokens(tokens);
+        this.sessionService.setAccessToken(tokens.accessToken);
+        this.sessionService.setRefreshToken(tokens.refreshToken);
         return tokens;
       }));
   }

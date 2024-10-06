@@ -5,7 +5,6 @@ import {Router} from '@angular/router';
 import {SessionService} from '../service/session.service';
 import {ToastrService} from 'ngx-toastr';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
-import {Role} from '../enums/role';
 
 @Component({
   selector: 'app-main',
@@ -24,9 +23,7 @@ export class MainComponent implements OnInit, OnDestroy {
               private toast: ToastrService,
               private router: Router) {
 
-    this.isUserAdmin = this.sessionService.getUser().userRoles
-      .map(userRole => userRole.name)
-      .includes(Role.ROLE_ADMIN);
+    this.isUserAdmin = this.sessionService.isUserAdmin();
 
   }
 

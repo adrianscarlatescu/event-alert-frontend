@@ -8,7 +8,7 @@ import {EventTagService} from './event.tag.service';
 import {EventSeverityService} from './event.severity.service';
 import {EventTag} from '../model/event.tag';
 import {EventSeverity} from '../model/event.severity';
-import {Tokens} from '../model/tokens';
+import {Role} from '../enums/role';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +27,12 @@ export class SessionService {
 
   public getUser(): User {
     return JSON.parse(localStorage.getItem('user'));
+  }
+
+  public isUserAdmin(): boolean {
+    return this.getUser().userRoles
+      .map(userRole => userRole.name)
+      .includes(Role.ROLE_ADMIN);
   }
 
   public setUserLatitude(latitude: number) {
@@ -61,13 +67,16 @@ export class SessionService {
     return JSON.parse(localStorage.getItem('severities'));
   }
 
-  public setTokens(token: Tokens): void {
-    localStorage.setItem('accessToken', token.accessToken);
-    localStorage.setItem('refreshToken', token.refreshToken);
+  public setAccessToken(accessToken: string): void {
+    localStorage.setItem('accessToken', accessToken);
   }
 
   public getAccessToken(): string {
     return localStorage.getItem('accessToken');
+  }
+
+  public setRefreshToken(refreshToken: string): void {
+    localStorage.setItem('refreshToken', refreshToken);
   }
 
   public getRefreshToken(): string {
