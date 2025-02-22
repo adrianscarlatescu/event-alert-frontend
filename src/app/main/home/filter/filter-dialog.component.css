@@ -1,17 +1,17 @@
 .filter_page_div {
-  width: 60vh;
+  width: 80vh;
   min-width: 400px;
   text-align: start;
   padding: 10px;
 }
 
-.filter_tag_option_div {
+.filter_type_option_div {
   display: flex;
   vertical-align: center;
   padding: 5px 20px;
 }
 
-.filter_tag_option_image {
+.filter_type_option_image {
   width: 40px;
   height: 40px;
   margin-right: 20px;
@@ -24,6 +24,19 @@
 }
 
 .filter_severity_mat_card {
+  border-radius: 24px;
+  width: 6px;
+  height: 6px;
+  margin-right: 20px;
+}
+
+.filter_status_option_div {
+  display: flex;
+  vertical-align: center;
+  padding: 5px 20px;
+}
+
+.filter_status_mat_card {
   border-radius: 24px;
   width: 6px;
   height: 6px;

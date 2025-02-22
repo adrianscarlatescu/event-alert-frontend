@@ -1,22 +1,14 @@
-import {EventTag} from '../../../model/event.tag';
-import {EventSeverity} from '../../../model/event.severity';
+import {SeverityDto} from '../../../model/severity.dto';
+import {TypeDto} from '../../../model/type.dto';
+import {StatusDto} from '../../../model/status.dto';
 
-export class FilterOptions {
+export type FilterOptions = {
 
   radius: number;
   startDate: Date;
   endDate: Date;
-  tags: EventTag[];
-  severities: EventSeverity[];
-
-  constructor() {
-    this.radius = 1000;
-    this.tags = [];
-    this.severities = [];
-
-    // Cover the events recorded in the database
-    this.startDate = new Date(2020, 0, 1);
-    this.endDate = new Date(2020, 11, 31);
-  }
+  types: TypeDto[];
+  severities: SeverityDto[];
+  statuses: StatusDto[];
 
 }

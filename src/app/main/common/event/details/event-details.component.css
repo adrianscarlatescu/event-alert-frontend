@@ -1,0 +1,75 @@
+.event_details_div {
+  display: flex;
+  justify-content: center;
+}
+
+.event_details_avatar_mat_card {
+  width: 50px;
+  height: 50px;
+  background-size: cover;
+}
+
+.event_details_type_mat_card {
+  width: 40px;
+  height: 40px;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 8px;
+}
+
+.event_details_mat_card {
+  text-align: start;
+  width: fit-content;
+  padding-bottom: 0;
+}
+
+.event_details_event_image {
+  width: 80vh;
+  height: 400px;
+  object-fit: cover;
+}
+
+.event_details_map_button {
+  text-align: right;
+}
+
+.event_details_comments_div {
+  display: flex;
+  height: fit-content;
+  margin-top: 25px;
+}
+
+.event_details_comments_number_mat_card {
+  margin-left: 10px;
+  margin-right: 10px;
+  height: fit-content;
+  width: fit-content;
+  padding: 10px;
+  background-color: #f0ecf9C0;
+}
+
+.event_details_description_div {
+  word-break: break-word;
+}
+
+.event_details_footer_div {
+  display: flex;
+  width: 400px;
+}
+
+.event_details_footer_info_div {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.event_details_status_circle {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mat-list-item:hover {
+  background-color: #f0ecf9C0;
+}

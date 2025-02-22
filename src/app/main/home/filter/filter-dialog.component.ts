@@ -3,8 +3,7 @@ import {FilterOptions} from './filter.options';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {SessionService} from '../../../service/session.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {EventTag} from '../../../model/event.tag';
-import {EventSeverity} from '../../../model/event.severity';
+import {SeverityDto} from '../../../model/severity.dto';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ToastrService} from 'ngx-toastr';
 import {MatSelectChange} from '@angular/material/select';
@@ -16,10 +15,13 @@ import {
   ERR_MSG_MAX_RADIUS,
   ERR_MSG_MIN_RADIUS,
   ERR_MSG_MIN_SEVERITY_REQUIRED,
-  ERR_MSG_MIN_TAG_REQUIRED,
+  ERR_MSG_MIN_STATUS_REQUIRED,
+  ERR_MSG_MIN_TYPE_REQUIRED,
   ERR_MSG_RADIUS_REQUIRED,
   ERR_MSG_START_DATE_REQUIRED
 } from '../../../defaults/field-validation-messages';
+import {TypeDto} from '../../../model/type.dto';
+import {StatusDto} from '../../../model/status.dto';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -31,11 +33,14 @@ export class FilterDialogComponent implements OnInit {
   filterOptions: FilterOptions;
   filterForm: FormGroup;
 
-  tags: EventTag[];
-  isAllTags: boolean;
+  types: TypeDto[];
+  withAllTypesSelected: boolean;
 
-  severities: EventSeverity[];
-  isAllSeverities: boolean;
+  severities: SeverityDto[];
+  withAllSeveritiesSelected: boolean;
+
+  statuses: StatusDto[];
+  withAllStatusesSelected: boolean;
 
   isNewSearch: boolean;
 
@@ -44,26 +49,31 @@ export class FilterDialogComponent implements OnInit {
               private formBuilder: FormBuilder,
               private domSanitizer: DomSanitizer,
               private dialogRef: MatDialogRef<FilterDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) private data: FilterOptions) {
+              @Inject(MAT_DIALOG_DATA) data: FilterOptions) {
 
     this.filterOptions = data;
     this.isNewSearch = false;
 
-    this.tags = sessionService.getTags().sort((a, b) => a.name.localeCompare(b.name));
-    this.isAllTags = this.filterOptions.tags.length === this.tags.length;
+    this.types = sessionService.getTypes().sort((a, b) => a.label.localeCompare(b.label));
+    this.withAllTypesSelected = this.filterOptions.types.length === this.types.length;
 
     this.severities = sessionService.getSeverities();
-    this.isAllSeverities = this.filterOptions.severities.length === this.severities.length;
+    this.withAllSeveritiesSelected = this.filterOptions.severities.length === this.severities.length;
+
+    this.statuses = sessionService.getStatuses();
+    this.withAllStatusesSelected = this.filterOptions.statuses.length === this.statuses.length;
 
   }
 
   ngOnInit(): void {
     this.filterForm = this.formBuilder.group({
       radius: [this.filterOptions.radius, [Validators.required, Validators.min(MIN_RADIUS), Validators.max(MAX_RADIUS)]],
-      selectedTags: [this.tags.filter(tag =>
-        this.filterOptions.tags.find(filterTag => filterTag.id === tag.id)), [Validators.required]],
+      selectedTypes: [this.types.filter(type =>
+        this.filterOptions.types.find(filterType => filterType.id === type.id)), [Validators.required]],
       selectedSeverities: [this.severities.filter(severity =>
         this.filterOptions.severities.find(filterSeverity => filterSeverity.id === severity.id)), [Validators.required]],
+      selectedStatuses: [this.statuses.filter(status =>
+        this.filterOptions.statuses.find(filterStatus => filterStatus.id === status.id)), [Validators.required]],
       startDate: [this.filterOptions.startDate, [Validators.required]],
       endDate: [this.filterOptions.endDate, [Validators.required]],
     }, {
@@ -83,11 +93,14 @@ export class FilterDialogComponent implements OnInit {
       return;
     }
 
-    this.filterOptions.radius = this.filterForm.value.radius;
-    this.filterOptions.startDate = this.filterForm.value.startDate;
-    this.filterOptions.endDate = this.filterForm.value.endDate;
-    this.filterOptions.tags = this.filterForm.value.selectedTags;
-    this.filterOptions.severities = this.filterForm.value.selectedSeverities;
+    this.filterOptions = {
+      radius: this.filterForm.value.radius,
+      startDate: this.filterForm.value.startDate,
+      endDate: this.filterForm.value.endDate,
+      types: this.filterForm.value.selectedTypes,
+      severities: this.filterForm.value.selectedSeverities,
+      statuses: this.filterForm.value.selectedStatuses
+    }
 
     this.isNewSearch = true;
 
@@ -129,10 +142,10 @@ export class FilterDialogComponent implements OnInit {
     }
   }
 
-  getTagsErrorMessage(): string {
-    const selectedTags: AbstractControl = this.filterForm.get('selectedTags');
-    if (selectedTags.hasError('required')) {
-      return ERR_MSG_MIN_TAG_REQUIRED;
+  getTypesErrorMessage(): string {
+    const selectedTypes: AbstractControl = this.filterForm.get('selectedTypes');
+    if (selectedTypes.hasError('required')) {
+      return ERR_MSG_MIN_TYPE_REQUIRED;
     }
   }
 
@@ -143,29 +156,49 @@ export class FilterDialogComponent implements OnInit {
     }
   }
 
-  onTagsSelectionChange(tags: MatSelectChange): void {
-    this.isAllTags = tags.value.length === this.tags.length;
+  getStatusesErrorMessage(): string {
+    const selectedStatuses: AbstractControl = this.filterForm.get('selectedStatuses');
+    if (selectedStatuses.hasError('required')) {
+      return ERR_MSG_MIN_STATUS_REQUIRED;
+    }
   }
 
-  onAllTagsChanged(): void {
-    this.isAllTags = !this.isAllTags;
-    if (this.isAllTags) {
-      this.filterForm.get('selectedTags').setValue(this.tags);
+  onTypesSelectionChange(types: MatSelectChange): void {
+    this.withAllTypesSelected = types.value.length === this.types.length;
+  }
+
+  onAllTypesChanged(): void {
+    this.withAllTypesSelected = !this.withAllTypesSelected;
+    if (this.withAllTypesSelected) {
+      this.filterForm.get('selectedTypes').setValue(this.types);
     } else {
-      this.filterForm.get('selectedTags').setValue([]);
+      this.filterForm.get('selectedTypes').setValue([]);
     }
   }
 
   onSeveritiesSelectionChange(severities: MatSelectChange): void {
-    this.isAllSeverities = severities.value.length === this.severities.length;
+    this.withAllSeveritiesSelected = severities.value.length === this.severities.length;
   }
 
   onAllSeveritiesChanged(): void {
-    this.isAllSeverities = !this.isAllSeverities;
-    if (this.isAllSeverities) {
+    this.withAllSeveritiesSelected = !this.withAllSeveritiesSelected;
+    if (this.withAllSeveritiesSelected) {
       this.filterForm.get('selectedSeverities').setValue(this.severities);
     } else {
       this.filterForm.get('selectedSeverities').setValue([]);
+    }
+  }
+
+  onStatusesSelectionChange(statuses: MatSelectChange): void {
+    this.withAllStatusesSelected = statuses.value.length === this.statuses.length;
+  }
+
+  onAllStatusesChanged(): void {
+    this.withAllStatusesSelected = !this.withAllStatusesSelected;
+    if (this.withAllStatusesSelected) {
+      this.filterForm.get('selectedStatuses').setValue(this.statuses);
+    } else {
+      this.filterForm.get('selectedStatuses').setValue([]);
     }
   }
 
@@ -193,6 +226,5 @@ class DateValidator {
       control.get('endDate')?.setErrors({year_limit: true});
       return ({year_limit: true});
     }
-
   }
 }

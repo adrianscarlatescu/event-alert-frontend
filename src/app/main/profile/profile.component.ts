@@ -5,10 +5,9 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
 import {SessionService} from '../../service/session.service';
-import {UserRequest} from '../../model/request/user.request';
-import {User} from '../../model/user';
+import {UserDto} from '../../model/user.dto';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {MAX_USER_NAME_LENGTH, PHONE_NUMBER_REGEX, USER_IMAGE_FILE_PREFIX} from '../../defaults/constants';
+import {LENGTH_50, PHONE_NUMBER_PATTERN, USER_IMAGE_FILE_PREFIX} from '../../defaults/constants';
 import {
   ERR_MSG_FIRST_NAME_LENGTH,
   ERR_MSG_FIRST_NAME_REQUIRED,
@@ -17,6 +16,8 @@ import {
   ERR_MSG_PHONE_NUMBER_REQUIRED,
   ERR_MSG_PHONE_PATTERN
 } from '../../defaults/field-validation-messages';
+import {UserUpdateDto} from '../../model/user-update.dto';
+import {GenderDto} from '../../model/gender.dto';
 
 
 @Component({
@@ -26,7 +27,8 @@ import {
 })
 export class ProfileComponent implements OnInit {
 
-  user: User;
+  user: UserDto;
+  genders: GenderDto[];
   profileImage: SafeUrl;
   profileForm: FormGroup;
   file: File;
@@ -40,16 +42,17 @@ export class ProfileComponent implements OnInit {
               private domSanitizer: DomSanitizer) {
 
     this.user = this.sessionService.getUser();
+    this.genders = this.sessionService.getGenders();
 
   }
 
   ngOnInit(): void {
     this.profileForm = this.formBuilder.group({
-      firstName: [this.user.firstName, [Validators.required, Validators.maxLength(MAX_USER_NAME_LENGTH)]],
-      lastName: [this.user.lastName, [Validators.required, Validators.maxLength(MAX_USER_NAME_LENGTH)]],
-      gender: [this.user.gender],
+      firstName: [this.user.firstName, [Validators.required, Validators.maxLength(LENGTH_50)]],
+      lastName: [this.user.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
+      gender: [this.user.gender.id],
       dateOfBirth: [this.user.dateOfBirth],
-      phoneNumber: [this.user.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_REGEX)]]
+      phoneNumber: [this.user.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_PATTERN)]]
     });
 
     if (this.user.imagePath) {
@@ -87,16 +90,17 @@ export class ProfileComponent implements OnInit {
   }
 
   private updateUser(): void {
-    const userRequest: UserRequest = new UserRequest();
-    userRequest.firstName = this.profileForm.value.firstName;
-    userRequest.lastName = this.profileForm.value.lastName;
-    userRequest.dateOfBirth = this.profileForm.value.dateOfBirth;
-    userRequest.phoneNumber = this.profileForm.value.phoneNumber;
-    userRequest.gender = this.profileForm.value.gender;
-    userRequest.imagePath = this.user.imagePath;
-    userRequest.roles = this.user.userRoles.map(userRole => userRole.name);
+    const userUpdate: UserUpdateDto = {
+      firstName: this.profileForm.value.firstName,
+      lastName: this.profileForm.value.lastName,
+      dateOfBirth: this.profileForm.value.dateOfBirth,
+      phoneNumber: this.profileForm.value.phoneNumber,
+      genderId: this.profileForm.value.gender,
+      imagePath: this.user.imagePath,
+      roleIds: this.user.roles.map(role => role.id)
+    };
 
-    this.userService.putProfile(userRequest)
+    this.userService.putProfile(userUpdate)
       .subscribe(user => {
         this.toast.success('Profile updated');
         this.sessionService.setUser(user);
@@ -107,6 +111,10 @@ export class ProfileComponent implements OnInit {
   private setImage(file: any): void {
     const url: string = URL.createObjectURL(file);
     this.profileImage = this.domSanitizer.bypassSecurityTrustUrl(url);
+  }
+
+  getRoles(): string {
+    return this.user.roles.map(role => role.label).join(', ');
   }
 
   getFirstNameErrorMessage(): string {

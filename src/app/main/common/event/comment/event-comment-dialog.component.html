@@ -1,0 +1,12 @@
+<div style="width: 80vh">
+  <h1 mat-dialog-title>New comment</h1>
+  <div mat-dialog-content>
+    <mat-form-field style="width: 100%">
+      <textarea [formControl]="commentControl" matInput required placeholder="Type below..." style="min-height: 50px"></textarea>
+    </mat-form-field>
+    <mat-error *ngIf="commentControl.dirty && commentControl.invalid">{{getCommentErrorMessage()}}</mat-error>
+  </div>
+  <button mat-mini-fab color="primary" style="float: right" (click)="onValidateClicked()">
+    <mat-icon>check</mat-icon>
+  </button>
+</div>

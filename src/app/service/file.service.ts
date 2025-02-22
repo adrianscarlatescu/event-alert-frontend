@@ -12,13 +12,13 @@ export class FileService {
   }
 
   getImage(imagePath: string): Observable<Blob> {
-    return this.http.get(`${baseUrl}/image`, {params: {path: imagePath}, responseType: 'blob'});
+    return this.http.get(`${baseUrl}/images`, {params: {path: imagePath}, responseType: 'blob'});
   }
 
   postImage(image: File, type: string): Observable<object> {
     const formData: FormData = new FormData();
     formData.append('image', image, type);
-    return this.http.post(`${baseUrl}/image`, formData);
+    return this.http.post(`${baseUrl}/images`, formData);
   }
 
 }

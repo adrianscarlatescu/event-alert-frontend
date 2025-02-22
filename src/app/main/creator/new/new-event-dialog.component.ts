@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {EventTag} from '../../../model/event.tag';
-import {Event} from '../../../model/event';
-import {EventSeverity} from '../../../model/event.severity';
+import {EventDto} from '../../../model/event.dto';
+import {SeverityDto} from '../../../model/severity.dto';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FileService} from '../../../service/file.service';
 import {SessionService} from '../../../service/session.service';
@@ -10,18 +9,19 @@ import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SpinnerService} from '../../../shared/spinner/spinner.service';
-import {EventRequest} from '../../../model/request/event.request';
-import {EVENT_IMAGE_FILE_PREFIX, MAX_DESCRIPTION_LENGTH} from '../../../defaults/constants';
-import {User} from '../../../model/user';
+import {EVENT_IMAGE_FILE_PREFIX, LENGTH_1000} from '../../../defaults/constants';
+import {UserDto} from '../../../model/user.dto';
 import {
   ERR_MSG_DESCRIPTION_LENGTH,
   ERR_MSG_IMAGE_REQUIRED,
-  ERR_MSG_PROFILE_FIRST_NAME_REQUIRED,
-  ERR_MSG_PROFILE_LAST_NAME_REQUIRED,
-  ERR_MSG_PROFILE_PHONE_NUMBER_REQUIRED,
+  ERR_MSG_PROFILE_FULL_NAME_REQUIRED,
   ERR_MSG_SEVERITY_REQUIRED,
-  ERR_MSG_TAG_REQUIRED
+  ERR_MSG_STATUS_REQUIRED,
+  ERR_MSG_TYPE_REQUIRED
 } from '../../../defaults/field-validation-messages';
+import {TypeDto} from '../../../model/type.dto';
+import {EventCreateDto} from '../../../model/event-create.dto';
+import {StatusDto} from '../../../model/status.dto';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -36,12 +36,13 @@ export class NewEventDialogComponent implements OnInit {
   file: File;
   eventImage: SafeUrl;
 
-  tags: EventTag[] = [];
-  severities: EventSeverity[] = [];
+  types: TypeDto[] = [];
+  severities: SeverityDto[] = [];
+  statuses: StatusDto[] = [];
 
   newEventForm: FormGroup;
 
-  newEvent: Event;
+  newEvent: EventDto;
 
   constructor(private formBuilder: FormBuilder,
               private fileService: FileService,
@@ -61,13 +62,16 @@ export class NewEventDialogComponent implements OnInit {
       return;
     }
 
-    this.tags = sessionService.getTags().sort((a, b) => a.name.localeCompare(b.name));
+    this.types = sessionService.getTypes().sort((a, b) => a.label.localeCompare(b.label)); // TODO
     this.severities = sessionService.getSeverities();
+    this.statuses = sessionService.getStatuses();
 
     this.newEventForm = this.formBuilder.group({
-      tag: [undefined, Validators.required],
       severity: [undefined, Validators.required],
-      description: [undefined, Validators.maxLength(MAX_DESCRIPTION_LENGTH)]
+      type: [undefined, Validators.required],
+      status: [undefined, Validators.required],
+      impactRadius: [undefined],
+      description: [undefined, Validators.maxLength(LENGTH_1000)]
     });
   }
 
@@ -99,41 +103,28 @@ export class NewEventDialogComponent implements OnInit {
       return;
     }
 
-    const user: User = this.sessionService.getUser();
-    let userRequiredDataErrorMessage: string = '';
-    if (!user.firstName) {
-      userRequiredDataErrorMessage += ERR_MSG_PROFILE_FIRST_NAME_REQUIRED;
-    }
-    if (!user.lastName) {
-      if (userRequiredDataErrorMessage) {
-        userRequiredDataErrorMessage += '<hr/>';
-      }
-      userRequiredDataErrorMessage += ERR_MSG_PROFILE_LAST_NAME_REQUIRED;
-    }
-    if (!user.phoneNumber) {
-      if (userRequiredDataErrorMessage) {
-        userRequiredDataErrorMessage += '<hr/>';
-      }
-      userRequiredDataErrorMessage += ERR_MSG_PROFILE_PHONE_NUMBER_REQUIRED;
-    }
-    if (userRequiredDataErrorMessage) {
-      this.toast.error(userRequiredDataErrorMessage, '',{enableHtml: true});
+    const user: UserDto = this.sessionService.getUser();
+    if (!user.firstName || !user.lastName) {
+      this.toast.error(ERR_MSG_PROFILE_FULL_NAME_REQUIRED, '',{enableHtml: true});
       return;
     }
 
     this.spinnerService.show();
     this.fileService.postImage(this.file, EVENT_IMAGE_FILE_PREFIX)
       .subscribe(imagePath => {
-        const eventRequest: EventRequest = new EventRequest();
-        eventRequest.latitude = this.latitude;
-        eventRequest.longitude = this.longitude;
-        eventRequest.userId = this.sessionService.getUser().id;
-        eventRequest.tagId = this.newEventForm.get('tag').value;
-        eventRequest.severityId = this.newEventForm.get('severity').value;
-        eventRequest.imagePath = imagePath.toString();
-        eventRequest.description = this.newEventForm.get('description').value;
+        const eventCreate: EventCreateDto = {
+          latitude: this.latitude,
+          longitude: this.longitude,
+          impactRadius: null, // TODO
+          typeId: this.newEventForm.get('type').value,
+          severityId: this.newEventForm.get('severity').value,
+          statusId: this.newEventForm.get('status').value,
+          userId: this.sessionService.getUser().id,
+          imagePath: imagePath.toString(),
+          description: this.newEventForm.get('description').value
+        };
 
-        this.eventService.postEvent(eventRequest)
+        this.eventService.postEvent(eventCreate)
           .subscribe(event => {
             this.toast.success('Event successfully reported');
             this.newEvent = event;
@@ -143,15 +134,21 @@ export class NewEventDialogComponent implements OnInit {
       });
   }
 
-  getTagErrorMessage(): string {
-    if (this.newEventForm.get('tag').hasError('required')) {
-      return ERR_MSG_TAG_REQUIRED;
-    }
-  }
-
   getSeverityErrorMessage(): string {
     if (this.newEventForm.get('severity').hasError('required')) {
       return ERR_MSG_SEVERITY_REQUIRED;
+    }
+  }
+
+  getTypeErrorMessage(): string {
+    if (this.newEventForm.get('type').hasError('required')) {
+      return ERR_MSG_TYPE_REQUIRED;
+    }
+  }
+
+  getStatusErrorMessage(): string {
+    if (this.newEventForm.get('status').hasError('required')) {
+      return ERR_MSG_STATUS_REQUIRED;
     }
   }
 

@@ -5,10 +5,14 @@
 
 <div class="home_top_info_div">
   <mat-card>
-    <p>{{totalEvents}} events</p>
+    <p>{{totalContentDisplayed}} events displayed</p>
   </mat-card>
 
-  <mat-card id="home_page_info_mat_card" [ngStyle]="{'visibility': homePage === 'map' ? 'visible' : 'hidden'}">
+  <mat-card>
+    <p>{{totalEvents}} total events</p>
+  </mat-card>
+
+  <mat-card>
     <p>Page {{totalPages > 0 ? pageIndex + 1 : 0}}/{{totalPages}}</p>
   </mat-card>
 </div>

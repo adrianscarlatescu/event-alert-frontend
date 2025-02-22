@@ -37,8 +37,7 @@
         <mat-form-field>
           <mat-label>Gender</mat-label>
           <mat-select formControlName="gender">
-            <mat-option value="MALE">Male</mat-option>
-            <mat-option value="FEMALE">Female</mat-option>
+            <mat-option *ngFor="let gender of genders" [value]="gender.id">{{gender.label}}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -62,13 +61,6 @@
 
       <div class="profile_category_div">
         <mat-form-field>
-          <mat-label>ID</mat-label>
-          <input matInput disabled value="{{user.id}}">
-        </mat-form-field>
-
-        <br>
-
-        <mat-form-field>
           <mat-label>Email</mat-label>
           <input matInput disabled value="{{user.email}}">
         </mat-form-field>
@@ -82,9 +74,9 @@
 
         <br>
 
-        <mat-form-field *ngIf="user.joinDateTime">
+        <mat-form-field *ngIf="user.joinedAt">
           <mat-label>Join date</mat-label>
-          <input matInput disabled value="{{user.joinDateTime | date: 'medium'}}">
+          <input matInput disabled value="{{user.joinedAt | date: 'medium'}}">
         </mat-form-field>
 
         <br>
@@ -92,6 +84,13 @@
         <mat-form-field>
           <mat-label>Reports number</mat-label>
           <input matInput disabled value="{{user.reportsNumber}}">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Roles</mat-label>
+          <input matInput disabled value="{{getRoles()}}">
         </mat-form-field>
       </div>
     </div>

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {EventService} from '../../service/event.service';
 import {SessionService} from '../../service/session.service';
 import {Router} from '@angular/router';
-import {Event} from '../../model/event';
+import {EventDto} from '../../model/event.dto';
 import {ToastrService} from 'ngx-toastr';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import {SpinnerService} from '../../shared/spinner/spinner.service';
 export class CreatorComponent implements OnInit {
 
   dataSource: MatTableDataSource<Element> = new MatTableDataSource([]);
-  displayedColumns: string[] = ['thumbnail', 'tagName', 'severityName', 'dateTime'];
+  displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius'];
 
   constructor(private eventService: EventService,
               private sessionService: SessionService,
@@ -55,7 +55,7 @@ export class CreatorComponent implements OnInit {
 
     const dialogRef: MatDialogRef<NewEventDialogComponent> = this.dialog.open(NewEventDialogComponent);
     dialogRef.afterClosed().subscribe(() => {
-      const newEvent: Event = dialogRef.componentInstance.newEvent;
+      const newEvent: EventDto = dialogRef.componentInstance.newEvent;
       if (!newEvent) {
         return;
       }
@@ -66,15 +66,18 @@ export class CreatorComponent implements OnInit {
     });
   }
 
-  private getElementFromEvent(event: Event): Element {
-    const element: Element = new Element();
-    element.eventId = event.id;
-    element.tagName = event.tag.name;
-    element.tagImagePath = event.tag.imagePath;
-    element.severityName = event.severity.name;
-    element.severityColor = event.severity.color;
-    element.dateTime = event.dateTime;
-    return element;
+  private getElementFromEvent(event: EventDto): Element {
+    return {
+      eventId: event.id,
+      impactRadius: event.impactRadius,
+      typeLabel: event.type.label,
+      typeImagePath: event.type.imagePath,
+      severityLabel: event.severity.label,
+      severityColor: event.severity.color,
+      statusLabel: event.status.label,
+      statusColor: event.status.color,
+      createdAt: event.createdAt
+    };
   }
 
   getCacheImage(imagePath: string): string | ArrayBuffer {
@@ -83,13 +86,16 @@ export class CreatorComponent implements OnInit {
 
 }
 
-class Element {
+type Element = {
 
   eventId: number;
-  tagName: string;
-  tagImagePath: string;
-  severityName: string;
-  severityColor: number;
-  dateTime: Date;
+  impactRadius: number;
+  typeLabel: string;
+  typeImagePath: string;
+  severityLabel: string;
+  severityColor: string;
+  statusLabel: string;
+  statusColor: string;
+  createdAt: Date;
 
 }

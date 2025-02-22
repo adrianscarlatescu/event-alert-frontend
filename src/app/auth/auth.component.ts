@@ -9,9 +9,7 @@ import {SessionService} from '../service/session.service';
 import {CustomReuseStrategy} from '../main/common/custom.reuse.strategy';
 import {SpinnerService} from '../shared/spinner/spinner.service';
 import {concatMap} from 'rxjs/operators';
-import {LoginRequest} from '../model/request/login.request';
-import {RegisterRequest} from '../model/request/register.request';
-import {JWT_OFFSET_SECONDS, MAX_EMAIL_LENGTH, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH} from '../defaults/constants';
+import {JWT_OFFSET_SECONDS, LENGTH_8, LENGTH_50} from '../defaults/constants';
 import {
   ERR_MSG_CONFIRMATION_PASSWORD_REQUIRED,
   ERR_MSG_DIFFERENT_PASSWORDS,
@@ -21,6 +19,8 @@ import {
   ERR_MSG_PASSWORD_LENGTH,
   ERR_MSG_PASSWORD_REQUIRED
 } from '../defaults/field-validation-messages';
+import {AuthLoginDto} from '../model/auth-login.dto';
+import {AuthRegisterDto} from '../model/auth-register.dto';
 
 @Component({
   selector: 'app-auth',
@@ -69,9 +69,9 @@ export class AuthComponent implements OnInit {
     });
 
     this.registerForm = this.formBuilder.group({
-      email: [undefined, [Validators.required, Validators.email, Validators.maxLength(MAX_EMAIL_LENGTH)]],
-      password: [undefined, [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH), Validators.maxLength(MAX_PASSWORD_LENGTH)]],
-      confirmPassword: [undefined, [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH), Validators.maxLength(MAX_PASSWORD_LENGTH)]]
+      email: [undefined, [Validators.required, Validators.email, Validators.maxLength(LENGTH_50)]],
+      password: [undefined, [Validators.required, Validators.minLength(LENGTH_8), Validators.maxLength(LENGTH_50)]],
+      confirmPassword: [undefined, [Validators.required, Validators.minLength(LENGTH_8), Validators.maxLength(LENGTH_50)]]
     }, {
       validators: [PasswordValidator.validate]
     });
@@ -127,11 +127,12 @@ export class AuthComponent implements OnInit {
     if (this.loginForm.valid) {
       this.spinnerService.show();
 
-      const loginRequest: LoginRequest = new LoginRequest();
-      loginRequest.email = this.loginForm.value.email;
-      loginRequest.password = this.loginForm.value.password;
+      const authLogin: AuthLoginDto = {
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password
+      }
 
-      return this.authService.login(loginRequest)
+      return this.authService.login(authLogin)
         .pipe(concatMap(() => this.sessionService.sync()))
         .subscribe(() => {
           console.log('Sync completed');
@@ -150,12 +151,13 @@ export class AuthComponent implements OnInit {
     if (this.registerForm.valid) {
       this.spinnerService.show();
 
-      const registerRequest: RegisterRequest = new RegisterRequest();
-      registerRequest.email = this.registerForm.value.email;
-      registerRequest.password = this.registerForm.value.password;
-      registerRequest.confirmPassword = this.registerForm.value.confirmPassword;
+      const authRegister: AuthRegisterDto = {
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password,
+        confirmPassword: this.registerForm.value.confirmPassword
+      }
 
-      return this.authService.register(registerRequest)
+      return this.authService.register(authRegister)
         .subscribe(user => {
           this.toast.success('Registration successful');
           this.spinnerService.close();

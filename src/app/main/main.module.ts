@@ -12,35 +12,35 @@ import {RouteReuseStrategy, RouterModule} from '@angular/router';
 import {AuthGuard} from '../service/guard/auth.guard';
 import {SharedModule} from '../shared/shared.module';
 import {AgmCoreModule} from '@agm/core';
-import {EventDetailsComponent} from './common/event/details/event.details.component';
+import {EventDetailsComponent} from './common/event/details/event-details.component';
 import {AgmOverlays} from 'agm-overlays';
-import {CommentDialogComponent} from './common/event/comment/comment-dialog.component';
-import {MapComponent} from './home/map/map.component';
-import {ListComponent} from './home/list/list.component';
+import {EventCommentDialogComponent} from './common/event/comment/event-comment-dialog.component';
+import {EventsMapComponent} from './home/map/events-map.component';
+import {EventsListComponent} from './home/list/events-list.component';
 import {FilterDialogComponent} from './home/filter/filter-dialog.component';
-import {OrderDialogComponent} from './common/order/order.dialog.component';
+import {OrderDialogComponent} from './common/order/order-dialog.component';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
 import {NewEventDialogComponent} from './creator/new/new-event-dialog.component';
-import {MapViewDialogComponent} from './common/event/details/map/map-view-dialog.component';
+import {EventMapDialogComponent} from './common/event/map/event-map-dialog.component';
 
 @NgModule({
   declarations: [
     MainComponent,
     HomeComponent,
-    CreatorComponent,
-    AdminComponent,
-    ProfileComponent,
-    EventDetailsComponent,
-    NewEventDialogComponent,
-    CommentDialogComponent,
-    MapComponent,
-    ListComponent,
+    EventsMapComponent,
+    EventsListComponent,
     FilterDialogComponent,
     OrderDialogComponent,
+    CreatorComponent,
+    NewEventDialogComponent,
     NotificationsComponent,
-    MapViewDialogComponent
+    ProfileComponent,
+    AdminComponent,
+    EventDetailsComponent,
+    EventCommentDialogComponent,
+    EventMapDialogComponent
   ],
   imports: [
     CommonModule,

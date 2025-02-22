@@ -1,18 +1,18 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {SessionService} from '../../service/session.service';
-import {MapComponent} from './map/map.component';
+import {EventsMapComponent} from './map/events-map.component';
 import {FilterOptions} from './filter/filter.options';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FilterDialogComponent} from './filter/filter-dialog.component';
 import {EventService} from '../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
-import {OrderDialogComponent} from '../common/order/order.dialog.component';
-import {ListComponent} from './list/list.component';
+import {OrderDialogComponent} from '../common/order/order-dialog.component';
+import {EventsListComponent} from './list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 import {Order} from '../../enums/order';
-import {EventFilterRequest} from '../../model/request/event.filter.request';
 import {PAGE_SIZE} from '../../defaults/constants';
+import {EventFilterDto} from '../../model/event-filter.dto';
 
 @Component({
   selector: 'app-home',
@@ -21,17 +21,18 @@ import {PAGE_SIZE} from '../../defaults/constants';
 })
 export class HomeComponent implements OnInit {
 
-  @ViewChild(MapComponent) mapComponent: MapComponent;
-  @ViewChild(ListComponent) listComponent: ListComponent;
+  @ViewChild(EventsMapComponent) mapComponent: EventsMapComponent;
+  @ViewChild(EventsListComponent) listComponent: EventsListComponent;
 
   totalEvents: number;
   totalPages: number;
+  totalContentDisplayed: number;
   pageIndex: number;
 
   homePage: HomePage;
 
   filterOptions: FilterOptions;
-  filterRequest: EventFilterRequest;
+  eventFilter: EventFilterDto;
   order: Order;
 
   constructor(private eventService: EventService,
@@ -40,14 +41,20 @@ export class HomeComponent implements OnInit {
               private toast: ToastrService,
               private dialog: MatDialog) {
 
-    this.filterOptions = new FilterOptions();
-    this.filterOptions.tags = this.sessionService.getTags();
-    this.filterOptions.severities = this.sessionService.getSeverities();
+    this.filterOptions = {
+      radius: 1000,
+      types: this.sessionService.getTypes(),
+      severities: this.sessionService.getSeverities(),
+      statuses: this.sessionService.getStatuses(),
 
-    this.filterRequest = new EventFilterRequest();
+      // Cover the events recorded in the database
+      startDate: new Date(2020, 0, 1),
+      endDate: new Date(2020, 11, 31)
+    }
 
     this.totalEvents = 0;
     this.totalPages = 0;
+    this.totalContentDisplayed = 0;
     this.pageIndex = 0;
 
     this.order = Order.BY_DATE_DESCENDING;
@@ -100,13 +107,19 @@ export class HomeComponent implements OnInit {
       if (!isNewSearch) {
         return;
       }
-      this.filterRequest.radius = this.filterOptions.radius;
-      this.filterRequest.startDate = this.filterOptions.startDate;
-      this.filterRequest.endDate = this.filterOptions.endDate;
-      this.filterRequest.latitude = this.sessionService.getUserLatitude();
-      this.filterRequest.longitude = this.sessionService.getUserLongitude();
-      this.filterRequest.tagsIds = this.filterOptions.tags.map(tag => tag.id);
-      this.filterRequest.severitiesIds = this.filterOptions.severities.map(severity => severity.id);
+
+      this.filterOptions = dialogRef.componentInstance.filterOptions;
+
+      this.eventFilter = {
+        radius: this.filterOptions.radius,
+        startDate: this.filterOptions.startDate,
+        endDate: this.filterOptions.endDate,
+        latitude: this.sessionService.getUserLatitude(),
+        longitude: this.sessionService.getUserLongitude(),
+        typeIds: this.filterOptions.types.map(type => type.id),
+        severityIds: this.filterOptions.severities.map(severity => severity.id),
+        statusIds: this.filterOptions.statuses.map(status => status.id)
+      };
 
       this.pageIndex = 0;
       this.requestNewSearch();
@@ -142,10 +155,11 @@ export class HomeComponent implements OnInit {
   private requestNewSearch(): void {
     this.spinnerService.show();
     this.mapComponent.selectedEvent = undefined;
-    this.eventService.getEventsByFilter(this.filterRequest, PAGE_SIZE, this.pageIndex, this.order)
+    this.eventService.getEventsByFilter(this.eventFilter, PAGE_SIZE, this.pageIndex, this.order)
       .subscribe(page => {
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
+        this.totalContentDisplayed = page.content.length;
 
         this.mapComponent.setEvents(page.content);
         this.listComponent.setData(page.content, page.totalElements, this.pageIndex);

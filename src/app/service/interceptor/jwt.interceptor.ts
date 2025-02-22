@@ -58,9 +58,9 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (isAccessTokenExpired) {
       return this.authService.refresh()
-        .pipe(concatMap(tokens => {
+        .pipe(concatMap(authTokensDto => {
           console.log('Using new access token for current request');
-          request = this.createRequestWithAuthHeader(request, tokens.accessToken);
+          request = this.createRequestWithAuthHeader(request, authTokensDto.accessToken);
           return next.handle(request);
         }));
     }
