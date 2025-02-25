@@ -10,11 +10,11 @@ import {NewEventDialogComponent} from './new/new-event-dialog.component';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 
 @Component({
-  selector: 'app-creator',
-  templateUrl: './creator.component.html',
-  styleUrls: ['./creator.component.css']
+  selector: 'app-reporter',
+  templateUrl: './reporter.component.html',
+  styleUrls: ['./reporter.component.css']
 })
-export class CreatorComponent implements OnInit {
+export class ReporterComponent implements OnInit {
 
   dataSource: MatTableDataSource<Element> = new MatTableDataSource([]);
   displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius'];

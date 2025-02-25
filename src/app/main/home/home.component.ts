@@ -10,7 +10,7 @@ import {OrderDialogComponent} from '../common/order/order-dialog.component';
 import {EventsListComponent} from './list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {Order} from '../../enums/order';
+import {OrderCode} from '../../enums/order-code';
 import {PAGE_SIZE} from '../../defaults/constants';
 import {EventFilterDto} from '../../model/event-filter.dto';
 
@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
 
   filterOptions: FilterOptions;
   eventFilter: EventFilterDto;
-  order: Order;
+  orderCode: OrderCode;
 
   constructor(private eventService: EventService,
               private sessionService: SessionService,
@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
     this.totalContentDisplayed = 0;
     this.pageIndex = 0;
 
-    this.order = Order.BY_DATE_DESCENDING;
+    this.orderCode = OrderCode.BY_DATE_DESCENDING;
 
     const storageHomePage: string = this.sessionService.getHomePage();
     this.homePage = storageHomePage == 'list' ? HomePage.LIST : HomePage.MAP;
@@ -138,15 +138,15 @@ export class HomeComponent implements OnInit {
 
   onOrderClicked(): void {
     const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
-      data: this.order
+      data: this.orderCode
     });
 
     dialogRef.afterClosed().subscribe(newOrder => {
-      if (!newOrder || this.totalEvents === 0 || newOrder === this.order) {
+      if (!newOrder || this.totalEvents === 0 || newOrder === this.orderCode) {
         this.toast.info('Order not applied');
         return;
       }
-      this.order = newOrder;
+      this.orderCode = newOrder;
       this.pageIndex = 0;
       this.requestNewSearch();
     });
@@ -155,7 +155,7 @@ export class HomeComponent implements OnInit {
   private requestNewSearch(): void {
     this.spinnerService.show();
     this.mapComponent.selectedEvent = undefined;
-    this.eventService.getEventsByFilter(this.eventFilter, PAGE_SIZE, this.pageIndex, this.order)
+    this.eventService.getEventsByFilter(this.eventFilter, PAGE_SIZE, this.pageIndex, this.orderCode)
       .subscribe(page => {
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;

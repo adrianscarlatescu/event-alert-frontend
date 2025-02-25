@@ -36,7 +36,7 @@
         <mat-option *ngFor="let severity of severities" [value]="severity.id">
           <div class="new_event_severity_option_div">
             <mat-card class="new_event_severity_mat_card"
-                      [ngStyle]="{'background-color': '#' + severity.color.toString(16)}"></mat-card>
+                      [ngStyle]="{'background-color': severity.color}"></mat-card>
             {{severity.label}}
           </div>
         </mat-option>
@@ -61,6 +61,14 @@
 
       </mat-select>
       <mat-error *ngIf="newEventForm.get('status').invalid">{{getStatusErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Impact radius (km)</mat-label>
+      <input matInput type="number" formControlName="impactRadius">
+      <mat-error *ngIf="newEventForm.get('impactRadius').invalid">{{getImpactRadiusErrorMessage()}}</mat-error>
     </mat-form-field>
 
     <br>

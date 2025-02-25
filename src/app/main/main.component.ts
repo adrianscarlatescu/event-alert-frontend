@@ -62,8 +62,8 @@ export class MainComponent implements OnInit, OnDestroy {
     this.router.navigate(['/home']);
   }
 
-  onCreator(): void {
-    this.router.navigate(['/creator']);
+  onReporter(): void {
+    this.router.navigate(['/reporter']);
   }
 
   onNotifications(): void {

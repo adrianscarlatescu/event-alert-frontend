@@ -10,10 +10,10 @@ export type EventDto = {
   modifiedAt: Date;
   latitude: number;
   longitude: number;
-  impactRadius: number;
   type: TypeDto;
   severity: SeverityDto;
   status: StatusDto;
+  impactRadius: number;
   user: UserBaseDto;
   imagePath: string;
   description: string;

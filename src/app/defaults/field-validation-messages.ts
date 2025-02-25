@@ -4,7 +4,7 @@ import {
   LENGTH_1000,
   MIN_RADIUS,
   MAX_RADIUS,
-  MAX_YEARS_INTERVAL
+  MAX_YEARS_INTERVAL, MIN_IMPACT_RADIUS, MAX_IMPACT_RADIUS
 } from './constants';
 
 // Auth
@@ -28,6 +28,9 @@ export const ERR_MSG_PHONE_PATTERN: string = 'The phone number does not match th
 export const ERR_MSG_SEVERITY_REQUIRED: string = 'The severity is required';
 export const ERR_MSG_TYPE_REQUIRED: string = 'The type is required';
 export const ERR_MSG_STATUS_REQUIRED: string = 'The status is required';
+export const ERR_MSG_MIN_IMPACT_RADIUS: string = 'The impact radius must be greater or equal to ' + MIN_IMPACT_RADIUS;
+export const ERR_MSG_MAX_IMPACT_RADIUS: string = 'The impact radius must be less or equal to ' + MAX_IMPACT_RADIUS;
+export const ERR_MSG_IMPACT_RADIUS_DECIMALS: string = 'The impact radius must have up to 2 decimals';
 export const ERR_MSG_IMAGE_REQUIRED: string = 'The image is required';
 export const ERR_MSG_DESCRIPTION_LENGTH: string = 'The description must not exceed ' + LENGTH_1000 + ' characters';
 export const ERR_MSG_PROFILE_FULL_NAME_REQUIRED: string = 'The profile first name and last name are required';

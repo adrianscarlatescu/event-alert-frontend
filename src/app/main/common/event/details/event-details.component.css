@@ -55,7 +55,7 @@
 
 .event_details_footer_div {
   display: flex;
-  width: 400px;
+  width: 100%;
 }
 
 .event_details_footer_info_div {

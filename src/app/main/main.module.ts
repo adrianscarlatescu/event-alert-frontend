@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 import {HomeComponent} from './home/home.component';
-import {CreatorComponent} from './creator/creator.component';
+import {ReporterComponent} from './reporter/reporter.component';
 import {AdminComponent} from './admin/admin.component';
 import {ProfileComponent} from './profile/profile.component';
 import {MainComponent} from './main.component';
@@ -22,7 +22,7 @@ import {OrderDialogComponent} from './common/order/order-dialog.component';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
-import {NewEventDialogComponent} from './creator/new/new-event-dialog.component';
+import {NewEventDialogComponent} from './reporter/new/new-event-dialog.component';
 import {EventMapDialogComponent} from './common/event/map/event-map-dialog.component';
 
 @NgModule({
@@ -33,7 +33,7 @@ import {EventMapDialogComponent} from './common/event/map/event-map-dialog.compo
     EventsListComponent,
     FilterDialogComponent,
     OrderDialogComponent,
-    CreatorComponent,
+    ReporterComponent,
     NewEventDialogComponent,
     NotificationsComponent,
     ProfileComponent,
@@ -56,7 +56,7 @@ import {EventMapDialogComponent} from './common/event/map/event-map-dialog.compo
         path: '', component: MainComponent, canActivate: [AuthGuard],
         children: [
           {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-          {path: 'creator', component: CreatorComponent, canActivate: [AuthGuard]},
+          {path: 'reporter', component: ReporterComponent, canActivate: [AuthGuard]},
           {path: 'notifications', component: NotificationsComponent, canActivate: [AuthGuard]},
           {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
           {path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},

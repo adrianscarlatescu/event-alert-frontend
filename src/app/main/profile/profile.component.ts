@@ -7,7 +7,7 @@ import {ToastrService} from 'ngx-toastr';
 import {SessionService} from '../../service/session.service';
 import {UserDto} from '../../model/user.dto';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {LENGTH_50, PHONE_NUMBER_PATTERN, USER_IMAGE_FILE_PREFIX} from '../../defaults/constants';
+import {LENGTH_50, PHONE_NUMBER_PATTERN} from '../../defaults/constants';
 import {
   ERR_MSG_FIRST_NAME_LENGTH,
   ERR_MSG_FIRST_NAME_REQUIRED,
@@ -18,6 +18,7 @@ import {
 } from '../../defaults/field-validation-messages';
 import {UserUpdateDto} from '../../model/user-update.dto';
 import {GenderDto} from '../../model/gender.dto';
+import {ImageTypeCode} from '../../enums/image-type-code';
 
 
 @Component({
@@ -79,7 +80,7 @@ export class ProfileComponent implements OnInit {
 
     this.spinnerService.show();
     if (this.file) {
-      this.fileService.postImage(this.file, USER_IMAGE_FILE_PREFIX)
+      this.fileService.postImage(this.file, ImageTypeCode.USER)
         .subscribe(imagePath => {
           this.user.imagePath = imagePath.toString();
           this.updateUser();

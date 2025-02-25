@@ -9,11 +9,11 @@ import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SpinnerService} from '../../../shared/spinner/spinner.service';
-import {EVENT_IMAGE_FILE_PREFIX, LENGTH_1000} from '../../../defaults/constants';
+import {IMPACT_RADIUS_PATTERN, LENGTH_1000, MAX_IMPACT_RADIUS, MIN_IMPACT_RADIUS} from '../../../defaults/constants';
 import {UserDto} from '../../../model/user.dto';
 import {
   ERR_MSG_DESCRIPTION_LENGTH,
-  ERR_MSG_IMAGE_REQUIRED,
+  ERR_MSG_IMAGE_REQUIRED, ERR_MSG_IMPACT_RADIUS_DECIMALS, ERR_MSG_MAX_IMPACT_RADIUS, ERR_MSG_MIN_IMPACT_RADIUS,
   ERR_MSG_PROFILE_FULL_NAME_REQUIRED,
   ERR_MSG_SEVERITY_REQUIRED,
   ERR_MSG_STATUS_REQUIRED,
@@ -22,6 +22,9 @@ import {
 import {TypeDto} from '../../../model/type.dto';
 import {EventCreateDto} from '../../../model/event-create.dto';
 import {StatusDto} from '../../../model/status.dto';
+import {ImageTypeCode} from '../../../enums/image-type-code';
+import {pipe} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -41,7 +44,6 @@ export class NewEventDialogComponent implements OnInit {
   statuses: StatusDto[] = [];
 
   newEventForm: FormGroup;
-
   newEvent: EventDto;
 
   constructor(private formBuilder: FormBuilder,
@@ -70,7 +72,7 @@ export class NewEventDialogComponent implements OnInit {
       severity: [undefined, Validators.required],
       type: [undefined, Validators.required],
       status: [undefined, Validators.required],
-      impactRadius: [undefined],
+      impactRadius: [undefined, [Validators.min(MIN_IMPACT_RADIUS), Validators.max(MAX_IMPACT_RADIUS), Validators.pattern(IMPACT_RADIUS_PATTERN)]],
       description: [undefined, Validators.maxLength(LENGTH_1000)]
     });
   }
@@ -110,28 +112,27 @@ export class NewEventDialogComponent implements OnInit {
     }
 
     this.spinnerService.show();
-    this.fileService.postImage(this.file, EVENT_IMAGE_FILE_PREFIX)
-      .subscribe(imagePath => {
+    this.fileService.postImage(this.file, ImageTypeCode.EVENT)
+      .pipe(mergeMap(imagePath => {
         const eventCreate: EventCreateDto = {
           latitude: this.latitude,
           longitude: this.longitude,
-          impactRadius: null, // TODO
           typeId: this.newEventForm.get('type').value,
           severityId: this.newEventForm.get('severity').value,
           statusId: this.newEventForm.get('status').value,
+          impactRadius: this.newEventForm.get('impactRadius').value,
           userId: this.sessionService.getUser().id,
           imagePath: imagePath.toString(),
           description: this.newEventForm.get('description').value
         };
-
-        this.eventService.postEvent(eventCreate)
-          .subscribe(event => {
-            this.toast.success('Event successfully reported');
-            this.newEvent = event;
-            this.dialogRef.close();
-            this.spinnerService.close();
-          }, () => this.spinnerService.close());
-      });
+        return this.eventService.postEvent(eventCreate);
+      }))
+      .subscribe(event => {
+        this.toast.success('Event successfully reported');
+        this.newEvent = event;
+        this.dialogRef.close();
+        this.spinnerService.close();
+      }, () => this.spinnerService.close());
   }
 
   getSeverityErrorMessage(): string {
@@ -149,6 +150,18 @@ export class NewEventDialogComponent implements OnInit {
   getStatusErrorMessage(): string {
     if (this.newEventForm.get('status').hasError('required')) {
       return ERR_MSG_STATUS_REQUIRED;
+    }
+  }
+
+  getImpactRadiusErrorMessage(): string {
+    if (this.newEventForm.get('impactRadius').hasError('min')) {
+      return ERR_MSG_MIN_IMPACT_RADIUS;
+    }
+    if (this.newEventForm.get('impactRadius').hasError('max')) {
+      return ERR_MSG_MAX_IMPACT_RADIUS;
+    }
+    if (this.newEventForm.get('impactRadius').hasError('pattern')) {
+      return ERR_MSG_IMPACT_RADIUS_DECIMALS;
     }
   }
 

@@ -1,4 +1,4 @@
-export enum Order {
+export enum OrderCode {
 
   BY_DATE_ASCENDING = 'BY_DATE_ASCENDING',
   BY_DATE_DESCENDING = 'BY_DATE_DESCENDING',
