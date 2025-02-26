@@ -1,19 +1,19 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {SessionService} from '../../service/session.service';
-import {EventsMapComponent} from './map/events-map.component';
-import {FilterOptions} from './filter/filter.options';
+import {EventsMapComponent} from './events-map/events-map.component';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FilterDialogComponent} from './filter/filter-dialog.component';
 import {EventService} from '../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
-import {OrderDialogComponent} from '../common/order/order-dialog.component';
-import {EventsListComponent} from './list/events-list.component';
+import {EventsOrderDialogComponent} from '../common/events-order/events-order-dialog.component';
+import {EventsListComponent} from './events-list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 import {OrderCode} from '../../enums/order-code';
 import {PAGE_SIZE} from '../../defaults/constants';
 import {EventFilterDto} from '../../model/event-filter.dto';
 import {EventDto} from '../../model/event.dto';
+import {FilterOptions} from '../../types/filter-options';
+import {EventsFilterDialogComponent} from '../common/events-filter/events-filter-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit {
   }
 
   onFilterClicked(): void {
-    const dialogRef: MatDialogRef<FilterDialogComponent> = this.dialog.open(FilterDialogComponent, {
+    const dialogRef: MatDialogRef<EventsFilterDialogComponent> = this.dialog.open(EventsFilterDialogComponent, {
       data: this.filterOptions,
       autoFocus: false
     });
@@ -140,7 +140,7 @@ export class HomeComponent implements OnInit {
   }
 
   onOrderClicked(): void {
-    const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
+    const dialogRef: MatDialogRef<EventsOrderDialogComponent> = this.dialog.open(EventsOrderDialogComponent, {
       data: this.orderCode
     });
 

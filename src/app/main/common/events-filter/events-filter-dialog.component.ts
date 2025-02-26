@@ -1,5 +1,4 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FilterOptions} from './filter.options';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {SessionService} from '../../../service/session.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
@@ -22,13 +21,14 @@ import {
 } from '../../../defaults/field-validation-messages';
 import {TypeDto} from '../../../model/type.dto';
 import {StatusDto} from '../../../model/status.dto';
+import {FilterOptions} from '../../../types/filter-options';
 
 @Component({
   selector: 'app-filter-dialog',
-  templateUrl: './filter-dialog.component.html',
-  styleUrls: ['./filter-dialog.component.css']
+  templateUrl: './events-filter-dialog.component.html',
+  styleUrls: ['./events-filter-dialog.component.css']
 })
-export class FilterDialogComponent implements OnInit {
+export class EventsFilterDialogComponent implements OnInit {
 
   filterOptions: FilterOptions;
   filterForm: FormGroup;
@@ -48,7 +48,7 @@ export class FilterDialogComponent implements OnInit {
               private toast: ToastrService,
               private formBuilder: FormBuilder,
               private domSanitizer: DomSanitizer,
-              private dialogRef: MatDialogRef<FilterDialogComponent>,
+              private dialogRef: MatDialogRef<EventsFilterDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data: FilterOptions) {
 
     this.filterOptions = data;

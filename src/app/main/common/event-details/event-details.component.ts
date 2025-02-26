@@ -1,18 +1,18 @@
 import {Component, NgZone, OnInit} from '@angular/core';
-import {EventDto} from '../../../../model/event.dto';
+import {EventDto} from '../../../model/event.dto';
 import {ActivatedRoute} from '@angular/router';
-import {FileService} from '../../../../service/file.service';
+import {FileService} from '../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {CommentDto} from '../../../../model/comment.dto';
-import {CommentService} from '../../../../service/comment.service';
-import {EventService} from '../../../../service/event.service';
-import {SessionService} from '../../../../service/session.service';
+import {CommentDto} from '../../../model/comment.dto';
+import {CommentService} from '../../../service/comment.service';
+import {EventService} from '../../../service/event.service';
+import {SessionService} from '../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {EventCommentDialogComponent} from '../comment/event-comment-dialog.component';
+import {EventCommentDialogComponent} from '../event-comment/event-comment-dialog.component';
 import {map, mergeMap} from 'rxjs/operators';
 import {from} from 'rxjs';
-import {EventMapDialogComponent} from '../map/event-map-dialog.component';
+import {EventMapDialogComponent} from '../event-map/event-map-dialog.component';
 
 @Component({
   selector: 'app-event.details',

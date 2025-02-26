@@ -1,13 +1,13 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {CommentService} from '../../../../service/comment.service';
 import {ToastrService} from 'ngx-toastr';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {CommentDto} from '../../../../model/comment.dto';
-import {SpinnerService} from '../../../../shared/spinner/spinner.service';
-import {LENGTH_1000} from '../../../../defaults/constants';
 import {FormControl, Validators} from '@angular/forms';
-import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../../defaults/field-validation-messages';
-import {CommentCreateDto} from '../../../../model/comment-create.dto';
+import {CommentDto} from '../../../model/comment.dto';
+import {CommentService} from '../../../service/comment.service';
+import {SpinnerService} from '../../../shared/spinner/spinner.service';
+import {LENGTH_1000} from '../../../defaults/constants';
+import {CommentCreateDto} from '../../../model/comment-create.dto';
+import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../defaults/field-validation-messages';
 
 @Component({
   selector: 'app-event-comment-dialog',

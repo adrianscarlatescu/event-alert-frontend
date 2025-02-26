@@ -6,7 +6,7 @@ import {EventDto} from '../../model/event.dto';
 import {ToastrService} from 'ngx-toastr';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {NewEventDialogComponent} from './new/new-event-dialog.component';
+import {NewEventDialogComponent} from './new-event/new-event-dialog.component';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 
 @Component({

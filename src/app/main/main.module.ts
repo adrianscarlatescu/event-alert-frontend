@@ -12,18 +12,18 @@ import {RouteReuseStrategy, RouterModule} from '@angular/router';
 import {AuthGuard} from '../service/guard/auth.guard';
 import {SharedModule} from '../shared/shared.module';
 import {AgmCoreModule} from '@agm/core';
-import {EventDetailsComponent} from './common/event/details/event-details.component';
 import {AgmOverlays} from 'agm-overlays';
-import {EventCommentDialogComponent} from './common/event/comment/event-comment-dialog.component';
-import {EventsMapComponent} from './home/map/events-map.component';
-import {EventsListComponent} from './home/list/events-list.component';
-import {FilterDialogComponent} from './home/filter/filter-dialog.component';
-import {OrderDialogComponent} from './common/order/order-dialog.component';
+import {EventsMapComponent} from './home/events-map/events-map.component';
+import {EventsListComponent} from './home/events-list/events-list.component';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
 import {NotificationsComponent} from './notifications/notifications.component';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
-import {NewEventDialogComponent} from './reporter/new/new-event-dialog.component';
-import {EventMapDialogComponent} from './common/event/map/event-map-dialog.component';
+import {NewEventDialogComponent} from './reporter/new-event/new-event-dialog.component';
+import {EventDetailsComponent} from './common/event-details/event-details.component';
+import {EventCommentDialogComponent} from './common/event-comment/event-comment-dialog.component';
+import {EventMapDialogComponent} from './common/event-map/event-map-dialog.component';
+import {EventsFilterDialogComponent} from './common/events-filter/events-filter-dialog.component';
+import {EventsOrderDialogComponent} from './common/events-order/events-order-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,13 +31,13 @@ import {EventMapDialogComponent} from './common/event/map/event-map-dialog.compo
     HomeComponent,
     EventsMapComponent,
     EventsListComponent,
-    FilterDialogComponent,
-    OrderDialogComponent,
+    EventsFilterDialogComponent,
+    EventsOrderDialogComponent,
     ReporterComponent,
-    NewEventDialogComponent,
     NotificationsComponent,
     ProfileComponent,
     AdminComponent,
+    NewEventDialogComponent,
     EventDetailsComponent,
     EventCommentDialogComponent,
     EventMapDialogComponent

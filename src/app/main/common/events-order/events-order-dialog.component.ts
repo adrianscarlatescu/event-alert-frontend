@@ -4,14 +4,14 @@ import {OrderCode} from '../../../enums/order-code';
 
 @Component({
   selector: 'app-order.dialog',
-  templateUrl: './order-dialog.component.html',
-  styleUrls: ['./order-dialog.component.css']
+  templateUrl: './events-order-dialog.component.html',
+  styleUrls: ['./events-order-dialog.component.css']
 })
-export class OrderDialogComponent implements OnInit {
+export class EventsOrderDialogComponent implements OnInit {
 
   orderCode: OrderCode;
 
-  constructor(private dialogRef: MatDialogRef<OrderDialogComponent>,
+  constructor(private dialogRef: MatDialogRef<EventsOrderDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data: OrderCode) {
 
     this.orderCode = data;
