@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {SessionService} from '../../../service/session.service';
 import {mapTheme} from '../../common/map.style';
 import {EventDto} from '../../../model/event.dto';
@@ -12,13 +12,16 @@ import {interval, Subscription} from 'rxjs';
   templateUrl: './events-map.component.html',
   styleUrls: ['./events-map.component.css']
 })
-export class EventsMapComponent implements OnInit {
+export class EventsMapComponent implements OnInit, OnChanges {
 
   mapStyle = mapTheme;
   zoom: number = 13;
   map: google.maps.Map;
 
+  @Input()
   events: EventDto[];
+  @Input()
+  filterRadius: number;
 
   selectedEvent: EventDto;
   selectedEventImage: SafeUrl;
@@ -31,6 +34,39 @@ export class EventsMapComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(): void {
+    this.selectedEvent = undefined;
+    if (!this.events || this.events.length === 0) {
+      return;
+    }
+
+    const distances: number[] = this.events.map(event => event.distance);
+    const radius: number = Math.max(...distances);
+
+    setTimeout(() => {
+
+      const targetZoom: number = 15.5 - Math.log(radius) / Math.log(2);
+      const intervalSub: Subscription = interval(500).subscribe(() => {
+
+        if (targetZoom - this.zoom >= 2) {
+          this.zoom += 2;
+        } else if (this.zoom - targetZoom >= 2) {
+          this.zoom -= 2;
+        } else if (targetZoom - this.zoom >= 1) {
+          this.zoom += 1;
+        } else if (this.zoom - targetZoom >= 1) {
+          this.zoom -= 1;
+        } else {
+          intervalSub.unsubscribe();
+        }
+
+      });
+
+      this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
+
+    }, 500);
   }
 
   setDefaultViewValues(): void {
@@ -66,40 +102,6 @@ export class EventsMapComponent implements OnInit {
     setTimeout(() => {
       this.selectedEvent = null;
     }, 250);
-  }
-
-  public setEvents(events: EventDto[]): void {
-    this.events = events;
-
-    if (this.events.length === 0) {
-      return;
-    }
-
-    const distances: number[] = this.events.map(event => event.distance);
-    const radius: number = Math.max(...distances);
-
-    setTimeout(() => {
-
-      const targetZoom: number = 15.5 - Math.log(radius) / Math.log(2);
-      const intervalSub: Subscription = interval(500).subscribe(() => {
-
-        if (targetZoom - this.zoom >= 2) {
-          this.zoom += 2;
-        } else if (this.zoom - targetZoom >= 2) {
-          this.zoom -= 2;
-        } else if (targetZoom - this.zoom >= 1) {
-          this.zoom += 1;
-        } else if (this.zoom - targetZoom >= 1) {
-          this.zoom -= 1;
-        } else {
-          intervalSub.unsubscribe();
-        }
-
-      });
-
-      this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
-
-    }, 500);
   }
 
 }

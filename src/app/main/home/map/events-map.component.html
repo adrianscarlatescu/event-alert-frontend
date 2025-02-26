@@ -21,26 +21,38 @@
       </agm-overlay>
     </agm-marker>
 
-    <agm-marker-cluster>
-      <agm-marker *ngFor="let event of events;">
+    <agm-marker *ngFor="let event of events;">
 
-        <agm-overlay
-          [latitude]="event.latitude"
-          [longitude]="event.longitude"
-          (markerClick)="onMarkerClicked(event)">
+      <agm-overlay
+        [latitude]="event.latitude"
+        [longitude]="event.longitude"
+        (markerClick)="onMarkerClicked(event)">
 
-          <div class="map_marker_overlay"
-               style="-webkit-mask-box-image: url('../../../../assets/event_marker.png');"
-               [ngStyle]="{'background-image': 'url(' + sessionService.getCacheImageByUrl(event.type.imagePath) + ')',
+        <div class="map_marker_overlay"
+             style="-webkit-mask-box-image: url('../../../../assets/event_marker.png');"
+             [ngStyle]="{'background-image': 'url(' + sessionService.getCacheImageByUrl(event.type.imagePath) + ')',
                'background-color': event.severity.color}">
-          </div>
+        </div>
 
-          <img src="assets/event_marker_border.png" class="map_marker_overlay"
-               style="position: absolute"/>
-        </agm-overlay>
+        <img src="assets/event_marker_border.png" class="map_marker_overlay"
+             style="position: absolute"/>
+      </agm-overlay>
 
-      </agm-marker>
-    </agm-marker-cluster>
+    </agm-marker>
+
+    <agm-circle *ngIf="events && events.length > 0"
+                [latitude]="events[0].latitude"
+                [longitude]="events[0].longitude"
+                [radius]="filterRadius * 1000"
+                [fillColor]="'grey'">
+    </agm-circle>
+
+    <agm-circle *ngIf="selectedEvent && selectedEvent.impactRadius"
+                [latitude]="selectedEvent.latitude"
+                [longitude]="selectedEvent.longitude"
+                [radius]="selectedEvent.impactRadius * 1000"
+                [fillColor]="'red'">
+    </agm-circle>
 
     <agm-info-window *ngIf="selectedEvent"
                      [latitude]="selectedEvent.latitude"

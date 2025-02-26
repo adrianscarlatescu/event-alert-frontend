@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EventDto} from '../../../model/event.dto';
 import {SessionService} from '../../../service/session.service';
 import {PageEvent} from '@angular/material/paginator';
@@ -13,9 +13,13 @@ export class EventsListComponent implements OnInit {
 
   @Output() pageEventEmitter: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
+  @Input()
   events: EventDto[];
+  @Input()
   length: number;
+  @Input()
   index: number;
+
   displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius', 'distance'];
 
   constructor(private router: Router,
@@ -24,12 +28,6 @@ export class EventsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  }
-
-  public setData(events: EventDto[], totalEvents: number, pageIndex: number): void {
-    this.events = events;
-    this.length = totalEvents;
-    this.index = pageIndex;
   }
 
   onRowClicked(eventId: number): void {

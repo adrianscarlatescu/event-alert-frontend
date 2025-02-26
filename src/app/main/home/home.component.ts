@@ -13,6 +13,7 @@ import {SpinnerService} from '../../shared/spinner/spinner.service';
 import {OrderCode} from '../../enums/order-code';
 import {PAGE_SIZE} from '../../defaults/constants';
 import {EventFilterDto} from '../../model/event-filter.dto';
+import {EventDto} from '../../model/event.dto';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +31,8 @@ export class HomeComponent implements OnInit {
   pageIndex: number;
 
   homePage: HomePage;
+
+  events: EventDto[];
 
   filterOptions: FilterOptions;
   eventFilter: EventFilterDto;
@@ -154,15 +157,12 @@ export class HomeComponent implements OnInit {
 
   private requestNewSearch(): void {
     this.spinnerService.show();
-    this.mapComponent.selectedEvent = undefined;
     this.eventService.getEventsByFilter(this.eventFilter, PAGE_SIZE, this.pageIndex, this.orderCode)
       .subscribe(page => {
         this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
         this.totalContentDisplayed = page.content.length;
-
-        this.mapComponent.setEvents(page.content);
-        this.listComponent.setData(page.content, page.totalElements, this.pageIndex);
+        this.events = page.content;
 
         if (this.totalEvents === 0) {
           this.toast.info('No events found');
