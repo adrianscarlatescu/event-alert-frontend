@@ -4,9 +4,9 @@ import {EventDto} from '../model/event.dto';
 import {Observable} from 'rxjs';
 import {baseUrl} from '../../environments/environment';
 import {PageDto} from '../model/page.dto';
-import {OrderCode} from '../enums/order-code';
+import {EventsOrder} from '../enums/events-order';
 import {EventCreateDto} from '../model/event-create.dto';
-import {EventFilterDto} from '../model/event-filter.dto';
+import {EventsFilterDto} from '../model/events-filter.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,13 +28,13 @@ export class EventService {
     return this.http.post<EventDto>(`${baseUrl}/events`, eventCreate);
   }
 
-  getEventsByFilter(eventFilter: EventFilterDto, pageSize: number, pageNumber: number, orderCode: OrderCode): Observable<PageDto<EventDto>> {
+  getEventsByFilter(eventFilter: EventsFilterDto, pageSize: number, pageNumber: number, eventsOrder: EventsOrder): Observable<PageDto<EventDto>> {
     return this.http.post<PageDto<EventDto>>(`${baseUrl}/events/filter`, eventFilter,
       {
         params: {
           'pageSize': pageSize.toString(),
           'pageNumber': pageNumber.toString(),
-          'orderCode': orderCode.toString()
+          'order': eventsOrder.toString()
         }
       });
   }

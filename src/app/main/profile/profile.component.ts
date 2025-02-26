@@ -18,7 +18,7 @@ import {
 } from '../../defaults/field-validation-messages';
 import {UserUpdateDto} from '../../model/user-update.dto';
 import {GenderDto} from '../../model/gender.dto';
-import {ImageTypeCode} from '../../enums/image-type-code';
+import {ImageType} from '../../enums/image-type';
 
 
 @Component({
@@ -80,7 +80,7 @@ export class ProfileComponent implements OnInit {
 
     this.spinnerService.show();
     if (this.file) {
-      this.fileService.postImage(this.file, ImageTypeCode.USER)
+      this.fileService.postImage(this.file, ImageType.USER)
         .subscribe(imagePath => {
           this.user.imagePath = imagePath.toString();
           this.updateUser();

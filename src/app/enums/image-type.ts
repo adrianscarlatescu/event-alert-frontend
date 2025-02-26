@@ -1,4 +1,4 @@
-export enum ImageTypeCode {
+export enum ImageType {
 
   USER= 'USER',
   EVENT = 'EVENT',

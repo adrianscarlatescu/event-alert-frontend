@@ -9,10 +9,10 @@ import {EventService} from '../../../service/event.service';
 import {SessionService} from '../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {EventCommentDialogComponent} from '../event-comment/event-comment-dialog.component';
 import {map, mergeMap} from 'rxjs/operators';
 import {from} from 'rxjs';
 import {EventMapDialogComponent} from '../event-map/event-map-dialog.component';
+import {CommentDialogComponent} from './comment/comment-dialog.component';
 
 @Component({
   selector: 'app-event-details',
@@ -121,7 +121,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   onNewCommentClicked(): void {
-    const dialogRef: MatDialogRef<EventCommentDialogComponent> = this.dialog.open(EventCommentDialogComponent, {
+    const dialogRef: MatDialogRef<CommentDialogComponent> = this.dialog.open(CommentDialogComponent, {
       data: {
         eventId: this.event.id,
         userId: this.sessionService.getUser().id

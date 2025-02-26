@@ -25,8 +25,8 @@ import {FilterOptions} from '../../../types/filter-options';
 
 @Component({
   selector: 'app-filter-dialog',
-  templateUrl: './events-filter-dialog.component.html',
-  styleUrls: ['./events-filter-dialog.component.css']
+  templateUrl: './filter-dialog.component.html',
+  styleUrls: ['./filter-dialog.component.css']
 })
 export class FilterDialogComponent implements OnInit {
 

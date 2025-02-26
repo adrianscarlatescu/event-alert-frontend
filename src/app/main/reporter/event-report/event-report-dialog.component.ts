@@ -22,7 +22,7 @@ import {
 import {TypeDto} from '../../../model/type.dto';
 import {EventCreateDto} from '../../../model/event-create.dto';
 import {StatusDto} from '../../../model/status.dto';
-import {ImageTypeCode} from '../../../enums/image-type-code';
+import {ImageType} from '../../../enums/image-type';
 import {pipe} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 
@@ -112,7 +112,7 @@ export class EventReportDialogComponent implements OnInit {
     }
 
     this.spinnerService.show();
-    this.fileService.postImage(this.file, ImageTypeCode.EVENT)
+    this.fileService.postImage(this.file, ImageType.EVENT)
       .pipe(mergeMap(imagePath => {
         const eventCreate: EventCreateDto = {
           latitude: this.latitude,

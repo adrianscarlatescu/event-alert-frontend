@@ -1,20 +1,20 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {OrderCode} from '../../../enums/order-code';
+import {EventsOrder} from '../../../enums/events-order';
 
 @Component({
   selector: 'app-order-dialog',
-  templateUrl: './events-order-dialog.component.html',
-  styleUrls: ['./events-order-dialog.component.css']
+  templateUrl: './order-dialog.component.html',
+  styleUrls: ['./order-dialog.component.css']
 })
 export class OrderDialogComponent implements OnInit {
 
-  orderCode: OrderCode;
+  order: EventsOrder;
 
   constructor(private dialogRef: MatDialogRef<OrderDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) data: OrderCode) {
+              @Inject(MAT_DIALOG_DATA) data: EventsOrder) {
 
-    this.orderCode = data;
+    this.order = data;
 
   }
 
@@ -22,6 +22,6 @@ export class OrderDialogComponent implements OnInit {
   }
 
   onValidateClicked(): void {
-    this.dialogRef.close(this.orderCode);
+    this.dialogRef.close(this.order);
   }
 }
