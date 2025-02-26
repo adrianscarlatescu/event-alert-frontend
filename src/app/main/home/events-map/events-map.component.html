@@ -44,14 +44,23 @@
                 [latitude]="events[0].latitude"
                 [longitude]="events[0].longitude"
                 [radius]="filterRadius * 1000"
-                [fillColor]="'grey'">
+                [clickable]="false"
+                [fillColor]="'#B0B0B0'"
+                [strokeColor]="'#8C8C8C'"
+                [strokePosition]="'OUTSIDE'"
+                [strokeOpacity]="0.5"
+                [strokeWeight]="2.5">
     </agm-circle>
 
     <agm-circle *ngIf="selectedEvent && selectedEvent.impactRadius"
                 [latitude]="selectedEvent.latitude"
                 [longitude]="selectedEvent.longitude"
                 [radius]="selectedEvent.impactRadius * 1000"
-                [fillColor]="'red'">
+                [fillColor]="selectedEvent.severity.color"
+                [strokeColor]="'#8C8C8C'"
+                [strokePosition]="'OUTSIDE'"
+                [strokeOpacity]="0.5"
+                [strokeWeight]="2.5">
     </agm-circle>
 
     <agm-info-window *ngIf="selectedEvent"
