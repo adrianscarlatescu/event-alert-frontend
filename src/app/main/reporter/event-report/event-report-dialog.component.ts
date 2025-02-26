@@ -8,7 +8,6 @@ import {EventService} from '../../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
-import {SpinnerService} from '../../../shared/spinner/spinner.service';
 import {IMPACT_RADIUS_PATTERN, LENGTH_1000, MAX_IMPACT_RADIUS, MIN_IMPACT_RADIUS} from '../../../defaults/constants';
 import {UserDto} from '../../../model/user.dto';
 import {
@@ -25,6 +24,7 @@ import {StatusDto} from '../../../model/status.dto';
 import {ImageType} from '../../../enums/image-type';
 import {pipe} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
+import {SpinnerService} from '../../../service/spinner.service';
 
 @Component({
   selector: 'app-event-report-dialog',

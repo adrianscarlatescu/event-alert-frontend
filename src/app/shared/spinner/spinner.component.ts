@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {SpinnerService} from './spinner.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {SpinnerService} from '../../service/spinner.service';
 
 @Component({
   selector: 'app-spinner',

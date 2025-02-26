@@ -7,7 +7,7 @@ import {ToastrService} from 'ngx-toastr';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {EventReportDialogComponent} from './event-report/event-report-dialog.component';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
+import {SpinnerService} from '../../service/spinner.service';
 
 @Component({
   selector: 'app-reporter',

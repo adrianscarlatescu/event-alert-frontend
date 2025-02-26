@@ -7,13 +7,13 @@ import {ToastrService} from 'ngx-toastr';
 import {OrderDialogComponent} from '../common/order/order-dialog.component';
 import {EventsListComponent} from './events-list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
 import {EventsOrder} from '../../enums/events-order';
 import {PAGE_SIZE} from '../../defaults/constants';
 import {EventsFilterDto} from '../../model/events-filter.dto';
 import {EventDto} from '../../model/event.dto';
 import {FilterOptions} from '../../types/filter-options';
 import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
+import {SpinnerService} from '../../service/spinner.service';
 
 @Component({
   selector: 'app-home',

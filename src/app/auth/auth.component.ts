@@ -7,7 +7,6 @@ import {ToastrService} from 'ngx-toastr';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {SessionService} from '../service/session.service';
 import {CustomReuseStrategy} from '../main/common/custom.reuse.strategy';
-import {SpinnerService} from '../shared/spinner/spinner.service';
 import {concatMap} from 'rxjs/operators';
 import {JWT_OFFSET_SECONDS, LENGTH_8, LENGTH_50} from '../defaults/constants';
 import {
@@ -21,6 +20,7 @@ import {
 } from '../defaults/field-validation-messages';
 import {AuthLoginDto} from '../model/auth-login.dto';
 import {AuthRegisterDto} from '../model/auth-register.dto';
+import {SpinnerService} from '../service/spinner.service';
 
 @Component({
   selector: 'app-auth',

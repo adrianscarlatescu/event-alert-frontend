@@ -4,10 +4,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
 import {CommentDto} from '../../../../model/comment.dto';
 import {CommentService} from '../../../../service/comment.service';
-import {SpinnerService} from '../../../../shared/spinner/spinner.service';
 import {LENGTH_1000} from '../../../../defaults/constants';
 import {CommentCreateDto} from '../../../../model/comment-create.dto';
 import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../../defaults/field-validation-messages';
+import {SpinnerService} from '../../../../service/spinner.service';
 
 @Component({
   selector: 'app-comment-dialog',

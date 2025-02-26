@@ -6,7 +6,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
 import {SessionService} from '../../service/session.service';
 import {UserDto} from '../../model/user.dto';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
 import {LENGTH_50, PHONE_NUMBER_PATTERN} from '../../defaults/constants';
 import {
   ERR_MSG_FIRST_NAME_LENGTH,
@@ -19,6 +18,7 @@ import {
 import {UserUpdateDto} from '../../model/user-update.dto';
 import {GenderDto} from '../../model/gender.dto';
 import {ImageType} from '../../enums/image-type';
+import {SpinnerService} from '../../service/spinner.service';
 
 
 @Component({

@@ -8,7 +8,7 @@ import {SessionService} from '../session.service';
 import {Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
 import {JWT_OFFSET_SECONDS, LOGIN_URL_REGEX, REFRESH_TOKEN_URL_REGEX, REGISTER_URL_REGEX} from '../../defaults/constants';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
+import {SpinnerService} from '../spinner.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
