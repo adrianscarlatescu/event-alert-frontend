@@ -1,18 +1,18 @@
 <div style="position: absolute; width: 100%; height: 100%">
 
-  <agm-map *ngIf="sessionService.getUserLatitude() && sessionService.getUserLongitude()"
+  <agm-map *ngIf="userLocation"
            id="map_container" style="width: 100%; height: 100%"
            (mapReady)="mapReady($event)"
            (zoomChange)="zoomChange($event)"
-           [latitude]="sessionService.getUserLatitude()"
-           [longitude]="sessionService.getUserLongitude()"
+           [latitude]="userLocation.latitude"
+           [longitude]="userLocation.longitude"
            [zoom]="zoom"
            [styles]="mapStyle">
 
-    <agm-marker>
+    <agm-marker *ngIf="userLocation">
       <agm-overlay
-        [latitude]="sessionService.getUserLatitude()"
-        [longitude]="sessionService.getUserLongitude()">
+        [latitude]="userLocation.latitude"
+        [longitude]="userLocation.longitude">
 
         <div class="map_user_overlay"
              style="background-image: url('../../../../assets/user_marker.png')">

@@ -11,7 +11,7 @@ export class SpinnerService {
   constructor() {
   }
 
-  getSpinnerObserver(): Observable<boolean> {
+  getSpinner(): Observable<boolean> {
     return this.spinner;
   }
 

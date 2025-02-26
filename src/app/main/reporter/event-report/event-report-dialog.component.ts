@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {EventDto} from '../../../model/event.dto';
 import {SeverityDto} from '../../../model/severity.dto';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -7,12 +7,15 @@ import {SessionService} from '../../../service/session.service';
 import {EventService} from '../../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {IMPACT_RADIUS_PATTERN, LENGTH_1000, MAX_IMPACT_RADIUS, MIN_IMPACT_RADIUS} from '../../../defaults/constants';
 import {UserDto} from '../../../model/user.dto';
 import {
   ERR_MSG_DESCRIPTION_LENGTH,
-  ERR_MSG_IMAGE_REQUIRED, ERR_MSG_IMPACT_RADIUS_DECIMALS, ERR_MSG_MAX_IMPACT_RADIUS, ERR_MSG_MIN_IMPACT_RADIUS,
+  ERR_MSG_IMAGE_REQUIRED,
+  ERR_MSG_IMPACT_RADIUS_DECIMALS,
+  ERR_MSG_MAX_IMPACT_RADIUS,
+  ERR_MSG_MIN_IMPACT_RADIUS,
   ERR_MSG_PROFILE_FULL_NAME_REQUIRED,
   ERR_MSG_SEVERITY_REQUIRED,
   ERR_MSG_STATUS_REQUIRED,
@@ -22,9 +25,9 @@ import {TypeDto} from '../../../model/type.dto';
 import {EventCreateDto} from '../../../model/event-create.dto';
 import {StatusDto} from '../../../model/status.dto';
 import {ImageType} from '../../../enums/image-type';
-import {pipe} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {SpinnerService} from '../../../service/spinner.service';
+import {UserLocation} from '../../../types/user-location';
 
 @Component({
   selector: 'app-event-report-dialog',
@@ -33,8 +36,7 @@ import {SpinnerService} from '../../../service/spinner.service';
 })
 export class EventReportDialogComponent implements OnInit {
 
-  latitude: number;
-  longitude: number;
+  userLocation: UserLocation;
 
   file: File;
   eventImage: SafeUrl;
@@ -53,16 +55,10 @@ export class EventReportDialogComponent implements OnInit {
               private spinnerService: SpinnerService,
               private toast: ToastrService,
               private domSanitizer: DomSanitizer,
-              private dialogRef: MatDialogRef<EventReportDialogComponent>) {
+              private dialogRef: MatDialogRef<EventReportDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: UserLocation) {
 
-    this.latitude = this.sessionService.getUserLatitude();
-    this.longitude = this.sessionService.getUserLongitude();
-
-    if (!this.latitude || !this.longitude) {
-      console.log('Location not provided');
-      this.dialogRef.close();
-      return;
-    }
+    this.userLocation = data;
 
     this.types = sessionService.getTypes().sort((a, b) => a.label.localeCompare(b.label)); // TODO
     this.severities = sessionService.getSeverities();
@@ -115,8 +111,8 @@ export class EventReportDialogComponent implements OnInit {
     this.fileService.postImage(this.file, ImageType.EVENT)
       .pipe(mergeMap(imagePath => {
         const eventCreate: EventCreateDto = {
-          latitude: this.latitude,
-          longitude: this.longitude,
+          latitude: this.userLocation.latitude,
+          longitude: this.userLocation.longitude,
           typeId: this.newEventForm.get('type').value,
           severityId: this.newEventForm.get('severity').value,
           statusId: this.newEventForm.get('status').value,

@@ -14,6 +14,7 @@ import {EventDto} from '../../model/event.dto';
 import {FilterOptions} from '../../types/filter-options';
 import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
+import {UserLocation} from '../../types/user-location';
 
 @Component({
   selector: 'app-home',
@@ -38,11 +39,15 @@ export class HomeComponent implements OnInit {
   eventsFilter: EventsFilterDto;
   eventsOrder: EventsOrder;
 
+  userLocation: UserLocation;
+
   constructor(private eventService: EventService,
               private sessionService: SessionService,
               private spinnerService: SpinnerService,
               private toast: ToastrService,
               private dialog: MatDialog) {
+
+    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
 
     this.filterOptions = {
       radius: 1000,
@@ -84,6 +89,10 @@ export class HomeComponent implements OnInit {
   }
 
   onLocationClicked(): void {
+    if (!this.userLocation) {
+      this.toast.warning('Location not provided');
+      return;
+    }
     this.mapComponent.setDefaultViewValues();
   }
 
@@ -100,6 +109,11 @@ export class HomeComponent implements OnInit {
   }
 
   onFilterClicked(): void {
+    if (!this.userLocation) {
+      this.toast.warning('Location not provided');
+      return;
+    }
+
     const dialogRef: MatDialogRef<FilterDialogComponent> = this.dialog.open(FilterDialogComponent, {
       data: this.filterOptions,
       autoFocus: false
@@ -117,8 +131,8 @@ export class HomeComponent implements OnInit {
         radius: this.filterOptions.radius,
         startDate: this.filterOptions.startDate,
         endDate: this.filterOptions.endDate,
-        latitude: this.sessionService.getUserLatitude(),
-        longitude: this.sessionService.getUserLongitude(),
+        latitude: this.userLocation.latitude,
+        longitude: this.userLocation.longitude,
         typeIds: this.filterOptions.types.map(type => type.id),
         severityIds: this.filterOptions.severities.map(severity => severity.id),
         statusIds: this.filterOptions.statuses.map(status => status.id)
@@ -140,6 +154,11 @@ export class HomeComponent implements OnInit {
   }
 
   onOrderClicked(): void {
+    if (!this.userLocation) {
+      this.toast.warning('Location not provided');
+      return;
+    }
+
     const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
       data: this.eventsOrder
     });

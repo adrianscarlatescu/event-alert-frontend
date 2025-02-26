@@ -8,6 +8,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {EventReportDialogComponent} from './event-report/event-report-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
+import {UserLocation} from '../../types/user-location';
 
 @Component({
   selector: 'app-reporter',
@@ -18,6 +19,8 @@ export class ReporterComponent implements OnInit {
 
   dataSource: MatTableDataSource<Element> = new MatTableDataSource([]);
   displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius'];
+
+  userLocation: UserLocation;
 
   constructor(private eventService: EventService,
               private sessionService: SessionService,
@@ -41,6 +44,8 @@ export class ReporterComponent implements OnInit {
         this.dataSource.data = data;
         this.spinnerService.close();
       }, () => this.spinnerService.close());
+
+    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
   }
 
   onRowClicked(eventId: number): void {
@@ -48,12 +53,14 @@ export class ReporterComponent implements OnInit {
   }
 
   onNewEventClicked(): void {
-    if (!this.sessionService.getUserLatitude() || !this.sessionService.getUserLongitude()) {
+    if (!this.userLocation) {
       this.toast.warning('Location not provided');
       return;
     }
 
-    const dialogRef: MatDialogRef<EventReportDialogComponent> = this.dialog.open(EventReportDialogComponent);
+    const dialogRef: MatDialogRef<EventReportDialogComponent> = this.dialog.open(EventReportDialogComponent, {
+      data: this.userLocation
+    });
     dialogRef.afterClosed().subscribe(() => {
       const newEvent: EventDto = dialogRef.componentInstance.newEvent;
       if (!newEvent) {

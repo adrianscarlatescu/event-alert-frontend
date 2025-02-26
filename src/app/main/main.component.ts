@@ -36,12 +36,11 @@ export class MainComponent implements OnInit, OnDestroy {
           position => {
             const latitude: number = position.coords.latitude;
             const longitude: number = position.coords.longitude;
-            this.sessionService.setUserLatitude(latitude);
-            this.sessionService.setUserLongitude(longitude);
+            this.sessionService.setUserLocation({latitude, longitude});
             console.log('Location updated');
           },
           positionError => {
-            console.log(positionError);
+            console.error(positionError);
             this.toast.error('Could not retrieve your location');
           });
       } else if (result.state == 'denied') {

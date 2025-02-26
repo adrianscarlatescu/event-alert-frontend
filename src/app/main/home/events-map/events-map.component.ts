@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {interval, Subscription} from 'rxjs';
+import {UserLocation} from '../../../types/user-location';
 
 @Component({
   selector: 'app-events-map',
@@ -26,6 +27,8 @@ export class EventsMapComponent implements OnInit, OnChanges {
   selectedEvent: EventDto;
   selectedEventImage: SafeUrl;
 
+  userLocation: UserLocation;
+
   constructor(private router: Router,
               private domSanitizer: DomSanitizer,
               private fileService: FileService,
@@ -34,6 +37,7 @@ export class EventsMapComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
   }
 
   ngOnChanges(): void {
@@ -64,14 +68,20 @@ export class EventsMapComponent implements OnInit, OnChanges {
 
       });
 
-      this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
+      if (this.userLocation.latitude && this.userLocation.longitude) {
+        this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
+      }
 
     }, 500);
   }
 
   setDefaultViewValues(): void {
+    if (!this.userLocation.latitude) {
+      console.error('Location not provided');
+      return;
+    }
     this.zoom = 15;
-    this.map.panTo({lat: this.sessionService.getUserLatitude(), lng: this.sessionService.getUserLongitude()});
+    this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
   }
 
   mapReady(map: google.maps.Map): void {

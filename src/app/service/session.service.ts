@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {UserDto} from '../model/user.dto';
 import {FileService} from './file.service';
-import {EMPTY, forkJoin, from, Observable} from 'rxjs';
+import {BehaviorSubject, EMPTY, forkJoin, from, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {UserService} from './user.service';
 import {TypeService} from './type.service';
@@ -16,11 +16,14 @@ import {RoleService} from './role.service';
 import {RoleDto} from '../model/role.dto';
 import {CategoryService} from './category.service';
 import {CategoryDto} from '../model/category.dto';
+import {UserLocation} from '../types/user-location';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
+
+  private userLocationSubject: BehaviorSubject<UserLocation> = new BehaviorSubject<UserLocation>(undefined);
 
   constructor(private fileService: FileService,
               private genderService: GenderService,
@@ -60,20 +63,12 @@ export class SessionService {
     return this.getUser().roles.map(role => role.id).includes('ROLE_ADMIN');
   }
 
-  public setUserLatitude(latitude: number) {
-    localStorage.setItem('userLatitude', latitude.toString());
+  public setUserLocation(userLocation: UserLocation): void {
+    this.userLocationSubject.next(userLocation);
   }
 
-  public getUserLatitude(): number {
-    return +localStorage.getItem('userLatitude');
-  }
-
-  public setUserLongitude(longitude: number) {
-    localStorage.setItem('userLongitude', longitude.toString());
-  }
-
-  public getUserLongitude(): number {
-    return +localStorage.getItem('userLongitude');
+  public getUserLocation(): Observable<UserLocation> {
+    return this.userLocationSubject.asObservable();
   }
 
   public setCategories(categories: CategoryDto[]) {

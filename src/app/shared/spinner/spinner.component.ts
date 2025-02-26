@@ -17,7 +17,7 @@ export class SpinnerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.spinnerService.getSpinnerObserver().subscribe(isShown => {
+    this.spinnerService.getSpinner().subscribe(isShown => {
       if (this.isFirstSubscription) {
         this.isFirstSubscription = false;
         return;
