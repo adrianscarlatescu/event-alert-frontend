@@ -1,15 +1,15 @@
-<app-map
+<app-events-map
   [events]="events"
   [filterRadius]="filterOptions.radius"
   [ngStyle]="{'visibility': homePage === 'map' ? 'visible' : 'hidden'}">
-</app-map>
-<app-list
+</app-events-map>
+<app-events-list
   [events]="events"
   [length]="totalEvents"
   [index]="pageIndex"
   (pageEventEmitter)="onPageChanged($event)"
   [ngStyle]="{'visibility': homePage === 'list' ? 'visible' : 'collapse'}">
-</app-list>
+</app-events-list>
 
 <div class="home_top_info_div">
   <mat-card>

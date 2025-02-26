@@ -2,19 +2,19 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
-import {CommentDto} from '../../../model/comment.dto';
-import {CommentService} from '../../../service/comment.service';
-import {SpinnerService} from '../../../shared/spinner/spinner.service';
-import {LENGTH_1000} from '../../../defaults/constants';
-import {CommentCreateDto} from '../../../model/comment-create.dto';
-import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../defaults/field-validation-messages';
+import {CommentDto} from '../../../../model/comment.dto';
+import {CommentService} from '../../../../service/comment.service';
+import {SpinnerService} from '../../../../shared/spinner/spinner.service';
+import {LENGTH_1000} from '../../../../defaults/constants';
+import {CommentCreateDto} from '../../../../model/comment-create.dto';
+import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../../defaults/field-validation-messages';
 
 @Component({
-  selector: 'app-event-comment-dialog',
-  templateUrl: './event-comment-dialog.component.html',
-  styleUrls: ['./event-comment-dialog.component.css']
+  selector: 'app-comment-dialog',
+  templateUrl: './comment-dialog.component.html',
+  styleUrls: ['./comment-dialog.component.css']
 })
-export class EventCommentDialogComponent implements OnInit {
+export class CommentDialogComponent implements OnInit {
 
   commentControl: FormControl;
   newEventComment: CommentDto;
@@ -22,7 +22,7 @@ export class EventCommentDialogComponent implements OnInit {
   constructor(private eventCommentService: CommentService,
               private toast: ToastrService,
               private spinnerService: SpinnerService,
-              private dialogRef: MatDialogRef<EventCommentDialogComponent>,
+              private dialogRef: MatDialogRef<CommentDialogComponent>,
               @Inject(MAT_DIALOG_DATA) private data: DialogData) {
   }
 

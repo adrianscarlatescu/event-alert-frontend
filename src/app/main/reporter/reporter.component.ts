@@ -6,7 +6,7 @@ import {EventDto} from '../../model/event.dto';
 import {ToastrService} from 'ngx-toastr';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {NewEventDialogComponent} from './new-event/new-event-dialog.component';
+import {EventReportDialogComponent} from './event-report/event-report-dialog.component';
 import {SpinnerService} from '../../shared/spinner/spinner.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class ReporterComponent implements OnInit {
       return;
     }
 
-    const dialogRef: MatDialogRef<NewEventDialogComponent> = this.dialog.open(NewEventDialogComponent);
+    const dialogRef: MatDialogRef<EventReportDialogComponent> = this.dialog.open(EventReportDialogComponent);
     dialogRef.afterClosed().subscribe(() => {
       const newEvent: EventDto = dialogRef.componentInstance.newEvent;
       if (!newEvent) {

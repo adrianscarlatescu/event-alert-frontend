@@ -28,7 +28,7 @@ import {FilterOptions} from '../../../types/filter-options';
   templateUrl: './events-filter-dialog.component.html',
   styleUrls: ['./events-filter-dialog.component.css']
 })
-export class EventsFilterDialogComponent implements OnInit {
+export class FilterDialogComponent implements OnInit {
 
   filterOptions: FilterOptions;
   filterForm: FormGroup;
@@ -48,7 +48,7 @@ export class EventsFilterDialogComponent implements OnInit {
               private toast: ToastrService,
               private formBuilder: FormBuilder,
               private domSanitizer: DomSanitizer,
-              private dialogRef: MatDialogRef<EventsFilterDialogComponent>,
+              private dialogRef: MatDialogRef<FilterDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data: FilterOptions) {
 
     this.filterOptions = data;

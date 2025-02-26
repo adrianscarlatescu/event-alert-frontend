@@ -5,7 +5,7 @@ import {PageEvent} from '@angular/material/paginator';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-list',
+  selector: 'app-events-list',
   templateUrl: './events-list.component.html',
   styleUrls: ['./events-list.component.css']
 })

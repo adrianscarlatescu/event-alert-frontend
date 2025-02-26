@@ -15,7 +15,7 @@ import {from} from 'rxjs';
 import {EventMapDialogComponent} from '../event-map/event-map-dialog.component';
 
 @Component({
-  selector: 'app-event.details',
+  selector: 'app-event-details',
   templateUrl: './event-details.component.html',
   styleUrls: ['./event-details.component.css']
 })

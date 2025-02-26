@@ -3,15 +3,15 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {OrderCode} from '../../../enums/order-code';
 
 @Component({
-  selector: 'app-order.dialog',
+  selector: 'app-order-dialog',
   templateUrl: './events-order-dialog.component.html',
   styleUrls: ['./events-order-dialog.component.css']
 })
-export class EventsOrderDialogComponent implements OnInit {
+export class OrderDialogComponent implements OnInit {
 
   orderCode: OrderCode;
 
-  constructor(private dialogRef: MatDialogRef<EventsOrderDialogComponent>,
+  constructor(private dialogRef: MatDialogRef<OrderDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data: OrderCode) {
 
     this.orderCode = data;

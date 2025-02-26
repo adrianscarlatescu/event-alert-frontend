@@ -27,11 +27,11 @@ import {pipe} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-new-event-dialog',
-  templateUrl: './new-event-dialog.component.html',
-  styleUrls: ['./new-event-dialog.component.css']
+  selector: 'app-event-report-dialog',
+  templateUrl: './event-report-dialog.component.html',
+  styleUrls: ['./event-report-dialog.component.css']
 })
-export class NewEventDialogComponent implements OnInit {
+export class EventReportDialogComponent implements OnInit {
 
   latitude: number;
   longitude: number;
@@ -53,7 +53,7 @@ export class NewEventDialogComponent implements OnInit {
               private spinnerService: SpinnerService,
               private toast: ToastrService,
               private domSanitizer: DomSanitizer,
-              private dialogRef: MatDialogRef<NewEventDialogComponent>) {
+              private dialogRef: MatDialogRef<EventReportDialogComponent>) {
 
     this.latitude = this.sessionService.getUserLatitude();
     this.longitude = this.sessionService.getUserLongitude();

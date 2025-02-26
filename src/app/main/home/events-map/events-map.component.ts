@@ -8,7 +8,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {interval, Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-map',
+  selector: 'app-events-map',
   templateUrl: './events-map.component.html',
   styleUrls: ['./events-map.component.css']
 })
