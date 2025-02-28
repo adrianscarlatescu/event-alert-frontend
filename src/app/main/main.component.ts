@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {SessionService} from '../service/session.service';
 import {ToastrService} from 'ngx-toastr';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
+import {UserService} from '../service/user.service';
 
 @Component({
   selector: 'app-main',
@@ -15,19 +16,20 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSidenav) sidenav: MatSidenav;
 
-  isUserAdmin: boolean = false;
+  isConnectedUserAdmin: boolean = false;
   geoWatchId: number;
 
   constructor(private authService: AuthService,
               private sessionService: SessionService,
+              private userService: UserService,
               private toast: ToastrService,
               private router: Router) {
-
-    this.isUserAdmin = this.sessionService.isUserAdmin();
 
   }
 
   ngOnInit(): void {
+    this.userService.isConnectedUserAdmin().subscribe(value => this.isConnectedUserAdmin = value);
+
     navigator.permissions.query({
       name: 'geolocation'
     }).then(result => {

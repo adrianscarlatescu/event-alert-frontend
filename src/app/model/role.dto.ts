@@ -1,6 +1,8 @@
+import {RoleId} from '../enums/id/role-id';
+
 export type RoleDto = {
 
-  id: string;
+  id: RoleId;
   label: string;
   description: string;
   position: number;

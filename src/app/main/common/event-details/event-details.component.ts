@@ -9,10 +9,13 @@ import {EventService} from '../../../service/event.service';
 import {SessionService} from '../../../service/session.service';
 import {MapsAPILoader} from '@agm/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {map, mergeMap} from 'rxjs/operators';
-import {from} from 'rxjs';
+import {concatMap, map, mergeMap, tap} from 'rxjs/operators';
+import {forkJoin, from, of} from 'rxjs';
 import {EventMapDialogComponent} from '../event-map/event-map-dialog.component';
 import {CommentDialogComponent} from './comment/comment-dialog.component';
+import {UserService} from '../../../service/user.service';
+import {UserDto} from '../../../model/user.dto';
+import {SpinnerService} from '../../../service/spinner.service';
 
 @Component({
   selector: 'app-event-details',
@@ -20,6 +23,8 @@ import {CommentDialogComponent} from './comment/comment-dialog.component';
   styleUrls: ['./event-details.component.css']
 })
 export class EventDetailsComponent implements OnInit {
+
+  isDataLoaded: boolean = false;
 
   eventId: number;
   event: EventDto;
@@ -33,10 +38,14 @@ export class EventDetailsComponent implements OnInit {
   comments: CommentDto[] = [];
   commentsUsersImages: CommentUserImage[] = [];
 
+  connectedUser: UserDto;
+
   constructor(activatedRoute: ActivatedRoute,
-              private fileService: FileService,
-              private eventService: EventService,
               private sessionService: SessionService,
+              private fileService: FileService,
+              private userService: UserService,
+              private spinnerService: SpinnerService,
+              private eventService: EventService,
               private commentService: CommentService,
               private domSanitizer: DomSanitizer,
               private mapsApiLoader: MapsAPILoader,
@@ -48,9 +57,16 @@ export class EventDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.eventService.getEventById(this.eventId)
-      .pipe(map(event => {
-        this.event = event;
+    this.spinnerService.show();
+
+    forkJoin([
+      this.userService.getProfile(),
+      this.eventService.getEventById(this.eventId)
+    ])
+      .pipe(tap(data => {
+        this.connectedUser = data[0];
+        this.event = data[1];
+
         this.typeImage = 'url(' + this.sessionService.getCacheImageByUrl(this.event.type.imagePath) + ')';
         this.severityColor = this.event.severity.color;
 
@@ -66,37 +82,38 @@ export class EventDetailsComponent implements OnInit {
               if (status == google.maps.GeocoderStatus.OK) {
                 this.eventAddress = results[0].formatted_address;
               } else {
-                console.log(status);
+                console.warn(status);
               }
             });
           });
         });
       }))
-      .pipe(mergeMap(() => {
-        return this.fileService.getImage(this.event.imagePath)
-          .pipe(map(blob => {
+      .pipe(concatMap(() => {
+        const eventImageObservable = this.fileService.getImage(this.event.imagePath)
+          .pipe(tap(blob => {
             const url: string = URL.createObjectURL(blob);
             this.eventImage = this.domSanitizer.bypassSecurityTrustUrl(url);
           }));
-      }))
-      .pipe(mergeMap(() => {
-        return this.fileService.getImage(this.event.user.imagePath)
-          .pipe(map(blob => {
+
+        const eventUserImageObservable = this.fileService.getImage(this.event.user.imagePath)
+          .pipe(tap(blob => {
             const reader: FileReader = new FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => {
               this.eventUserImage = 'url(' + reader.result + ')';
             };
           }));
-      }))
-      .pipe(mergeMap(() => {
-        return this.commentService.getCommentsByEventId(this.event.id)
-          .pipe(mergeMap(comments => {
+
+        const eventCommentsUsersImagesObservable = this.commentService.getCommentsByEventId(this.event.id)
+          .pipe(concatMap(comments => {
             this.comments = comments;
+            if (this.comments.length === 0) {
+              return of([]);
+            }
 
             return from(this.comments)
               .pipe(mergeMap(comment => {
-                return this.fileService.getImage(comment.user.imagePath).pipe(map(blob => {
+                return this.fileService.getImage(comment.user.imagePath).pipe(tap(blob => {
                   const url: string = URL.createObjectURL(blob);
                   const userImage: CommentUserImage = {
                     commentId: comment.id,
@@ -107,8 +124,13 @@ export class EventDetailsComponent implements OnInit {
               }));
 
           }));
+
+        return forkJoin([eventImageObservable, eventUserImageObservable, eventCommentsUsersImagesObservable])
       }))
-      .subscribe();
+      .subscribe(data => {
+        this.isDataLoaded = true;
+        this.spinnerService.close();
+      }, () => this.spinnerService.close());
   }
 
   getEventCommentUserImage(commentId: number): SafeUrl {
@@ -124,7 +146,7 @@ export class EventDetailsComponent implements OnInit {
     const dialogRef: MatDialogRef<CommentDialogComponent> = this.dialog.open(CommentDialogComponent, {
       data: {
         eventId: this.event.id,
-        userId: this.sessionService.getUser().id
+        userId: this.connectedUser.id
       }
     });
 

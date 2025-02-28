@@ -1,4 +1,4 @@
-<div class="profile_page_div">
+<div *ngIf="isDataLoaded" class="profile_page_div">
   <form [formGroup]="profileForm" (ngSubmit)="onSaveClicked()">
 
     <div class="profile_main_div">
@@ -62,7 +62,7 @@
       <div class="profile_category_div">
         <mat-form-field>
           <mat-label>Email</mat-label>
-          <input matInput disabled value="{{user.email}}">
+          <input matInput disabled value="{{connectedUser.email}}">
         </mat-form-field>
 
         <br>
@@ -74,16 +74,16 @@
 
         <br>
 
-        <mat-form-field *ngIf="user.joinedAt">
+        <mat-form-field *ngIf="connectedUser.joinedAt">
           <mat-label>Join date</mat-label>
-          <input matInput disabled value="{{user.joinedAt | date: 'medium'}}">
+          <input matInput disabled value="{{connectedUser.joinedAt | date: 'medium'}}">
         </mat-form-field>
 
         <br>
 
         <mat-form-field>
           <mat-label>Reports number</mat-label>
-          <input matInput disabled value="{{user.reportsNumber}}">
+          <input matInput disabled value="{{connectedUser.reportsNumber}}">
         </mat-form-field>
 
         <br>

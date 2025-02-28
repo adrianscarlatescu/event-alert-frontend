@@ -15,6 +15,7 @@ import {FilterOptions} from '../../types/filter-options';
 import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
+import {HomePage} from '../../types/home-page';
 
 @Component({
   selector: 'app-home',
@@ -67,8 +68,9 @@ export class HomeComponent implements OnInit {
 
     this.eventsOrder = EventsOrder.BY_DATE_DESCENDING;
 
-    const storageHomePage: string = this.sessionService.getHomePage();
-    this.homePage = storageHomePage == 'list' ? HomePage.LIST : HomePage.MAP;
+    const sessionHomePage = this.sessionService.getHomePage();
+    this.homePage = sessionHomePage && sessionHomePage === HomePage.LIST ? HomePage.LIST : HomePage.MAP;
+    this.sessionService.setHomePage(this.homePage);
 
   }
 
@@ -196,8 +198,4 @@ export class HomeComponent implements OnInit {
     this.requestNewSearch();
   }
 
-}
-
-export enum HomePage {
-  MAP = 'map', LIST = 'list'
 }

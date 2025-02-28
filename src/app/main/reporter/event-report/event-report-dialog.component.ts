@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EventDto} from '../../../model/event.dto';
 import {SeverityDto} from '../../../model/severity.dto';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -7,7 +7,7 @@ import {SessionService} from '../../../service/session.service';
 import {EventService} from '../../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MatDialogRef} from '@angular/material/dialog';
 import {IMPACT_RADIUS_PATTERN, LENGTH_1000, MAX_IMPACT_RADIUS, MIN_IMPACT_RADIUS} from '../../../defaults/constants';
 import {UserDto} from '../../../model/user.dto';
 import {
@@ -28,6 +28,7 @@ import {ImageType} from '../../../enums/image-type';
 import {mergeMap} from 'rxjs/operators';
 import {SpinnerService} from '../../../service/spinner.service';
 import {UserLocation} from '../../../types/user-location';
+import {UserService} from '../../../service/user.service';
 
 @Component({
   selector: 'app-event-report-dialog',
@@ -48,17 +49,19 @@ export class EventReportDialogComponent implements OnInit {
   newEventForm: FormGroup;
   newEvent: EventDto;
 
+  connectedUser: UserDto;
+
   constructor(private formBuilder: FormBuilder,
               private fileService: FileService,
               private sessionService: SessionService,
+              private userService: UserService,
               private eventService: EventService,
               private spinnerService: SpinnerService,
               private toast: ToastrService,
               private domSanitizer: DomSanitizer,
-              private dialogRef: MatDialogRef<EventReportDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: UserLocation) {
+              private dialogRef: MatDialogRef<EventReportDialogComponent>) {
 
-    this.userLocation = data;
+    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
 
     this.types = sessionService.getTypes().sort((a, b) => a.label.localeCompare(b.label)); // TODO
     this.severities = sessionService.getSeverities();
@@ -74,7 +77,7 @@ export class EventReportDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.userService.getProfile().subscribe(user => this.connectedUser = user);
   }
 
   onImageChanged(event: any): void {
@@ -101,8 +104,7 @@ export class EventReportDialogComponent implements OnInit {
       return;
     }
 
-    const user: UserDto = this.sessionService.getUser();
-    if (!user.firstName || !user.lastName) {
+    if (!this.connectedUser.firstName || !this.connectedUser.lastName) {
       this.toast.error(ERR_MSG_PROFILE_FULL_NAME_REQUIRED, '',{enableHtml: true});
       return;
     }
@@ -117,7 +119,7 @@ export class EventReportDialogComponent implements OnInit {
           severityId: this.newEventForm.get('severity').value,
           statusId: this.newEventForm.get('status').value,
           impactRadius: this.newEventForm.get('impactRadius').value,
-          userId: this.sessionService.getUser().id,
+          userId: this.connectedUser.id,
           imagePath: imagePath.toString(),
           description: this.newEventForm.get('description').value
         };

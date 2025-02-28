@@ -19,6 +19,9 @@ import {UserUpdateDto} from '../../model/user-update.dto';
 import {GenderDto} from '../../model/gender.dto';
 import {ImageType} from '../../enums/image-type';
 import {SpinnerService} from '../../service/spinner.service';
+import {GenderService} from '../../service/gender.service';
+import {forkJoin, of} from 'rxjs';
+import {concatMap, tap} from 'rxjs/operators';
 
 
 @Component({
@@ -28,13 +31,18 @@ import {SpinnerService} from '../../service/spinner.service';
 })
 export class ProfileComponent implements OnInit {
 
-  user: UserDto;
+  isDataLoaded: boolean = false;
+
+  connectedUser: UserDto;
   genders: GenderDto[];
+
   profileImage: SafeUrl;
+  profileImageFile: File;
+
   profileForm: FormGroup;
-  file: File;
 
   constructor(private userService: UserService,
+              private genderService: GenderService,
               private fileService: FileService,
               private sessionService: SessionService,
               private spinnerService: SpinnerService,
@@ -42,32 +50,48 @@ export class ProfileComponent implements OnInit {
               private formBuilder: FormBuilder,
               private domSanitizer: DomSanitizer) {
 
-    this.user = this.sessionService.getUser();
-    this.genders = this.sessionService.getGenders();
-
   }
 
   ngOnInit(): void {
-    this.profileForm = this.formBuilder.group({
-      firstName: [this.user.firstName, [Validators.required, Validators.maxLength(LENGTH_50)]],
-      lastName: [this.user.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
-      gender: [this.user.gender.id],
-      dateOfBirth: [this.user.dateOfBirth],
-      phoneNumber: [this.user.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_PATTERN)]]
-    });
+    this.spinnerService.show();
 
-    if (this.user.imagePath) {
-      this.fileService.getImage(this.user.imagePath)
-        .subscribe(image => {
-          this.setImage(image);
-        });
-    }
+    forkJoin([
+      this.userService.getProfile(),
+      this.genderService.getGenders()
+    ])
+      .pipe(concatMap(data => {
+        this.connectedUser = data[0];
+        this.genders = data[1];
+
+        this.initForm();
+
+        if (this.connectedUser.imagePath) {
+          return this.fileService.getImage(this.connectedUser.imagePath)
+            .pipe(tap(blob => this.setImage(blob)));
+        }
+
+        return of([]);
+      }))
+      .subscribe(() => {
+        this.isDataLoaded = true;
+        this.spinnerService.close()
+      }, () => this.spinnerService.close());
+  }
+
+  initForm(): void {
+    this.profileForm = this.formBuilder.group({
+      firstName: [this.connectedUser.firstName, [Validators.required, Validators.maxLength(LENGTH_50)]],
+      lastName: [this.connectedUser.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
+      gender: [this.connectedUser.gender.id],
+      dateOfBirth: [this.connectedUser.dateOfBirth],
+      phoneNumber: [this.connectedUser.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_PATTERN)]]
+    });
   }
 
   onImageChanged(event: any): void {
     if (event.target.files && event.target.files[0]) {
-      this.file = event.target.files[0];
-      this.setImage(this.file);
+      this.profileImageFile = event.target.files[0];
+      this.setImage(this.profileImageFile);
     }
   }
 
@@ -79,10 +103,10 @@ export class ProfileComponent implements OnInit {
     }
 
     this.spinnerService.show();
-    if (this.file) {
-      this.fileService.postImage(this.file, ImageType.USER)
+    if (this.profileImageFile) {
+      this.fileService.postImage(this.profileImageFile, ImageType.USER)
         .subscribe(imagePath => {
-          this.user.imagePath = imagePath.toString();
+          this.connectedUser.imagePath = imagePath.toString();
           this.updateUser();
         }, () => this.spinnerService.close());
     } else {
@@ -97,14 +121,13 @@ export class ProfileComponent implements OnInit {
       dateOfBirth: this.profileForm.value.dateOfBirth,
       phoneNumber: this.profileForm.value.phoneNumber,
       genderId: this.profileForm.value.gender,
-      imagePath: this.user.imagePath,
-      roleIds: this.user.roles.map(role => role.id)
+      imagePath: this.connectedUser.imagePath,
+      roleIds: this.connectedUser.roles.map(role => role.id)
     };
 
     this.userService.putProfile(userUpdate)
-      .subscribe(user => {
+      .subscribe(() => {
         this.toast.success('Profile updated');
-        this.sessionService.setUser(user);
         this.spinnerService.close();
       }, () => this.spinnerService.close());
   }
@@ -115,7 +138,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getRoles(): string {
-    return this.user.roles.map(role => role.label).join(', ');
+    return this.connectedUser.roles.map(role => role.label).join(', ');
   }
 
   getFirstNameErrorMessage(): string {

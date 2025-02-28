@@ -9,6 +9,8 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {EventReportDialogComponent} from './event-report/event-report-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
+import {UserService} from '../../service/user.service';
+import {concatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-reporter',
@@ -24,6 +26,7 @@ export class ReporterComponent implements OnInit {
 
   constructor(private eventService: EventService,
               private sessionService: SessionService,
+              private userService: UserService,
               private spinnerService: SpinnerService,
               private toast: ToastrService,
               private dialog: MatDialog,
@@ -33,7 +36,10 @@ export class ReporterComponent implements OnInit {
 
   ngOnInit(): void {
     this.spinnerService.show();
-    this.eventService.getEventsByUserId(this.sessionService.getUser().id)
+    this.userService.getProfile()
+      .pipe(concatMap(user => {
+        return this.eventService.getEventsByUserId(user.id);
+      }))
       .subscribe(events => {
         const data: Element[] = [];
         events.map(event => {

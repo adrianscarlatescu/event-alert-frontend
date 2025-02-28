@@ -1,6 +1,8 @@
+import {GenderId} from '../enums/id/gender-id';
+
 export type GenderDto = {
 
-  id: string;
+  id: GenderId;
   label: string;
 
 }
