@@ -5,8 +5,9 @@ import {EventDto} from '../../../model/event.dto';
 import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {interval, Subscription} from 'rxjs';
+import {forkJoin, interval, Subscription} from 'rxjs';
 import {UserLocation} from '../../../types/user-location';
+import {tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-events-map',
@@ -29,6 +30,8 @@ export class EventsMapComponent implements OnInit, OnChanges {
 
   userLocation: UserLocation;
 
+  typeImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
+
   constructor(private router: Router,
               private domSanitizer: DomSanitizer,
               private fileService: FileService,
@@ -45,6 +48,18 @@ export class EventsMapComponent implements OnInit, OnChanges {
     if (!this.events || this.events.length === 0) {
       return;
     }
+
+    forkJoin(this.events
+      .map(event => event.type.imagePath)
+      .filter((value, index, array) => array.indexOf(value) === index)
+      .map(imagePath => {
+        return this.fileService.getImage(imagePath)
+          .pipe(tap(blob => {
+            const url: string = URL.createObjectURL(blob);
+            this.typeImages.set(imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
+          }));
+      }))
+      .subscribe();
 
     const distances: number[] = this.events.map(event => event.distance);
     const radius: number = Math.max(...distances);

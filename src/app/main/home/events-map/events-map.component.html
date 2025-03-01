@@ -30,8 +30,8 @@
 
         <div class="map_marker_overlay"
              style="-webkit-mask-box-image: url('../../../../assets/event_marker.png');"
-             [ngStyle]="{'background-image': 'url(' + sessionService.getCacheImageByUrl(event.type.imagePath) + ')',
-               'background-color': event.severity.color}">
+             [ngStyle]="{'background-color': event.severity.color}">
+          <img style="position: absolute; width: 80%; height: 80%; left: 10%; top: 5%;" [src]="typeImages.get(event.type.imagePath)" class="filter_type_option_image">
         </div>
 
         <img src="assets/event_marker_border.png" class="map_marker_overlay"

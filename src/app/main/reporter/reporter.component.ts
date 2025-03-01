@@ -10,7 +10,10 @@ import {EventReportDialogComponent} from './event-report/event-report-dialog.com
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
 import {UserService} from '../../service/user.service';
-import {concatMap} from 'rxjs/operators';
+import {concatMap, tap} from 'rxjs/operators';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {FileService} from '../../service/file.service';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-reporter',
@@ -19,39 +22,53 @@ import {concatMap} from 'rxjs/operators';
 })
 export class ReporterComponent implements OnInit {
 
-  dataSource: MatTableDataSource<Element> = new MatTableDataSource([]);
+  isDataLoaded: boolean = false;
+
+  dataSource: MatTableDataSource<EventDto> = new MatTableDataSource([]);
   displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius'];
 
   userLocation: UserLocation;
+  typeImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
 
   constructor(private eventService: EventService,
               private sessionService: SessionService,
+              private fileService: FileService,
               private userService: UserService,
               private spinnerService: SpinnerService,
               private toast: ToastrService,
+              private domSanitizer: DomSanitizer,
               private dialog: MatDialog,
               private router: Router) {
 
   }
 
   ngOnInit(): void {
+    this.sessionService.getUserLocation()
+      .subscribe(userLocation => this.userLocation = userLocation);
+
     this.spinnerService.show();
     this.userService.getProfile()
       .pipe(concatMap(user => {
         return this.eventService.getEventsByUserId(user.id);
       }))
-      .subscribe(events => {
-        const data: Element[] = [];
-        events.map(event => {
-          const element: Element = this.getElementFromEvent(event);
-          data.push(element);
-        });
+      .pipe(concatMap(events => {
+        this.dataSource.data = events;
 
-        this.dataSource.data = data;
+        return forkJoin(events
+          .map(event => event.type.imagePath)
+          .filter((value, index, array) => array.indexOf(value) === index)
+          .map(imagePath => {
+          return this.fileService.getImage(imagePath)
+            .pipe(tap(blob => {
+              const url: string = URL.createObjectURL(blob);
+              this.typeImages.set(imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
+            }));
+        }));
+      }))
+      .subscribe(() => {
+        this.isDataLoaded = true;
         this.spinnerService.close();
       }, () => this.spinnerService.close());
-
-    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
   }
 
   onRowClicked(eventId: number): void {
@@ -73,42 +90,10 @@ export class ReporterComponent implements OnInit {
         return;
       }
 
-      const elements: Element[] = this.dataSource.data;
-      elements.unshift(this.getElementFromEvent(newEvent));
-      this.dataSource.data = elements;
+      const events: EventDto[] = this.dataSource.data;
+      events.unshift(newEvent);
+      this.dataSource.data = events;
     });
   }
-
-  private getElementFromEvent(event: EventDto): Element {
-    return {
-      eventId: event.id,
-      impactRadius: event.impactRadius,
-      typeLabel: event.type.label,
-      typeImagePath: event.type.imagePath,
-      severityLabel: event.severity.label,
-      severityColor: event.severity.color,
-      statusLabel: event.status.label,
-      statusColor: event.status.color,
-      createdAt: event.createdAt
-    };
-  }
-
-  getCacheImage(imagePath: string): string | ArrayBuffer {
-    return this.sessionService.getCacheImageByUrl(imagePath);
-  }
-
-}
-
-type Element = {
-
-  eventId: number;
-  impactRadius: number;
-  typeLabel: string;
-  typeImagePath: string;
-  severityLabel: string;
-  severityColor: string;
-  statusLabel: string;
-  statusColor: string;
-  createdAt: Date;
 
 }

@@ -21,7 +21,7 @@ import {ImageType} from '../../enums/image-type';
 import {SpinnerService} from '../../service/spinner.service';
 import {GenderService} from '../../service/gender.service';
 import {forkJoin, of} from 'rxjs';
-import {concatMap, tap} from 'rxjs/operators';
+import {concatMap, mergeMap, tap} from 'rxjs/operators';
 
 
 @Component({
@@ -132,8 +132,8 @@ export class ProfileComponent implements OnInit {
       }, () => this.spinnerService.close());
   }
 
-  private setImage(file: any): void {
-    const url: string = URL.createObjectURL(file);
+  private setImage(blob: Blob): void {
+    const url: string = URL.createObjectURL(blob);
     this.profileImage = this.domSanitizer.bypassSecurityTrustUrl(url);
   }
 

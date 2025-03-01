@@ -18,7 +18,7 @@
 
         <mat-option *ngFor="let type of types" [value]="type.id">
           <div class="new_event_type_option_div">
-            <img [src]="getImage(type.imagePath)" class="new_event_type_option_image">
+            <img [src]="typeImages.get(type.imagePath)" class="new_event_type_option_image">
             {{type.label}}
           </div>
         </mat-option>

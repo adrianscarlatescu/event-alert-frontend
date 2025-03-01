@@ -34,8 +34,8 @@ export class JwtInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    const accessToken: string | null = this.sessionService.getAccessToken();
-    const refreshToken: string | null = this.sessionService.getRefreshToken();
+    const accessToken: string = this.sessionService.getAccessToken();
+    const refreshToken: string = this.sessionService.getRefreshToken();
 
     if (!accessToken || !refreshToken) {
       this.toast.warning('Authorization tokens required, please re-login');

@@ -4,7 +4,8 @@
     <mat-card class="event_details_mat_card">
 
       <mat-card-header>
-        <div class="event_details_avatar_mat_card" mat-card-avatar [ngStyle]="{'background-image': eventUserImage}">
+        <div class="event_details_avatar_mat_card" mat-card-avatar>
+          <img style="width: 100%; height: 100%; border-radius: 50%;" [src]="eventUserImage">
         </div>
         <mat-card-title *ngIf="event">
           {{event.user.firstName + ' ' + event.user.lastName}}
@@ -20,8 +21,9 @@
 
       <div class="event_details_footer_div">
         <mat-card-header class="event_details_footer_info_div">
-          <div *ngIf="typeImage && severityColor" class="event_details_type_mat_card" mat-card-avatar
-               [ngStyle]="{'background-image': typeImage, 'background-color': severityColor}">
+          <div *ngIf="eventTypeImage && eventSeverityColor" class="event_details_type_mat_card" mat-card-avatar
+               [ngStyle]="{'background-color': eventSeverityColor}">
+            <img style="width: 100%; height: 100%;" [src]="eventTypeImage">
           </div>
           <mat-card-title *ngIf="event">
             {{event.type.label}}
@@ -69,7 +71,7 @@
     <div>
       <mat-list *ngIf="comments.length > 0">
         <mat-list-item *ngFor="let comment of comments" style="height: fit-content;">
-          <img matListAvatar [src]="getEventCommentUserImage(comment.id)"/>
+          <img matListAvatar [src]="commentsUsersImages.get(comment.user.id)"/>
           <h3 matLine>{{comment.user.firstName + ' ' + comment.user.lastName}}</h3>
           <p matLine>
             <span style="color: grey">{{comment.createdAt | date: 'medium'}}</span>

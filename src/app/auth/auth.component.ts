@@ -43,8 +43,8 @@ export class AuthComponent implements OnInit {
               private spinnerService: SpinnerService,
               private sessionService: SessionService) {
 
-    const accessToken: string | null = this.sessionService.getAccessToken();
-    const refreshToken: string | null = this.sessionService.getRefreshToken();
+    const accessToken = this.sessionService.getAccessToken();
+    const refreshToken = this.sessionService.getRefreshToken();
 
     if (accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS)) {
       this.spinnerService.show();

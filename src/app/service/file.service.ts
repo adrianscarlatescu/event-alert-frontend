@@ -1,19 +1,31 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {baseUrl} from '../../environments/environment';
 import {ImageType} from '../enums/image-type';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
 
+  private cachedImages: Map<string, Blob> = new Map<string, Blob>();
+
   constructor(private http: HttpClient) {
   }
 
+  fetchImage(imagePath: string): Observable<Blob> {
+    console.log('fetch image', imagePath);
+    return this.getImageObservable(imagePath)
+      .pipe(tap(blob => this.cachedImages.set(imagePath, blob)));
+  }
+
   getImage(imagePath: string): Observable<Blob> {
-    return this.http.get(`${baseUrl}/images`, {params: {path: imagePath}, responseType: 'blob'});
+    if (this.cachedImages.has(imagePath)) {
+      return of(this.cachedImages.get(imagePath));
+    }
+    return this.getImageObservable(imagePath);
   }
 
   postImage(image: File, imageType: ImageType): Observable<object> {
@@ -24,6 +36,10 @@ export class FileService {
         'type': imageType
       }
     });
+  }
+
+  private getImageObservable(imagePath: string): Observable<Blob> {
+    return this.http.get(`${baseUrl}/images`, {params: {path: imagePath}, responseType: 'blob'});
   }
 
 }

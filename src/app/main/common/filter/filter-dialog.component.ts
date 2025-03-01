@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {SessionService} from '../../../service/session.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {SeverityDto} from '../../../model/severity.dto';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -22,6 +21,12 @@ import {
 import {TypeDto} from '../../../model/type.dto';
 import {StatusDto} from '../../../model/status.dto';
 import {FilterOptions} from '../../../types/filter-options';
+import {TypeService} from '../../../service/type.service';
+import {FileService} from '../../../service/file.service';
+import {concatMap, tap} from 'rxjs/operators';
+import {forkJoin} from 'rxjs';
+import {SeverityService} from '../../../service/severity.service';
+import {StatusService} from '../../../service/status.service';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -30,10 +35,13 @@ import {FilterOptions} from '../../../types/filter-options';
 })
 export class FilterDialogComponent implements OnInit {
 
+  isDataLoaded: boolean = false;
+
   filterOptions: FilterOptions;
   filterForm: FormGroup;
 
   types: TypeDto[];
+  typeImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
   withAllTypesSelected: boolean;
 
   severities: SeverityDto[];
@@ -44,7 +52,10 @@ export class FilterDialogComponent implements OnInit {
 
   isNewSearch: boolean;
 
-  constructor(private sessionService: SessionService,
+  constructor(private fileService: FileService,
+              private typeService: TypeService,
+              private severityService: SeverityService,
+              private statusService: StatusService,
               private toast: ToastrService,
               private formBuilder: FormBuilder,
               private domSanitizer: DomSanitizer,
@@ -54,18 +65,41 @@ export class FilterDialogComponent implements OnInit {
     this.filterOptions = data;
     this.isNewSearch = false;
 
-    this.types = sessionService.getTypes().sort((a, b) => a.label.localeCompare(b.label));
-    this.withAllTypesSelected = this.filterOptions.types.length === this.types.length;
-
-    this.severities = sessionService.getSeverities();
-    this.withAllSeveritiesSelected = this.filterOptions.severities.length === this.severities.length;
-
-    this.statuses = sessionService.getStatuses();
-    this.withAllStatusesSelected = this.filterOptions.statuses.length === this.statuses.length;
-
   }
 
   ngOnInit(): void {
+    forkJoin([
+      this.typeService.getTypes(),
+      this.severityService.getSeverities(),
+      this.statusService.getStatuses()
+    ])
+      .pipe(concatMap(data => {
+        this.types = data[0];
+        this.severities = data[1];
+        this.statuses = data[2];
+
+        this.withAllTypesSelected = this.filterOptions.types.length === this.types.length;
+        this.withAllSeveritiesSelected = this.filterOptions.severities.length === this.severities.length;
+        this.withAllStatusesSelected = this.filterOptions.statuses.length === this.statuses.length;
+
+        const typeImagesObservable = this.types.map(type => {
+          return this.fileService.getImage(type.imagePath)
+            .pipe(tap(blob => {
+              const url: string = URL.createObjectURL(blob);
+              this.typeImages.set(type.imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
+            }));
+        });
+
+        return forkJoin(typeImagesObservable);
+      }))
+      .subscribe(() => {
+        this.initForm();
+        this.isDataLoaded = true;
+      });
+
+  }
+
+  initForm(): void {
     this.filterForm = this.formBuilder.group({
       radius: [this.filterOptions.radius, [Validators.required, Validators.min(MIN_RADIUS), Validators.max(MAX_RADIUS)]],
       selectedTypes: [this.types.filter(type =>
@@ -79,11 +113,6 @@ export class FilterDialogComponent implements OnInit {
     }, {
       validators: [DateValidator.validate]
     });
-  }
-
-  getImage(imagePath: string): SafeUrl {
-    const url: string = this.sessionService.getCacheImageByUrl(imagePath).toString();
-    return this.domSanitizer.bypassSecurityTrustUrl(url);
   }
 
   onSaveClicked(): void {

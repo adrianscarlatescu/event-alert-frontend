@@ -25,10 +25,14 @@ import {TypeDto} from '../../../model/type.dto';
 import {EventCreateDto} from '../../../model/event-create.dto';
 import {StatusDto} from '../../../model/status.dto';
 import {ImageType} from '../../../enums/image-type';
-import {mergeMap} from 'rxjs/operators';
+import {concatMap, mergeMap, tap} from 'rxjs/operators';
 import {SpinnerService} from '../../../service/spinner.service';
 import {UserLocation} from '../../../types/user-location';
 import {UserService} from '../../../service/user.service';
+import {forkJoin} from 'rxjs';
+import {TypeService} from '../../../service/type.service';
+import {SeverityService} from '../../../service/severity.service';
+import {StatusService} from '../../../service/status.service';
 
 @Component({
   selector: 'app-event-report-dialog',
@@ -43,6 +47,7 @@ export class EventReportDialogComponent implements OnInit {
   eventImage: SafeUrl;
 
   types: TypeDto[] = [];
+  typeImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
   severities: SeverityDto[] = [];
   statuses: StatusDto[] = [];
 
@@ -54,6 +59,9 @@ export class EventReportDialogComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private fileService: FileService,
               private sessionService: SessionService,
+              private typeService: TypeService,
+              private severityService: SeverityService,
+              private statusService: StatusService,
               private userService: UserService,
               private eventService: EventService,
               private spinnerService: SpinnerService,
@@ -61,12 +69,41 @@ export class EventReportDialogComponent implements OnInit {
               private domSanitizer: DomSanitizer,
               private dialogRef: MatDialogRef<EventReportDialogComponent>) {
 
-    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
+  }
 
-    this.types = sessionService.getTypes().sort((a, b) => a.label.localeCompare(b.label)); // TODO
-    this.severities = sessionService.getSeverities();
-    this.statuses = sessionService.getStatuses();
+  ngOnInit(): void {
+    this.initForm();
 
+    this.sessionService.getUserLocation()
+      .subscribe(userLocation => this.userLocation = userLocation);
+
+    this.userService.getProfile()
+      .subscribe(user => this.connectedUser = user);
+
+    forkJoin([
+      this.typeService.getTypes(),
+      this.severityService.getSeverities(),
+      this.statusService.getStatuses()
+    ])
+      .pipe(concatMap(data => {
+        this.types = data[0];
+        this.severities = data[1];
+        this.statuses = data[2];
+
+        const typeImagesObservable = this.types.map(type => {
+          return this.fileService.getImage(type.imagePath)
+            .pipe(tap(blob => {
+              const url: string = URL.createObjectURL(blob);
+              this.typeImages.set(type.imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
+            }));
+        });
+
+        return forkJoin(typeImagesObservable);
+      }))
+      .subscribe();
+  }
+
+  initForm(): void {
     this.newEventForm = this.formBuilder.group({
       severity: [undefined, Validators.required],
       type: [undefined, Validators.required],
@@ -76,21 +113,12 @@ export class EventReportDialogComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.userService.getProfile().subscribe(user => this.connectedUser = user);
-  }
-
   onImageChanged(event: any): void {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       const url: string = URL.createObjectURL(this.file);
       this.eventImage = this.domSanitizer.bypassSecurityTrustUrl(url);
     }
-  }
-
-  getImage(imagePath: string): SafeUrl {
-    const url: string = this.sessionService.getCacheImageByUrl(imagePath).toString();
-    return this.domSanitizer.bypassSecurityTrustUrl(url);
   }
 
   onSaveClicked(): void {

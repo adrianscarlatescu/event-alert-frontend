@@ -1,4 +1,4 @@
-<div class="filter_page_div">
+<div *ngIf="isDataLoaded" class="filter_page_div">
 
   <form [formGroup]="filterForm" (ngSubmit)="onSaveClicked()">
     <mat-form-field style="min-width: 60%">
@@ -36,7 +36,7 @@
 
         <mat-option *ngFor="let type of types" [value]="type">
           <div class="filter_type_option_div">
-            <img [src]="getImage(type.imagePath)" class="filter_type_option_image">
+            <img [src]="typeImages.get(type.imagePath)" class="filter_type_option_image">
             {{type.label}}
           </div>
         </mat-option>

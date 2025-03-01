@@ -16,6 +16,10 @@ import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
 import {HomePage} from '../../types/home-page';
+import {TypeService} from '../../service/type.service';
+import {SeverityService} from '../../service/severity.service';
+import {StatusService} from '../../service/status.service';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -42,24 +46,14 @@ export class HomeComponent implements OnInit {
 
   userLocation: UserLocation;
 
-  constructor(private eventService: EventService,
-              private sessionService: SessionService,
+  constructor(private sessionService: SessionService,
+              private eventService: EventService,
+              private typeService: TypeService,
+              private severityService: SeverityService,
+              private statusService: StatusService,
               private spinnerService: SpinnerService,
               private toast: ToastrService,
               private dialog: MatDialog) {
-
-    this.sessionService.getUserLocation().subscribe(userLocation => this.userLocation = userLocation);
-
-    this.filterOptions = {
-      radius: 1000,
-      types: this.sessionService.getTypes(),
-      severities: this.sessionService.getSeverities(),
-      statuses: this.sessionService.getStatuses(),
-
-      // Cover the events recorded in the database
-      startDate: new Date(2020, 0, 1),
-      endDate: new Date(2020, 11, 31)
-    }
 
     this.totalEvents = 0;
     this.totalPages = 0;
@@ -75,7 +69,27 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sessionService.getUserLocation()
+      .subscribe(userLocation => this.userLocation = userLocation);
 
+    forkJoin([
+      this.typeService.getTypes(),
+      this.severityService.getSeverities(),
+      this.statusService.getStatuses()
+    ])
+      .subscribe(data => {
+        this.filterOptions = {
+          types: data[0],
+          severities: data[1],
+          statuses: data[2],
+
+          radius: 1000,
+
+          // Cover the events recorded in the database
+          startDate: new Date(2020, 0, 1),
+          endDate: new Date(2020, 11, 31)
+        }
+      });
   }
 
   onPreviousClicked(): void {
