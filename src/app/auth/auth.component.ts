@@ -7,8 +7,7 @@ import {ToastrService} from 'ngx-toastr';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {SessionService} from '../service/session.service';
 import {CustomReuseStrategy} from '../main/common/custom.reuse.strategy';
-import {concatMap} from 'rxjs/operators';
-import {JWT_OFFSET_SECONDS, LENGTH_8, LENGTH_50} from '../defaults/constants';
+import {JWT_OFFSET_SECONDS, LENGTH_50, LENGTH_8} from '../defaults/constants';
 import {
   ERR_MSG_CONFIRMATION_PASSWORD_REQUIRED,
   ERR_MSG_DIFFERENT_PASSWORDS,
@@ -34,47 +33,44 @@ export class AuthComponent implements OnInit {
   registerForm: FormGroup;
   hidePassword: boolean = true;
   returnUrl: string;
+  syncError: boolean = false;
 
   constructor(activatedRoute: ActivatedRoute,
-              private formBuilder: FormBuilder,
-              private router: Router,
-              private toast: ToastrService,
+              private sessionService: SessionService,
               private authService: AuthService,
               private spinnerService: SpinnerService,
-              private sessionService: SessionService) {
-
-    const accessToken = this.sessionService.getAccessToken();
-    const refreshToken = this.sessionService.getRefreshToken();
-
-    if (accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS)) {
-      this.spinnerService.show();
-      this.sessionService.sync()
-        .subscribe(() => {
-          console.log('Sync completed');
-          this.router.navigate(['/home']);
-          this.spinnerService.close();
-        }, () => this.spinnerService.close());
-    } else {
-      localStorage.clear();
-    }
+              private toastrService: ToastrService,
+              private formBuilder: FormBuilder,
+              private router: Router) {
 
     this.returnUrl = activatedRoute.snapshot.queryParams['returnUrl'];
+    this.syncError = activatedRoute.snapshot.queryParams['syncError'];
 
   }
 
   ngOnInit(): void {
-    this.loginForm = this.formBuilder.group({
-      email: [undefined, [Validators.required, Validators.email]],
-      password: [undefined, [Validators.required]],
-    });
+    const accessToken = this.sessionService.getAccessToken();
+    const refreshToken = this.sessionService.getRefreshToken();
 
-    this.registerForm = this.formBuilder.group({
-      email: [undefined, [Validators.required, Validators.email, Validators.maxLength(LENGTH_50)]],
-      password: [undefined, [Validators.required, Validators.minLength(LENGTH_8), Validators.maxLength(LENGTH_50)]],
-      confirmPassword: [undefined, [Validators.required, Validators.minLength(LENGTH_8), Validators.maxLength(LENGTH_50)]]
-    }, {
-      validators: [PasswordValidator.validate]
-    });
+    if (!this.syncError && accessToken && refreshToken && !this.jwtHelper.isTokenExpired(refreshToken, JWT_OFFSET_SECONDS)) {
+      console.log('Valid tokens, redirect /home');
+      this.router.navigate(['/home']);
+    } else {
+      localStorage.clear();
+
+      this.loginForm = this.formBuilder.group({
+        email: [undefined, [Validators.required, Validators.email]],
+        password: [undefined, [Validators.required]],
+      });
+
+      this.registerForm = this.formBuilder.group({
+        email: [undefined, [Validators.required, Validators.email, Validators.maxLength(LENGTH_50)]],
+        password: [undefined, [Validators.required, Validators.minLength(LENGTH_8), Validators.maxLength(LENGTH_50)]],
+        confirmPassword: [undefined, [Validators.required, Validators.minLength(LENGTH_8), Validators.maxLength(LENGTH_50)]]
+      }, {
+        validators: [PasswordValidator.validate]
+      });
+    }
   }
 
   getLoginEmailErrorMessage(): string {
@@ -133,10 +129,7 @@ export class AuthComponent implements OnInit {
       }
 
       return this.authService.login(authLogin)
-        .pipe(concatMap(() => this.sessionService.sync()))
         .subscribe(() => {
-          console.log('Sync completed');
-
           const reuseStrategy: CustomReuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
           reuseStrategy.routesToCache = ['home'];
           reuseStrategy.storedRouteHandles = new Map<string, DetachedRouteHandle>();
@@ -159,7 +152,7 @@ export class AuthComponent implements OnInit {
 
       return this.authService.register(authRegister)
         .subscribe(user => {
-          this.toast.success('Registration successful');
+          this.toastrService.success('Registration successful');
           this.spinnerService.close();
         }, () => this.spinnerService.close());
     }

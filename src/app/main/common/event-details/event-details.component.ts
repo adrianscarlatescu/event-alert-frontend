@@ -13,7 +13,6 @@ import {concatMap, tap} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {EventMapDialogComponent} from '../event-map/event-map-dialog.component';
 import {CommentDialogComponent} from './comment/comment-dialog.component';
-import {UserService} from '../../../service/user.service';
 import {UserDto} from '../../../model/user.dto';
 import {SpinnerService} from '../../../service/spinner.service';
 
@@ -42,10 +41,9 @@ export class EventDetailsComponent implements OnInit {
   constructor(activatedRoute: ActivatedRoute,
               private sessionService: SessionService,
               private fileService: FileService,
-              private userService: UserService,
-              private spinnerService: SpinnerService,
               private eventService: EventService,
               private commentService: CommentService,
+              private spinnerService: SpinnerService,
               private domSanitizer: DomSanitizer,
               private mapsApiLoader: MapsAPILoader,
               private ngZone: NgZone,
@@ -56,21 +54,14 @@ export class EventDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.connectedUser = this.sessionService.getConnectedUser();
+
     this.spinnerService.show();
+    this.eventService.getEventById(this.eventId)
+      .pipe(concatMap(event => {
+        this.event = event;
 
-    forkJoin([
-      this.userService.getProfile(),
-      this.eventService.getEventById(this.eventId)
-    ])
-      .pipe(concatMap(data => {
-        this.connectedUser = data[0];
-        this.event = data[1];
-
-        const eventTypeImageObservable = this.fileService.getImage(this.event.type.imagePath)
-          .pipe(tap(blob => {
-            const url: string = URL.createObjectURL(blob);
-            this.eventTypeImage =  this.domSanitizer.bypassSecurityTrustUrl(url);
-          }));
+        this.eventTypeImage = this.sessionService.getImage(this.event.imagePath);
         this.eventSeverityColor = this.event.severity.color;
 
         this.mapsApiLoader.load().then(() => {
@@ -121,7 +112,7 @@ export class EventDetailsComponent implements OnInit {
             return forkJoin(imagesObservable);
           }));
 
-        return forkJoin([eventImageObservable, eventUserImageObservable, eventTypeImageObservable, eventCommentsUsersImagesObservable]);
+        return forkJoin([eventImageObservable, eventUserImageObservable, eventCommentsUsersImagesObservable]);
       }))
       .subscribe(data => {
         this.isDataLoaded = true;

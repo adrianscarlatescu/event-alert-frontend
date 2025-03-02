@@ -12,28 +12,15 @@ import {RoleId} from '../enums/id/role-id';
 })
 export class UserService {
 
-  private cachedUser: UserDto;
-
   constructor(private http: HttpClient) {
   }
 
   getProfile(): Observable<UserDto> {
-    if (this.cachedUser) {
-      return of(this.cachedUser);
-    }
-    return this.http.get<UserDto>(`${baseUrl}/users/profile`)
-      .pipe(tap(user => this.cachedUser = user));
+    return this.http.get<UserDto>(`${baseUrl}/users/profile`);
   }
 
   putProfile(userUpdate: UserUpdateDto): Observable<UserDto> {
-    return this.http.put<UserDto>(`${baseUrl}/users/profile`, userUpdate)
-      .pipe(tap(user => this.cachedUser = user));
-  }
-
-  isConnectedUserAdmin(): Observable<boolean> {
-    return this.getProfile().pipe(map(user => {
-      return user.roles.map(role => role.id).includes(RoleId.ROLE_ADMIN);
-    }));
+    return this.http.put<UserDto>(`${baseUrl}/users/profile`, userUpdate);
   }
 
 }

@@ -18,7 +18,7 @@
 
         <mat-option *ngFor="let type of types" [value]="type.id">
           <div class="new_event_type_option_div">
-            <img [src]="typeImages.get(type.imagePath)" class="new_event_type_option_image">
+            <img [src]="getImage(type.imagePath)" class="new_event_type_option_image">
             {{type.label}}
           </div>
         </mat-option>
@@ -53,8 +53,7 @@
 
         <mat-option *ngFor="let status of statuses" [value]="status.id">
           <div class="new_event_status_option_div">
-            <mat-card class="new_event_status_mat_card"
-                      [ngStyle]="{'background-color': status.color}"></mat-card>
+            <mat-card class="new_event_status_mat_card" [ngStyle]="{'background-color': status.color}"></mat-card>
             {{status.label}}
           </div>
         </mat-option>

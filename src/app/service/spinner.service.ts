@@ -6,21 +6,21 @@ import {BehaviorSubject, Observable} from 'rxjs';
 })
 export class SpinnerService {
 
-  private spinner = new BehaviorSubject<boolean>(false);
+  private spinnerSubject = new BehaviorSubject<boolean>(false);
 
   constructor() {
   }
 
   getSpinner(): Observable<boolean> {
-    return this.spinner;
+    return this.spinnerSubject;
   }
 
   show(): void {
-    this.spinner.next(true);
+    this.spinnerSubject.next(true);
   }
 
   close(): void {
-    this.spinner.next(false);
+    this.spinnerSubject.next(false);
   }
 
 }

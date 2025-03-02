@@ -16,10 +16,6 @@ import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
 import {HomePage} from '../../types/home-page';
-import {TypeService} from '../../service/type.service';
-import {SeverityService} from '../../service/severity.service';
-import {StatusService} from '../../service/status.service';
-import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -48,11 +44,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private sessionService: SessionService,
               private eventService: EventService,
-              private typeService: TypeService,
-              private severityService: SeverityService,
-              private statusService: StatusService,
               private spinnerService: SpinnerService,
-              private toast: ToastrService,
+              private toastrService: ToastrService,
               private dialog: MatDialog) {
 
     this.totalEvents = 0;
@@ -62,34 +55,26 @@ export class HomeComponent implements OnInit {
 
     this.eventsOrder = EventsOrder.BY_DATE_DESCENDING;
 
-    const sessionHomePage = this.sessionService.getHomePage();
-    this.homePage = sessionHomePage && sessionHomePage === HomePage.LIST ? HomePage.LIST : HomePage.MAP;
-    this.sessionService.setHomePage(this.homePage);
-
   }
 
   ngOnInit(): void {
     this.sessionService.getUserLocation()
       .subscribe(userLocation => this.userLocation = userLocation);
 
-    forkJoin([
-      this.typeService.getTypes(),
-      this.severityService.getSeverities(),
-      this.statusService.getStatuses()
-    ])
-      .subscribe(data => {
-        this.filterOptions = {
-          types: data[0],
-          severities: data[1],
-          statuses: data[2],
+    const sessionHomePage = this.sessionService.getHomePage();
+    this.homePage = sessionHomePage && sessionHomePage === HomePage.LIST ? HomePage.LIST : HomePage.MAP;
 
-          radius: 1000,
+    this.filterOptions = {
+      types:this.sessionService.getTypes(),
+      severities: this.sessionService.getSeverities(),
+      statuses: this.sessionService.getStatuses(),
 
-          // Cover the events recorded in the database
-          startDate: new Date(2020, 0, 1),
-          endDate: new Date(2020, 11, 31)
-        }
-      });
+      radius: 1000,
+
+      // Cover the events recorded in the database
+      startDate: new Date(2020, 0, 1),
+      endDate: new Date(2020, 11, 31)
+    }
   }
 
   onPreviousClicked(): void {
@@ -106,7 +91,7 @@ export class HomeComponent implements OnInit {
 
   onLocationClicked(): void {
     if (!this.userLocation) {
-      this.toast.warning('Location not provided');
+      this.toastrService.warning('Location not provided');
       return;
     }
     this.mapComponent.setDefaultViewValues();
@@ -126,7 +111,7 @@ export class HomeComponent implements OnInit {
 
   onFilterClicked(): void {
     if (!this.userLocation) {
-      this.toast.warning('Location not provided');
+      this.toastrService.warning('Location not provided');
       return;
     }
 
@@ -171,7 +156,7 @@ export class HomeComponent implements OnInit {
 
   onOrderClicked(): void {
     if (!this.userLocation) {
-      this.toast.warning('Location not provided');
+      this.toastrService.warning('Location not provided');
       return;
     }
 
@@ -181,7 +166,7 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(newOrder => {
       if (!newOrder || this.totalEvents === 0 || newOrder === this.eventsOrder) {
-        this.toast.info('Order not applied');
+        this.toastrService.info('Order not applied');
         return;
       }
       this.eventsOrder = newOrder;
@@ -200,7 +185,7 @@ export class HomeComponent implements OnInit {
         this.events = page.content;
 
         if (this.totalEvents === 0) {
-          this.toast.info('No events found');
+          this.toastrService.info('No events found');
         }
 
         this.spinnerService.close();

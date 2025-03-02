@@ -19,9 +19,6 @@ import {UserUpdateDto} from '../../model/user-update.dto';
 import {GenderDto} from '../../model/gender.dto';
 import {ImageType} from '../../enums/image-type';
 import {SpinnerService} from '../../service/spinner.service';
-import {GenderService} from '../../service/gender.service';
-import {forkJoin, of} from 'rxjs';
-import {concatMap, mergeMap, tap} from 'rxjs/operators';
 
 
 @Component({
@@ -31,8 +28,6 @@ import {concatMap, mergeMap, tap} from 'rxjs/operators';
 })
 export class ProfileComponent implements OnInit {
 
-  isDataLoaded: boolean = false;
-
   connectedUser: UserDto;
   genders: GenderDto[];
 
@@ -41,41 +36,26 @@ export class ProfileComponent implements OnInit {
 
   profileForm: FormGroup;
 
-  constructor(private userService: UserService,
-              private genderService: GenderService,
+  constructor(private sessionService: SessionService,
               private fileService: FileService,
-              private sessionService: SessionService,
+              private userService: UserService,
               private spinnerService: SpinnerService,
-              private toast: ToastrService,
-              private formBuilder: FormBuilder,
-              private domSanitizer: DomSanitizer) {
+              private toastrService: ToastrService,
+              private domSanitizer: DomSanitizer,
+              private formBuilder: FormBuilder) {
 
   }
 
   ngOnInit(): void {
-    this.spinnerService.show();
+    this.genders = this.sessionService.getGenders();
+    this.connectedUser = this.sessionService.getConnectedUser();
 
-    forkJoin([
-      this.userService.getProfile(),
-      this.genderService.getGenders()
-    ])
-      .pipe(concatMap(data => {
-        this.connectedUser = data[0];
-        this.genders = data[1];
+    this.fileService.getImage(this.connectedUser.imagePath)
+      .subscribe(blob => {
+        this.setImage(blob);
+      });
 
-        this.initForm();
-
-        if (this.connectedUser.imagePath) {
-          return this.fileService.getImage(this.connectedUser.imagePath)
-            .pipe(tap(blob => this.setImage(blob)));
-        }
-
-        return of([]);
-      }))
-      .subscribe(() => {
-        this.isDataLoaded = true;
-        this.spinnerService.close()
-      }, () => this.spinnerService.close());
+    this.initForm();
   }
 
   initForm(): void {
@@ -97,7 +77,7 @@ export class ProfileComponent implements OnInit {
 
   onSaveClicked(): void {
     if (!this.profileForm.valid) {
-      this.toast.error('Invalid form');
+      this.toastrService.error('Invalid form');
       this.profileForm.markAsTouched();
       return;
     }
@@ -126,8 +106,9 @@ export class ProfileComponent implements OnInit {
     };
 
     this.userService.putProfile(userUpdate)
-      .subscribe(() => {
-        this.toast.success('Profile updated');
+      .subscribe(user => {
+        this.toastrService.success('Profile updated');
+        this.connectedUser = user;
         this.spinnerService.close();
       }, () => this.spinnerService.close());
   }

@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {SeverityDto} from '../../../model/severity.dto';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ToastrService} from 'ngx-toastr';
@@ -21,12 +20,8 @@ import {
 import {TypeDto} from '../../../model/type.dto';
 import {StatusDto} from '../../../model/status.dto';
 import {FilterOptions} from '../../../types/filter-options';
-import {TypeService} from '../../../service/type.service';
-import {FileService} from '../../../service/file.service';
-import {concatMap, tap} from 'rxjs/operators';
-import {forkJoin} from 'rxjs';
-import {SeverityService} from '../../../service/severity.service';
-import {StatusService} from '../../../service/status.service';
+import {SessionService} from '../../../service/session.service';
+import {SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -35,13 +30,10 @@ import {StatusService} from '../../../service/status.service';
 })
 export class FilterDialogComponent implements OnInit {
 
-  isDataLoaded: boolean = false;
-
   filterOptions: FilterOptions;
   filterForm: FormGroup;
 
   types: TypeDto[];
-  typeImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
   withAllTypesSelected: boolean;
 
   severities: SeverityDto[];
@@ -52,13 +44,9 @@ export class FilterDialogComponent implements OnInit {
 
   isNewSearch: boolean;
 
-  constructor(private fileService: FileService,
-              private typeService: TypeService,
-              private severityService: SeverityService,
-              private statusService: StatusService,
-              private toast: ToastrService,
+  constructor(private sessionService: SessionService,
+              private toastrService: ToastrService,
               private formBuilder: FormBuilder,
-              private domSanitizer: DomSanitizer,
               private dialogRef: MatDialogRef<FilterDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data: FilterOptions) {
 
@@ -68,35 +56,16 @@ export class FilterDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    forkJoin([
-      this.typeService.getTypes(),
-      this.severityService.getSeverities(),
-      this.statusService.getStatuses()
-    ])
-      .pipe(concatMap(data => {
-        this.types = data[0];
-        this.severities = data[1];
-        this.statuses = data[2];
+    this.types = this.sessionService.getTypes();
+    this.withAllTypesSelected = this.filterOptions.types.length === this.types.length;
 
-        this.withAllTypesSelected = this.filterOptions.types.length === this.types.length;
-        this.withAllSeveritiesSelected = this.filterOptions.severities.length === this.severities.length;
-        this.withAllStatusesSelected = this.filterOptions.statuses.length === this.statuses.length;
+    this.severities = this.sessionService.getSeverities();
+    this.withAllSeveritiesSelected = this.filterOptions.severities.length === this.severities.length;
 
-        const typeImagesObservable = this.types.map(type => {
-          return this.fileService.getImage(type.imagePath)
-            .pipe(tap(blob => {
-              const url: string = URL.createObjectURL(blob);
-              this.typeImages.set(type.imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
-            }));
-        });
+    this.statuses = this.sessionService.getStatuses();
+    this.withAllStatusesSelected = this.filterOptions.statuses.length === this.statuses.length;
 
-        return forkJoin(typeImagesObservable);
-      }))
-      .subscribe(() => {
-        this.initForm();
-        this.isDataLoaded = true;
-      });
-
+    this.initForm();
   }
 
   initForm(): void {
@@ -115,9 +84,13 @@ export class FilterDialogComponent implements OnInit {
     });
   }
 
+  getImage(imagePath: string): SafeUrl {
+    return this.sessionService.getImage(imagePath);
+  }
+
   onSaveClicked(): void {
     if (this.filterForm.invalid) {
-      this.toast.error('Invalid form');
+      this.toastrService.error('Invalid form');
       this.filterForm.markAsTouched();
       return;
     }

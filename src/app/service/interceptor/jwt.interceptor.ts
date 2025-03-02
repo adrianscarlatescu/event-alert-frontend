@@ -15,11 +15,11 @@ export class JwtInterceptor implements HttpInterceptor {
 
   private jwtHelper: JwtHelperService = new JwtHelperService();
 
-  constructor(private router: Router,
-              private toast: ToastrService,
+  constructor(private sessionService: SessionService,
+              private authService: AuthService,
               private spinnerService: SpinnerService,
-              private sessionService: SessionService,
-              private authService: AuthService) {
+              private toastrService: ToastrService,
+              private router: Router) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -38,7 +38,7 @@ export class JwtInterceptor implements HttpInterceptor {
     const refreshToken: string = this.sessionService.getRefreshToken();
 
     if (!accessToken || !refreshToken) {
-      this.toast.warning('Authorization tokens required, please re-login');
+      this.toastrService.warning('Authorization tokens required, please re-login');
       this.clearAndRedirect();
       return of();
     }
@@ -48,7 +48,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (isRefreshTokenRequest) {
       if (isRefreshTokenExpired) {
-        this.toast.warning('Authorization expired, please re-login');
+        this.toastrService.warning('Authorization expired, please re-login');
         this.clearAndRedirect();
         return of();
       }

@@ -9,11 +9,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {EventReportDialogComponent} from './event-report/event-report-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
-import {UserService} from '../../service/user.service';
-import {concatMap, tap} from 'rxjs/operators';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {FileService} from '../../service/file.service';
-import {forkJoin} from 'rxjs';
+import {SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-reporter',
@@ -22,21 +18,15 @@ import {forkJoin} from 'rxjs';
 })
 export class ReporterComponent implements OnInit {
 
-  isDataLoaded: boolean = false;
-
   dataSource: MatTableDataSource<EventDto> = new MatTableDataSource([]);
   displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius'];
 
   userLocation: UserLocation;
-  typeImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
 
-  constructor(private eventService: EventService,
-              private sessionService: SessionService,
-              private fileService: FileService,
-              private userService: UserService,
+  constructor(private sessionService: SessionService,
+              private eventService: EventService,
               private spinnerService: SpinnerService,
-              private toast: ToastrService,
-              private domSanitizer: DomSanitizer,
+              private toastrService: ToastrService,
               private dialog: MatDialog,
               private router: Router) {
 
@@ -47,28 +37,15 @@ export class ReporterComponent implements OnInit {
       .subscribe(userLocation => this.userLocation = userLocation);
 
     this.spinnerService.show();
-    this.userService.getProfile()
-      .pipe(concatMap(user => {
-        return this.eventService.getEventsByUserId(user.id);
-      }))
-      .pipe(concatMap(events => {
+    this.eventService.getEventsByUserId(this.sessionService.getConnectedUser().id)
+      .subscribe(events => {
         this.dataSource.data = events;
-
-        return forkJoin(events
-          .map(event => event.type.imagePath)
-          .filter((value, index, array) => array.indexOf(value) === index)
-          .map(imagePath => {
-          return this.fileService.getImage(imagePath)
-            .pipe(tap(blob => {
-              const url: string = URL.createObjectURL(blob);
-              this.typeImages.set(imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
-            }));
-        }));
-      }))
-      .subscribe(() => {
-        this.isDataLoaded = true;
         this.spinnerService.close();
       }, () => this.spinnerService.close());
+  }
+
+  getImage(imagePath: string): SafeUrl {
+    return this.sessionService.getImage(imagePath);
   }
 
   onRowClicked(eventId: number): void {
@@ -77,7 +54,7 @@ export class ReporterComponent implements OnInit {
 
   onNewEventClicked(): void {
     if (!this.userLocation) {
-      this.toast.warning('Location not provided');
+      this.toastrService.warning('Location not provided');
       return;
     }
 

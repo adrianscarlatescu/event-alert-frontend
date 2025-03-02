@@ -1,4 +1,4 @@
-<div *ngIf="isDataLoaded" style="margin: 10px 65px;">
+<div style="margin: 10px 65px;">
 
   <div style="display: flex;">
     <button type="button" color="primary" mat-raised-button (click)="onNewEventClicked()" style="min-width: 150px">
@@ -20,7 +20,7 @@
         <mat-card class="reporter_mat_card_thumbnail"
                   [ngStyle]="{'background-color': e.severity.color}">
           <div class="reporter_thumbnail_image">
-            <img style="width: 100%; height: 100%;" [src]="typeImages.get(e.type.imagePath)">
+            <img style="width: 100%; height: 100%;" [src]="getImage(e.type.imagePath)">
           </div>
         </mat-card>
       </td>

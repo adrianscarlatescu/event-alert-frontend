@@ -8,10 +8,8 @@
         <td mat-cell *matCellDef="let e">
           <mat-card class="list_mat_card_thumbnail"
                     [ngStyle]="{'background-color': e.severity.color}">
-            <div
-
-              class="list_thumbnail_image">
-              <img style="width: 100%; height: 100%;" [src]="typeImages.get(e.type.imagePath)" class="filter_type_option_image">
+            <div class="list_thumbnail_image">
+              <img style="width: 100%; height: 100%;" [src]="getImage(e.type.imagePath)" class="filter_type_option_image">
             </div>
           </mat-card>
         </td>

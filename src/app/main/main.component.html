@@ -39,7 +39,7 @@
     </mat-nav-list>
   </mat-sidenav>
 
-  <div class="sidenav-content">
+  <div *ngIf="isDataSynced" class="sidenav-content">
     <router-outlet></router-outlet>
     <button mat-mini-fab color="primary" class="main_menu_fab" (click)="toggleSidenav()">
       <mat-icon>menu</mat-icon>

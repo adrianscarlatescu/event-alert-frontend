@@ -20,8 +20,8 @@ export class CommentDialogComponent implements OnInit {
   newEventComment: CommentDto;
 
   constructor(private eventCommentService: CommentService,
-              private toast: ToastrService,
               private spinnerService: SpinnerService,
+              private toastrService: ToastrService,
               private dialogRef: MatDialogRef<CommentDialogComponent>,
               @Inject(MAT_DIALOG_DATA) private data: DialogData) {
   }
@@ -32,7 +32,7 @@ export class CommentDialogComponent implements OnInit {
 
   onValidateClicked(): void {
     if (this.commentControl.invalid) {
-      this.toast.error('Invalid form');
+      this.toastrService.error('Invalid form');
       this.commentControl.markAsTouched();
       return;
     }
@@ -47,7 +47,7 @@ export class CommentDialogComponent implements OnInit {
     this.eventCommentService.postComment(commentCreate)
       .subscribe(eventComment => {
         this.spinnerService.close();
-        this.toast.success('Comment posted');
+        this.toastrService.success('Comment posted');
         this.newEventComment = eventComment;
         this.dialogRef.close();
       }, () => this.spinnerService.close());

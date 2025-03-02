@@ -3,7 +3,6 @@ import {Observable, of} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {baseUrl} from '../../environments/environment';
 import {ImageType} from '../enums/image-type';
-import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +12,6 @@ export class FileService {
   private cachedImages: Map<string, Blob> = new Map<string, Blob>();
 
   constructor(private http: HttpClient) {
-  }
-
-  fetchImage(imagePath: string): Observable<Blob> {
-    console.log('fetch image', imagePath);
-    return this.getImageObservable(imagePath)
-      .pipe(tap(blob => this.cachedImages.set(imagePath, blob)));
   }
 
   getImage(imagePath: string): Observable<Blob> {

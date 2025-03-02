@@ -8,7 +8,7 @@ import {ToastrService} from 'ngx-toastr';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private toast: ToastrService) {
+  constructor(private toastrService: ToastrService) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -25,7 +25,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           }
 
           console.error(errorResponse);
-          this.toast.error(errorMessage, '',{enableHtml: true});
+          this.toastrService.error(errorMessage, '',{enableHtml: true});
           return throwError(errorMessage);
         }));
   }
