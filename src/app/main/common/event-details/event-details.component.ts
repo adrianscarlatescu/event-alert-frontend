@@ -137,8 +137,9 @@ export class EventDetailsComponent implements OnInit {
         this.comments.unshift(newComment);
         this.fileService.getImage(newComment.user.imagePath)
           .subscribe(blob => {
+            console.log(newComment.user.id, blob)
             const url: string = URL.createObjectURL(blob);
-            this.commentsUsersImages.set(newComment.user.id, url);
+            this.commentsUsersImages.set(newComment.user.id, this.domSanitizer.bypassSecurityTrustUrl(url));
           });
       });
   }
