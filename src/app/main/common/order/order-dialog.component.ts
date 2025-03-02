@@ -12,9 +12,9 @@ export class OrderDialogComponent implements OnInit {
   order: EventsOrder;
 
   constructor(private dialogRef: MatDialogRef<OrderDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) data: EventsOrder) {
+              @Inject(MAT_DIALOG_DATA) order: EventsOrder) {
 
-    this.order = data;
+    this.order = order;
 
   }
 

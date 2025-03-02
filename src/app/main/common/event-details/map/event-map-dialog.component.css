@@ -1,4 +1,4 @@
-.map_view_marker_overlay {
+.event_map_view_marker_overlay {
   width: 80px;
   height: 80px;
   background-position: center;
@@ -8,4 +8,12 @@
   position: relative;
   bottom: 60px;
   right: 30px;
+}
+
+.event_map_view_type_image {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 5%;
 }

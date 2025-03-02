@@ -9,6 +9,12 @@
   background-size: cover;
 }
 
+.event_details_avatar_image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
 .event_details_type_mat_card {
   width: 40px;
   height: 40px;
@@ -16,6 +22,11 @@
   background-repeat: no-repeat;
   background-position: center;
   padding: 8px;
+}
+
+.event_details_type_image {
+  width: 100%;
+  height: 100%;
 }
 
 .event_details_mat_card {

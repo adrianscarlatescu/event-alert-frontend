@@ -1,0 +1,30 @@
+<agm-map style="width: 100vh; height: 75vh" [latitude]="event.latitude" [longitude]="event.longitude"
+         [zoom]="mapZoom" [styles]="mapStyle">
+
+  <agm-marker>
+    <agm-overlay
+      [latitude]="event.latitude"
+      [longitude]="event.longitude">
+
+      <div class="event_map_view_marker_overlay"
+           style="-webkit-mask-box-image: url('../../../../../assets/event_marker.png');"
+           [ngStyle]="{'background-color': event.severity.color}">
+        <img [src]="getImage(event.type.imagePath)" class="event_map_view_type_image">
+      </div>
+      <img src="assets/event_marker_border.png" class="event_map_view_marker_overlay" style="position: absolute"/>
+
+    </agm-overlay>
+  </agm-marker>
+
+  <agm-circle *ngIf="event.impactRadius"
+              [latitude]="event.latitude"
+              [longitude]="event.longitude"
+              [radius]="event.impactRadius * 1000"
+              [fillColor]="event.severity.color"
+              [strokeColor]="'#8C8C8C'"
+              [strokePosition]="'OUTSIDE'"
+              [strokeOpacity]="0.5"
+              [strokeWeight]="2.5">
+  </agm-circle>
+
+</agm-map>

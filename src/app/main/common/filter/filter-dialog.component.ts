@@ -48,9 +48,9 @@ export class FilterDialogComponent implements OnInit {
               private toastrService: ToastrService,
               private formBuilder: FormBuilder,
               private dialogRef: MatDialogRef<FilterDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) data: FilterOptions) {
+              @Inject(MAT_DIALOG_DATA) filterOptions: FilterOptions) {
 
-    this.filterOptions = data;
+    this.filterOptions = filterOptions;
     this.isNewSearch = false;
 
   }

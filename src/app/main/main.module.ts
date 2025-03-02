@@ -16,14 +16,14 @@ import {AgmCoreModule} from '@agm/core';
 import {AgmOverlays} from 'agm-overlays';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
-import {EventsMapComponent} from './home/events-map/events-map.component';
-import {EventsListComponent} from './home/events-list/events-list.component';
+import {EventsMapComponent} from './home/map/events-map.component';
+import {EventsListComponent} from './home/list/events-list.component';
 import {FilterDialogComponent} from './common/filter/filter-dialog.component';
 import {OrderDialogComponent} from './common/order/order-dialog.component';
 import {EventReportDialogComponent} from './reporter/event-report/event-report-dialog.component';
 import {EventDetailsComponent} from './common/event-details/event-details.component';
-import {EventMapDialogComponent} from './common/event-map/event-map-dialog.component';
-import {CommentDialogComponent} from './common/event-details/comment/comment-dialog.component';
+import {EventMapDialogComponent} from './common/event-details/map/event-map-dialog.component';
+import {EventCommentDialogComponent} from './common/event-details/comment/event-comment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import {CommentDialogComponent} from './common/event-details/comment/comment-dia
     AdminComponent,
     EventDetailsComponent,
     EventMapDialogComponent,
-    CommentDialogComponent
+    EventCommentDialogComponent
   ],
   imports: [
     CommonModule,

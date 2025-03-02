@@ -3,14 +3,14 @@
   <div class="event_details_div">
     <mat-card class="event_details_mat_card">
 
-      <mat-card-header>
-        <div class="event_details_avatar_mat_card" mat-card-avatar>
-          <img style="width: 100%; height: 100%; border-radius: 50%;" [src]="eventUserImage">
+      <mat-card-header *ngIf="event">
+        <div *ngIf="eventUserImage" class="event_details_avatar_mat_card" mat-card-avatar>
+          <img [src]="eventUserImage" class="event_details_avatar_image">
         </div>
-        <mat-card-title *ngIf="event">
+        <mat-card-title>
           {{event.user.firstName + ' ' + event.user.lastName}}
         </mat-card-title>
-        <mat-card-subtitle *ngIf="event">
+        <mat-card-subtitle>
           {{event.createdAt | date: 'medium'}}
         </mat-card-subtitle>
       </mat-card-header>
@@ -19,27 +19,27 @@
         <img *ngIf="eventImage" [src]="eventImage" class="event_details_event_image">
       </div>
 
-      <div class="event_details_footer_div">
+      <div *ngIf="event" class="event_details_footer_div">
         <mat-card-header class="event_details_footer_info_div">
-          <div *ngIf="eventTypeImage && eventSeverityColor" class="event_details_type_mat_card" mat-card-avatar
-               [ngStyle]="{'background-color': eventSeverityColor}">
-            <img style="width: 100%; height: 100%;" [src]="eventTypeImage">
+          <div *ngIf="event" class="event_details_type_mat_card" mat-card-avatar
+               [ngStyle]="{'background-color': event.severity.color}">
+            <img [src]="getImage(event.type.imagePath)" class="event_details_type_image">
           </div>
-          <mat-card-title *ngIf="event">
+          <mat-card-title>
             {{event.type.label}}
           </mat-card-title>
           <mat-card-subtitle>
-            <div *ngIf="event">
+            <div >
               {{event.severity.label}}
             </div>
-            <div *ngIf="event">
+            <div>
               <div class="event_details_status_circle" [ngStyle]="{'background-color': event.status.color}"></div>
               {{event.status.label}}: {{event.status.description}}
             </div>
-            <div *ngIf="eventAddress">
+            <div>
               {{eventAddress}}
             </div>
-            <div *ngIf="event" class="event_details_description_div">
+            <div class="event_details_description_div">
               {{event.description}}
             </div>
           </mat-card-subtitle>

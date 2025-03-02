@@ -77,3 +77,11 @@
   right: 0.5%;
   top: 0.5%;
 }
+
+.map_event_type_image {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 5%;
+}

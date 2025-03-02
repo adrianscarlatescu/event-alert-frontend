@@ -11,8 +11,8 @@ import {MapsAPILoader} from '@agm/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {concatMap, tap} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
-import {EventMapDialogComponent} from '../event-map/event-map-dialog.component';
-import {CommentDialogComponent} from './comment/comment-dialog.component';
+import {EventMapDialogComponent} from './map/event-map-dialog.component';
+import {EventCommentDialogComponent} from './comment/event-comment-dialog.component';
 import {UserDto} from '../../../model/user.dto';
 import {SpinnerService} from '../../../service/spinner.service';
 
@@ -30,8 +30,6 @@ export class EventDetailsComponent implements OnInit {
   eventImage: SafeUrl;
   eventAddress: string;
   eventUserImage: SafeUrl;
-  eventTypeImage: SafeUrl;
-  eventSeverityColor: string;
 
   comments: CommentDto[] = [];
   commentsUsersImages: Map<number, SafeUrl> = new Map<number, SafeUrl>();
@@ -60,9 +58,6 @@ export class EventDetailsComponent implements OnInit {
     this.eventService.getEventById(this.eventId)
       .pipe(concatMap(event => {
         this.event = event;
-
-        this.eventTypeImage = this.sessionService.getImage(this.event.imagePath);
-        this.eventSeverityColor = this.event.severity.color;
 
         this.mapsApiLoader.load().then(() => {
           const geo = new google.maps.Geocoder();
@@ -120,8 +115,12 @@ export class EventDetailsComponent implements OnInit {
       }, () => this.spinnerService.close());
   }
 
+  getImage(imagePath: string): SafeUrl {
+    return this.sessionService.getImage(imagePath);
+  }
+
   onNewCommentClicked(): void {
-    const dialogRef: MatDialogRef<CommentDialogComponent> = this.dialog.open(CommentDialogComponent, {
+    const dialogRef: MatDialogRef<EventCommentDialogComponent> = this.dialog.open(EventCommentDialogComponent, {
       data: {
         eventId: this.event.id,
         userId: this.connectedUser.id
@@ -145,14 +144,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   onMapViewClicked(): void {
-    this.dialog.open(EventMapDialogComponent, {
-      data: {
-        latitude: this.event.latitude,
-        longitude: this.event.longitude,
-        typeImage: this.eventTypeImage,
-        severityColor: this.eventSeverityColor
-      }
-    });
+    this.dialog.open(EventMapDialogComponent, {data: this.event});
   }
 
 }

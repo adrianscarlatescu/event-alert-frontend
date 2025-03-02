@@ -11,10 +11,10 @@ import {SpinnerService} from '../../../../service/spinner.service';
 
 @Component({
   selector: 'app-comment-dialog',
-  templateUrl: './comment-dialog.component.html',
-  styleUrls: ['./comment-dialog.component.css']
+  templateUrl: './event-comment-dialog.component.html',
+  styleUrls: ['./event-comment-dialog.component.css']
 })
-export class CommentDialogComponent implements OnInit {
+export class EventCommentDialogComponent implements OnInit {
 
   commentControl: FormControl;
   newEventComment: CommentDto;
@@ -22,7 +22,7 @@ export class CommentDialogComponent implements OnInit {
   constructor(private eventCommentService: CommentService,
               private spinnerService: SpinnerService,
               private toastrService: ToastrService,
-              private dialogRef: MatDialogRef<CommentDialogComponent>,
+              private dialogRef: MatDialogRef<EventCommentDialogComponent>,
               @Inject(MAT_DIALOG_DATA) private data: DialogData) {
   }
 

@@ -1,11 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {SessionService} from '../../service/session.service';
-import {EventsMapComponent} from './events-map/events-map.component';
+import {EventsMapComponent} from './map/events-map.component';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {EventService} from '../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
 import {OrderDialogComponent} from '../common/order/order-dialog.component';
-import {EventsListComponent} from './events-list/events-list.component';
+import {EventsListComponent} from './list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
 import {EventsOrder} from '../../enums/events-order';
 import {PAGE_SIZE} from '../../defaults/constants';
