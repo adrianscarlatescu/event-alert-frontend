@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, forkJoin, Observable, of, pipe} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
 import {UserLocation} from '../types/user-location';
 import {RoleDto} from '../model/role.dto';
 import {GenderDto} from '../model/gender.dto';
@@ -16,7 +16,7 @@ import {TypeService} from './type.service';
 import {SeverityService} from './severity.service';
 import {StatusService} from './status.service';
 import {UserService} from './user.service';
-import {concatMap, map, tap} from 'rxjs/operators';
+import {concatMap, tap} from 'rxjs/operators';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {RoleId} from '../enums/id/role-id';
 

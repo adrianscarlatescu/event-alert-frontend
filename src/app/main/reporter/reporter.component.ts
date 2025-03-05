@@ -10,6 +10,12 @@ import {EventReportDialogComponent} from './event-report/event-report-dialog.com
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
 import {SafeUrl} from '@angular/platform-browser';
+import {EventCreateDto} from '../../model/event-create.dto';
+import {mergeMap} from 'rxjs/operators';
+import {ImageType} from '../../enums/image-type';
+import {EventReport} from '../../types/event-report';
+import {FileService} from '../../service/file.service';
+import {UserDto} from '../../model/user.dto';
 
 @Component({
   selector: 'app-reporter',
@@ -21,9 +27,11 @@ export class ReporterComponent implements OnInit {
   dataSource: MatTableDataSource<EventDto> = new MatTableDataSource([]);
   displayedColumns: string[] = ['thumbnail', 'type', 'severity', 'status', 'createdAt', 'impactRadius'];
 
+  connectedUser: UserDto;
   userLocation: UserLocation;
 
   constructor(private sessionService: SessionService,
+              private fileService: FileService,
               private eventService: EventService,
               private spinnerService: SpinnerService,
               private toastrService: ToastrService,
@@ -33,6 +41,8 @@ export class ReporterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.connectedUser = this.sessionService.getConnectedUser();
+
     this.sessionService.getUserLocation()
       .subscribe(userLocation => this.userLocation = userLocation);
 
@@ -59,17 +69,38 @@ export class ReporterComponent implements OnInit {
     }
 
     const dialogRef: MatDialogRef<EventReportDialogComponent> = this.dialog.open(EventReportDialogComponent, {
-      data: this.userLocation
+      autoFocus: false
     });
-    dialogRef.afterClosed().subscribe(() => {
-      const newEvent: EventDto = dialogRef.componentInstance.newEvent;
+    dialogRef.afterClosed().subscribe((newEvent: EventReport) => {
       if (!newEvent) {
         return;
       }
 
-      const events: EventDto[] = this.dataSource.data;
-      events.unshift(newEvent);
-      this.dataSource.data = events;
+      this.spinnerService.show();
+      this.fileService.postImage(newEvent.image, ImageType.EVENT)
+        .pipe(mergeMap(imagePath => {
+          const eventCreate: EventCreateDto = {
+            latitude: this.userLocation.latitude,
+            longitude: this.userLocation.longitude,
+            typeId: newEvent.typeId,
+            severityId: newEvent.severityId,
+            statusId: newEvent.statusId,
+            impactRadius: newEvent.impactRadius,
+            userId: this.connectedUser.id,
+            imagePath: imagePath.toString(),
+            description: newEvent.description
+          };
+          return this.eventService.postEvent(eventCreate);
+        }))
+        .subscribe(event => {
+          this.toastrService.success('Event successfully reported');
+          this.spinnerService.close();
+
+          const events: EventDto[] = this.dataSource.data;
+          events.unshift(event);
+          this.dataSource.data = events;
+        }, () => this.spinnerService.close());
+
     });
   }
 

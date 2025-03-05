@@ -65,9 +65,9 @@ export class HomeComponent implements OnInit {
     this.homePage = sessionHomePage && sessionHomePage === HomePage.LIST ? HomePage.LIST : HomePage.MAP;
 
     this.filterOptions = {
-      types:this.sessionService.getTypes(),
-      severities: this.sessionService.getSeverities(),
-      statuses: this.sessionService.getStatuses(),
+      typeIds: this.sessionService.getTypes().map(type => type.id),
+      severityIds: this.sessionService.getSeverities().map(severity => severity.id),
+      statusIds: this.sessionService.getStatuses().map(status => status.id),
 
       radius: 1000,
 
@@ -120,13 +120,12 @@ export class HomeComponent implements OnInit {
       autoFocus: false
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      const isNewSearch: boolean = dialogRef.componentInstance.isNewSearch;
-      if (!isNewSearch) {
+    dialogRef.afterClosed().subscribe(filterOptions => {
+      if (!filterOptions) {
         return;
       }
 
-      this.filterOptions = dialogRef.componentInstance.filterOptions;
+      this.filterOptions = filterOptions;
 
       this.eventsFilter = {
         radius: this.filterOptions.radius,
@@ -134,9 +133,9 @@ export class HomeComponent implements OnInit {
         endDate: this.filterOptions.endDate,
         latitude: this.userLocation.latitude,
         longitude: this.userLocation.longitude,
-        typeIds: this.filterOptions.types.map(type => type.id),
-        severityIds: this.filterOptions.severities.map(severity => severity.id),
-        statusIds: this.filterOptions.statuses.map(status => status.id)
+        typeIds: this.filterOptions.typeIds,
+        severityIds: this.filterOptions.severityIds,
+        statusIds: this.filterOptions.statusIds
       };
 
       this.pageIndex = 0;
@@ -161,11 +160,14 @@ export class HomeComponent implements OnInit {
     }
 
     const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
-      data: this.eventsOrder
+      data: this.eventsOrder,
     });
 
     dialogRef.afterClosed().subscribe(newOrder => {
-      if (!newOrder || this.totalEvents === 0 || newOrder === this.eventsOrder) {
+      if (!newOrder) {
+        return;
+      }
+      if (this.totalEvents === 0 || newOrder === this.eventsOrder) {
         this.toastrService.info('Order not applied');
         return;
       }

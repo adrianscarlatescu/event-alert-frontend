@@ -30,7 +30,6 @@ import {SafeUrl} from '@angular/platform-browser';
 })
 export class FilterDialogComponent implements OnInit {
 
-  filterOptions: FilterOptions;
   filterForm: FormGroup;
 
   types: TypeDto[];
@@ -42,28 +41,24 @@ export class FilterDialogComponent implements OnInit {
   statuses: StatusDto[];
   withAllStatusesSelected: boolean;
 
-  isNewSearch: boolean;
-
   constructor(private sessionService: SessionService,
               private toastrService: ToastrService,
               private formBuilder: FormBuilder,
               private dialogRef: MatDialogRef<FilterDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) filterOptions: FilterOptions) {
-
-    this.filterOptions = filterOptions;
-    this.isNewSearch = false;
+              @Inject(MAT_DIALOG_DATA)
+              private filterOptions: FilterOptions) {
 
   }
 
   ngOnInit(): void {
     this.types = this.sessionService.getTypes();
-    this.withAllTypesSelected = this.filterOptions.types.length === this.types.length;
+    this.withAllTypesSelected = this.filterOptions.typeIds.length === this.types.length;
 
     this.severities = this.sessionService.getSeverities();
-    this.withAllSeveritiesSelected = this.filterOptions.severities.length === this.severities.length;
+    this.withAllSeveritiesSelected = this.filterOptions.severityIds.length === this.severities.length;
 
     this.statuses = this.sessionService.getStatuses();
-    this.withAllStatusesSelected = this.filterOptions.statuses.length === this.statuses.length;
+    this.withAllStatusesSelected = this.filterOptions.statusIds.length === this.statuses.length;
 
     this.initForm();
   }
@@ -71,14 +66,11 @@ export class FilterDialogComponent implements OnInit {
   initForm(): void {
     this.filterForm = this.formBuilder.group({
       radius: [this.filterOptions.radius, [Validators.required, Validators.min(MIN_RADIUS), Validators.max(MAX_RADIUS)]],
-      selectedTypes: [this.types.filter(type =>
-        this.filterOptions.types.find(filterType => filterType.id === type.id)), [Validators.required]],
-      selectedSeverities: [this.severities.filter(severity =>
-        this.filterOptions.severities.find(filterSeverity => filterSeverity.id === severity.id)), [Validators.required]],
-      selectedStatuses: [this.statuses.filter(status =>
-        this.filterOptions.statuses.find(filterStatus => filterStatus.id === status.id)), [Validators.required]],
-      startDate: [this.filterOptions.startDate, [Validators.required]],
-      endDate: [this.filterOptions.endDate, [Validators.required]],
+      typeIds: [this.filterOptions.typeIds, Validators.required],
+      severityIds: [this.filterOptions.severityIds, Validators.required],
+      statusIds: [this.filterOptions.statusIds, Validators.required],
+      startDate: [this.filterOptions.startDate, Validators.required],
+      endDate: [this.filterOptions.endDate, Validators.required],
     }, {
       validators: [DateValidator.validate]
     });
@@ -88,25 +80,23 @@ export class FilterDialogComponent implements OnInit {
     return this.sessionService.getImage(imagePath);
   }
 
-  onSaveClicked(): void {
+  onValidateClicked(): void {
     if (this.filterForm.invalid) {
       this.toastrService.error('Invalid form');
       this.filterForm.markAsTouched();
       return;
     }
 
-    this.filterOptions = {
+    const filterOptions: FilterOptions = {
       radius: this.filterForm.value.radius,
       startDate: this.filterForm.value.startDate,
       endDate: this.filterForm.value.endDate,
-      types: this.filterForm.value.selectedTypes,
-      severities: this.filterForm.value.selectedSeverities,
-      statuses: this.filterForm.value.selectedStatuses
+      typeIds: this.filterForm.value.typeIds,
+      severityIds: this.filterForm.value.severityIds,
+      statusIds: this.filterForm.value.statusIds
     }
 
-    this.isNewSearch = true;
-
-    this.dialogRef.close();
+    this.dialogRef.close(filterOptions);
   }
 
   getRadiusErrorMessage(): string {
@@ -145,21 +135,21 @@ export class FilterDialogComponent implements OnInit {
   }
 
   getTypesErrorMessage(): string {
-    const selectedTypes: AbstractControl = this.filterForm.get('selectedTypes');
+    const selectedTypes: AbstractControl = this.filterForm.get('typeIds');
     if (selectedTypes.hasError('required')) {
       return ERR_MSG_MIN_TYPE_REQUIRED;
     }
   }
 
   getSeveritiesErrorMessage(): string {
-    const selectedSeverities: AbstractControl = this.filterForm.get('selectedSeverities');
+    const selectedSeverities: AbstractControl = this.filterForm.get('severityIds');
     if (selectedSeverities.hasError('required')) {
       return ERR_MSG_MIN_SEVERITY_REQUIRED;
     }
   }
 
   getStatusesErrorMessage(): string {
-    const selectedStatuses: AbstractControl = this.filterForm.get('selectedStatuses');
+    const selectedStatuses: AbstractControl = this.filterForm.get('statusIds');
     if (selectedStatuses.hasError('required')) {
       return ERR_MSG_MIN_STATUS_REQUIRED;
     }
@@ -172,9 +162,9 @@ export class FilterDialogComponent implements OnInit {
   onAllTypesChanged(): void {
     this.withAllTypesSelected = !this.withAllTypesSelected;
     if (this.withAllTypesSelected) {
-      this.filterForm.get('selectedTypes').setValue(this.types);
+      this.filterForm.get('typeIds').setValue(this.types.map(type => type.id));
     } else {
-      this.filterForm.get('selectedTypes').setValue([]);
+      this.filterForm.get('typeIds').setValue([]);
     }
   }
 
@@ -185,9 +175,9 @@ export class FilterDialogComponent implements OnInit {
   onAllSeveritiesChanged(): void {
     this.withAllSeveritiesSelected = !this.withAllSeveritiesSelected;
     if (this.withAllSeveritiesSelected) {
-      this.filterForm.get('selectedSeverities').setValue(this.severities);
+      this.filterForm.get('severityIds').setValue(this.severities.map(severity => severity.id));
     } else {
-      this.filterForm.get('selectedSeverities').setValue([]);
+      this.filterForm.get('severityIds').setValue([]);
     }
   }
 
@@ -198,9 +188,9 @@ export class FilterDialogComponent implements OnInit {
   onAllStatusesChanged(): void {
     this.withAllStatusesSelected = !this.withAllStatusesSelected;
     if (this.withAllStatusesSelected) {
-      this.filterForm.get('selectedStatuses').setValue(this.statuses);
+      this.filterForm.get('statusIds').setValue(this.statuses.map(status => status.id));
     } else {
-      this.filterForm.get('selectedStatuses').setValue([]);
+      this.filterForm.get('statusIds').setValue([]);
     }
   }
 

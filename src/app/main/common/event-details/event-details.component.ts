@@ -15,6 +15,8 @@ import {EventMapDialogComponent} from './map/event-map-dialog.component';
 import {EventCommentDialogComponent} from './comment/event-comment-dialog.component';
 import {UserDto} from '../../../model/user.dto';
 import {SpinnerService} from '../../../service/spinner.service';
+import {CommentCreateDto} from '../../../model/comment-create.dto';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-event-details',
@@ -42,6 +44,7 @@ export class EventDetailsComponent implements OnInit {
               private eventService: EventService,
               private commentService: CommentService,
               private spinnerService: SpinnerService,
+              private toastrService: ToastrService,
               private domSanitizer: DomSanitizer,
               private mapsApiLoader: MapsAPILoader,
               private ngZone: NgZone,
@@ -120,28 +123,36 @@ export class EventDetailsComponent implements OnInit {
   }
 
   onNewCommentClicked(): void {
-    const dialogRef: MatDialogRef<EventCommentDialogComponent> = this.dialog.open(EventCommentDialogComponent, {
-      data: {
-        eventId: this.event.id,
-        userId: this.connectedUser.id
+    const dialogRef: MatDialogRef<EventCommentDialogComponent> = this.dialog.open(EventCommentDialogComponent);
+
+    dialogRef.afterClosed().subscribe(newComment => {
+      if (!newComment) {
+        return;
       }
+
+      const commentCreate: CommentCreateDto = {
+        comment: newComment,
+        eventId: this.eventId,
+        userId: this.connectedUser.id
+      };
+
+      this.spinnerService.show();
+      this.commentService.postComment(commentCreate)
+        .pipe(tap(newComment => {
+          this.comments.unshift(newComment);
+        }))
+        .pipe(concatMap(newComment => {
+          return this.fileService.getImage(newComment.user.imagePath)
+            .pipe(tap(blob => {
+              const url: string = URL.createObjectURL(blob);
+              this.commentsUsersImages.set(newComment.user.id, this.domSanitizer.bypassSecurityTrustUrl(url));
+            }));
+        }))
+        .subscribe(() => {
+          this.spinnerService.close();
+          this.toastrService.success('Comment posted');
+        }, () => this.spinnerService.close());
     });
-
-    dialogRef.afterClosed()
-      .subscribe(() => {
-        const newComment: CommentDto = dialogRef.componentInstance.newEventComment;
-        if (!newComment) {
-          return;
-        }
-
-        this.comments.unshift(newComment);
-        this.fileService.getImage(newComment.user.imagePath)
-          .subscribe(blob => {
-            console.log(newComment.user.id, blob)
-            const url: string = URL.createObjectURL(blob);
-            this.commentsUsersImages.set(newComment.user.id, this.domSanitizer.bypassSecurityTrustUrl(url));
-          });
-      });
   }
 
   onMapViewClicked(): void {

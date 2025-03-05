@@ -24,4 +24,5 @@ export class OrderDialogComponent implements OnInit {
   onValidateClicked(): void {
     this.dialogRef.close(this.order);
   }
+
 }

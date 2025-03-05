@@ -1,12 +1,3 @@
-.new_event_page_div {
-  overflow-y: scroll;
-  width: 100vh;
-  height: 75vh;
-  min-width: 400px;
-  text-align: start;
-  padding: 10px;
-}
-
 .new_event_image_mat_card {
   margin-left: auto;
   margin-right: auto;

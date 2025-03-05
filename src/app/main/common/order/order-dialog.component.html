@@ -1,4 +1,4 @@
-<div style="width: 80vh">
+<app-modal title="Sort events" (onValidate)="onValidateClicked()">
 
   <mat-button-toggle-group vertical name="fontStyle" aria-label="Font Style" style="width: 100%" [(value)]="order">
 
@@ -51,8 +51,4 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 
-  <button mat-mini-fab color="primary" style="float: right; margin-top: 15px" (click)="onValidateClicked()">
-    <mat-icon>check</mat-icon>
-  </button>
-
-</div>
+</app-modal>

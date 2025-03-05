@@ -1,4 +1,5 @@
-<div class="new_event_page_div">
+<app-modal title="Report new event" (onValidate)="onValidateClicked()">
+
   <mat-card class="new_event_image_mat_card">
     <div class="new_event_image_div">
       <img *ngIf="eventImage" [src]="eventImage" class="new_event_image">
@@ -11,9 +12,9 @@
 
   <br>
 
-  <form [formGroup]="newEventForm" (ngSubmit)="onSaveClicked()">
+  <form [formGroup]="newEventForm">
     <mat-form-field appearance="fill">
-      <mat-label>Tag</mat-label>
+      <mat-label>Type</mat-label>
       <mat-select formControlName="type" required style="top: 0">
 
         <mat-option *ngFor="let type of types" [value]="type.id">
@@ -76,12 +77,6 @@
       <textarea formControlName="description" matInput placeholder="Add description..." style="min-height: 50px"></textarea>
       <mat-error *ngIf="newEventForm.get('description').invalid">{{getDescriptionErrorMessage()}}</mat-error>
     </mat-form-field>
-
-    <br>
-
-    <button mat-mini-fab color="primary" style="float: right" type="submit">
-      <mat-icon>check</mat-icon>
-    </button>
   </form>
 
-</div>
+</app-modal>

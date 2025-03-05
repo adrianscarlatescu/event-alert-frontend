@@ -38,13 +38,19 @@ import {MatTableModule} from '@angular/material/table';
 import {SpinnerComponent} from './spinner/spinner.component';
 import {CommonModule} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ModalComponent} from './modal/modal.component';
 
 @NgModule({
-  declarations: [SpinnerComponent],
+  declarations: [SpinnerComponent, ModalComponent],
   imports: [
     CommonModule,
     BrowserModule,
-    MatProgressSpinnerModule
+    BrowserAnimationsModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule
   ],
   exports: [
     MatAutocompleteModule,
@@ -83,7 +89,8 @@ import {BrowserModule} from '@angular/platform-browser';
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    SpinnerComponent
+    SpinnerComponent,
+    ModalComponent
   ]
 })
 export class SharedModule {

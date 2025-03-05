@@ -2,9 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {EventDto} from '../../../model/event.dto';
 import {SeverityDto} from '../../../model/severity.dto';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {FileService} from '../../../service/file.service';
 import {SessionService} from '../../../service/session.service';
-import {EventService} from '../../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
@@ -22,12 +20,8 @@ import {
   ERR_MSG_TYPE_REQUIRED
 } from '../../../defaults/field-validation-messages';
 import {TypeDto} from '../../../model/type.dto';
-import {EventCreateDto} from '../../../model/event-create.dto';
 import {StatusDto} from '../../../model/status.dto';
-import {ImageType} from '../../../enums/image-type';
-import {mergeMap} from 'rxjs/operators';
-import {SpinnerService} from '../../../service/spinner.service';
-import {UserLocation} from '../../../types/user-location';
+import {EventReport} from '../../../types/event-report';
 
 @Component({
   selector: 'app-event-report-dialog',
@@ -35,8 +29,6 @@ import {UserLocation} from '../../../types/user-location';
   styleUrls: ['./event-report-dialog.component.css']
 })
 export class EventReportDialogComponent implements OnInit {
-
-  userLocation: UserLocation;
 
   file: File;
   eventImage: SafeUrl;
@@ -51,9 +43,6 @@ export class EventReportDialogComponent implements OnInit {
   connectedUser: UserDto;
 
   constructor(private sessionService: SessionService,
-              private fileService: FileService,
-              private eventService: EventService,
-              private spinnerService: SpinnerService,
               private toastrService: ToastrService,
               private domSanitizer: DomSanitizer,
               private formBuilder: FormBuilder,
@@ -62,9 +51,6 @@ export class EventReportDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sessionService.getUserLocation()
-      .subscribe(userLocation => this.userLocation = userLocation);
-
     this.connectedUser = this.sessionService.getConnectedUser();
     this.types = this.sessionService.getTypes();
     this.severities = this.sessionService.getSeverities();
@@ -95,7 +81,7 @@ export class EventReportDialogComponent implements OnInit {
     }
   }
 
-  onSaveClicked(): void {
+  onValidateClicked(): void {
     if (this.newEventForm.invalid) {
       this.toastrService.error('Invalid form');
       this.newEventForm.markAsTouched();
@@ -111,28 +97,16 @@ export class EventReportDialogComponent implements OnInit {
       return;
     }
 
-    this.spinnerService.show();
-    this.fileService.postImage(this.file, ImageType.EVENT)
-      .pipe(mergeMap(imagePath => {
-        const eventCreate: EventCreateDto = {
-          latitude: this.userLocation.latitude,
-          longitude: this.userLocation.longitude,
-          typeId: this.newEventForm.get('type').value,
-          severityId: this.newEventForm.get('severity').value,
-          statusId: this.newEventForm.get('status').value,
-          impactRadius: this.newEventForm.get('impactRadius').value,
-          userId: this.connectedUser.id,
-          imagePath: imagePath.toString(),
-          description: this.newEventForm.get('description').value
-        };
-        return this.eventService.postEvent(eventCreate);
-      }))
-      .subscribe(event => {
-        this.toastrService.success('Event successfully reported');
-        this.newEvent = event;
-        this.dialogRef.close();
-        this.spinnerService.close();
-      }, () => this.spinnerService.close());
+    const eventReport: EventReport = {
+      image: this.file,
+      typeId: this.newEventForm.get('type').value,
+      severityId: this.newEventForm.get('severity').value,
+      statusId: this.newEventForm.get('status').value,
+      impactRadius: this.newEventForm.get('impactRadius').value,
+      description: this.newEventForm.get('description').value
+    };
+
+    this.dialogRef.close(eventReport);
   }
 
   getSeverityErrorMessage(): string {
