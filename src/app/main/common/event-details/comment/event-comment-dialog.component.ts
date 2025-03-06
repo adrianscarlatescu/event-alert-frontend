@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
-import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
 import {LENGTH_1000} from '../../../../defaults/constants';
 import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../../defaults/field-validation-messages';
+import {ModalComponent} from '../../../../shared/modal/modal.component';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-comment-dialog',
@@ -12,10 +13,13 @@ import {ERR_MSG_COMMENT_LENGTH, ERR_MSG_COMMENT_REQUIRED} from '../../../../defa
 })
 export class EventCommentDialogComponent implements OnInit {
 
+  @ViewChild(ModalComponent) modal: ModalComponent;
+
+  onValidate: Subject<string> = new Subject<string>();
+
   commentControl: FormControl;
 
-  constructor(private toastrService: ToastrService,
-              private dialogRef: MatDialogRef<EventCommentDialogComponent>) {
+  constructor(private toastrService: ToastrService) {
   }
 
   ngOnInit(): void {
@@ -29,7 +33,11 @@ export class EventCommentDialogComponent implements OnInit {
       return;
     }
 
-    this.dialogRef.close(this.commentControl.value);
+    this.onValidate.next(this.commentControl.value);
+  }
+
+  close(): void {
+    this.modal.close();
   }
 
   getCommentErrorMessage(): string {

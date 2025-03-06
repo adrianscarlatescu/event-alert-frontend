@@ -120,10 +120,8 @@ export class HomeComponent implements OnInit {
       autoFocus: false
     });
 
-    dialogRef.afterClosed().subscribe(filterOptions => {
-      if (!filterOptions) {
-        return;
-      }
+    dialogRef.componentInstance.onValidate.subscribe(filterOptions => {
+      dialogRef.componentInstance.close();
 
       this.filterOptions = filterOptions;
 
@@ -163,14 +161,14 @@ export class HomeComponent implements OnInit {
       data: this.eventsOrder,
     });
 
-    dialogRef.afterClosed().subscribe(newOrder => {
-      if (!newOrder) {
-        return;
-      }
+    dialogRef.componentInstance.onValidate.subscribe(newOrder => {
+      dialogRef.componentInstance.close();
+
       if (this.totalEvents === 0 || newOrder === this.eventsOrder) {
         this.toastrService.info('Order not applied');
         return;
       }
+
       this.eventsOrder = newOrder;
       this.pageIndex = 0;
       this.requestNewSearch();

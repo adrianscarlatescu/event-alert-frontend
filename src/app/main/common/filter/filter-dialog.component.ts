@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {SeverityDto} from '../../../model/severity.dto';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ToastrService} from 'ngx-toastr';
 import {MatSelectChange} from '@angular/material/select';
 import {MAX_RADIUS, MAX_YEARS_INTERVAL, MIN_RADIUS} from '../../../defaults/constants';
@@ -22,6 +22,8 @@ import {StatusDto} from '../../../model/status.dto';
 import {FilterOptions} from '../../../types/filter-options';
 import {SessionService} from '../../../service/session.service';
 import {SafeUrl} from '@angular/platform-browser';
+import {ModalComponent} from '../../../shared/modal/modal.component';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -29,6 +31,10 @@ import {SafeUrl} from '@angular/platform-browser';
   styleUrls: ['./filter-dialog.component.css']
 })
 export class FilterDialogComponent implements OnInit {
+
+  @ViewChild(ModalComponent) modal: ModalComponent;
+
+  onValidate: Subject<FilterOptions> = new Subject<FilterOptions>();
 
   filterForm: FormGroup;
 
@@ -44,7 +50,6 @@ export class FilterDialogComponent implements OnInit {
   constructor(private sessionService: SessionService,
               private toastrService: ToastrService,
               private formBuilder: FormBuilder,
-              private dialogRef: MatDialogRef<FilterDialogComponent>,
               @Inject(MAT_DIALOG_DATA)
               private filterOptions: FilterOptions) {
 
@@ -76,10 +81,6 @@ export class FilterDialogComponent implements OnInit {
     });
   }
 
-  getImage(imagePath: string): SafeUrl {
-    return this.sessionService.getImage(imagePath);
-  }
-
   onValidateClicked(): void {
     if (this.filterForm.invalid) {
       this.toastrService.error('Invalid form');
@@ -96,7 +97,15 @@ export class FilterDialogComponent implements OnInit {
       statusIds: this.filterForm.value.statusIds
     }
 
-    this.dialogRef.close(filterOptions);
+    this.onValidate.next(filterOptions);
+  }
+
+  close(): void {
+    this.modal.close();
+  }
+
+  getImage(imagePath: string): SafeUrl {
+    return this.sessionService.getImage(imagePath);
   }
 
   getRadiusErrorMessage(): string {

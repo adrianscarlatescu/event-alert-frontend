@@ -16,6 +16,7 @@ import {ImageType} from '../../enums/image-type';
 import {EventReport} from '../../types/event-report';
 import {FileService} from '../../service/file.service';
 import {UserDto} from '../../model/user.dto';
+import {ERR_MSG_PROFILE_FULL_NAME_REQUIRED} from '../../defaults/field-validation-messages';
 
 @Component({
   selector: 'app-reporter',
@@ -68,14 +69,16 @@ export class ReporterComponent implements OnInit {
       return;
     }
 
+    if (!this.connectedUser.firstName || !this.connectedUser.lastName) {
+      this.toastrService.error(ERR_MSG_PROFILE_FULL_NAME_REQUIRED, '',{enableHtml: true});
+      return;
+    }
+
     const dialogRef: MatDialogRef<EventReportDialogComponent> = this.dialog.open(EventReportDialogComponent, {
       autoFocus: false
     });
-    dialogRef.afterClosed().subscribe((newEvent: EventReport) => {
-      if (!newEvent) {
-        return;
-      }
 
+    dialogRef.componentInstance.onValidate.subscribe((newEvent: EventReport) => {
       this.spinnerService.show();
       this.fileService.postImage(newEvent.image, ImageType.EVENT)
         .pipe(mergeMap(imagePath => {
@@ -93,6 +96,8 @@ export class ReporterComponent implements OnInit {
           return this.eventService.postEvent(eventCreate);
         }))
         .subscribe(event => {
+          dialogRef.componentInstance.close();
+
           this.toastrService.success('Event successfully reported');
           this.spinnerService.close();
 

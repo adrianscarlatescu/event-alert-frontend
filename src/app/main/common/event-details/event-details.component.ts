@@ -125,11 +125,7 @@ export class EventDetailsComponent implements OnInit {
   onNewCommentClicked(): void {
     const dialogRef: MatDialogRef<EventCommentDialogComponent> = this.dialog.open(EventCommentDialogComponent);
 
-    dialogRef.afterClosed().subscribe(newComment => {
-      if (!newComment) {
-        return;
-      }
-
+    dialogRef.componentInstance.onValidate.subscribe(newComment => {
       const commentCreate: CommentCreateDto = {
         comment: newComment,
         eventId: this.eventId,
@@ -149,6 +145,8 @@ export class EventDetailsComponent implements OnInit {
             }));
         }))
         .subscribe(() => {
+          dialogRef.componentInstance.close();
+
           this.spinnerService.close();
           this.toastrService.success('Comment posted');
         }, () => this.spinnerService.close());

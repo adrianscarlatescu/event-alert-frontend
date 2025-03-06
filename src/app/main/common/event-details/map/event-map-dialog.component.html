@@ -1,4 +1,4 @@
-<agm-map style="width: 100vh; height: 75vh" [latitude]="event.latitude" [longitude]="event.longitude"
+<agm-map style="width: 75vw; height: 75vh;" [latitude]="event.latitude" [longitude]="event.longitude"
          [zoom]="mapZoom" [styles]="mapStyle">
 
   <agm-marker>
@@ -22,6 +22,7 @@
               [radius]="event.impactRadius * 1000"
               [fillColor]="event.severity.color"
               [strokeColor]="'#8C8C8C'"
+              [fillOpacity]="0.5"
               [strokePosition]="'OUTSIDE'"
               [strokeOpacity]="0.5"
               [strokeWeight]="2.5">

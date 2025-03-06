@@ -1,6 +1,8 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {EventsOrder} from '../../../enums/events-order';
+import {ModalComponent} from '../../../shared/modal/modal.component';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-order-dialog',
@@ -9,10 +11,13 @@ import {EventsOrder} from '../../../enums/events-order';
 })
 export class OrderDialogComponent implements OnInit {
 
+  @ViewChild(ModalComponent) modal: ModalComponent;
+
+  onValidate: Subject<EventsOrder> = new Subject<EventsOrder>();
+
   order: EventsOrder;
 
-  constructor(private dialogRef: MatDialogRef<OrderDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) order: EventsOrder) {
+  constructor(@Inject(MAT_DIALOG_DATA) order: EventsOrder) {
 
     this.order = order;
 
@@ -22,7 +27,11 @@ export class OrderDialogComponent implements OnInit {
   }
 
   onValidateClicked(): void {
-    this.dialogRef.close(this.order);
+    this.onValidate.next(this.order);
+  }
+
+  close(): void {
+    this.modal.close();
   }
 
 }

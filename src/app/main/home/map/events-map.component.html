@@ -40,12 +40,12 @@
 
     </agm-marker>
 
-    <agm-circle *ngIf="userLocation"
+    <agm-circle *ngIf="userLocation && events && events.length > 0"
                 [latitude]="userLocation.latitude"
                 [longitude]="userLocation.longitude"
                 [radius]="filterRadius * 1000"
                 [clickable]="false"
-                [fillColor]="'#B0B0B0'"
+                [fillColor]="'#C5B1E7'"
                 [strokeColor]="'#8C8C8C'"
                 [strokePosition]="'OUTSIDE'"
                 [strokeOpacity]="0.5"
@@ -72,6 +72,7 @@
         <img [src]="selectedEventImage" class="map_event_info_image">
         <p class="map_event_info_text" style="font-size: 16px; margin-top: 10px">{{selectedEvent.type.label}}</p>
         <p class="map_event_info_text">{{selectedEvent.severity.label}}</p>
+        <p class="map_event_info_text">{{selectedEvent.status.label}}</p>
         <p class="map_event_info_text">{{selectedEvent.createdAt | date: 'medium'}}</p>
         <p class="map_event_info_text">
           {{selectedEvent.distance.toString()

@@ -1,4 +1,4 @@
-<div class="modal-container">
+<div *ngIf="slideInOut" [@slideInOut]="slideInOut" class="modal-container">
   <div class="modal-title-div">
     <h2 class="modal-title-header">{{title}}</h2>
   </div>
@@ -9,11 +9,11 @@
 
   <mat-divider *ngIf="showButtons" class="modal-divider"></mat-divider>
   <div *ngIf="showButtons" class="modal-buttons-div">
-    <button mat-mini-fab color="primary" (click)="onValidateClicked()">
+    <button mat-mini-fab color="primary" (click)="validate()">
       <mat-icon>check</mat-icon>
     </button>
 
-    <button mat-mini-fab color="primary" style="margin-left: 10px;" (click)="onCancelClicked()">
+    <button mat-mini-fab color="primary" style="margin-left: 10px;" (click)="close()">
       <mat-icon>cancel</mat-icon>
     </button>
   </div>
