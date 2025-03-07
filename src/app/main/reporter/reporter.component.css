@@ -1,4 +1,4 @@
-.reporter_mat_card_thumbnail {
+.reporter-mat-card-thumbnail {
   border-radius: 40px;
   width: 40px;
   height: 40px;
@@ -6,7 +6,7 @@
   margin-bottom: 10px;
 }
 
-.reporter_thumbnail_image {
+.reporter-thumbnail-image {
   width: 40px;
   height: 40px;
   background-size: 40px;
@@ -14,22 +14,22 @@
   background-position: center;
 }
 
-.reporter_status_circle {
+.reporter-status-circle {
   height: 10px;
   width: 10px;
   border-radius: 50%;
   display: inline-block;
 }
 
-.reporter_clickable_row {
+.reporter-clickable-row {
   cursor: pointer;
 }
 
-.reporter_clickable_row:hover {
+.reporter-clickable-row:hover {
   background-color: #f0ecf9C0;
 }
 
-.reporter_mat_card {
+.reporter-mat-card {
   padding: 10px;
   margin-right: 10px;
   margin-left: 10px;

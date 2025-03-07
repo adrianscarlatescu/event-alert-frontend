@@ -1,16 +1,16 @@
-.profile_page_div {
+.mat-form-field {
+  min-width: 250px;
+  margin-right: 20px;
+}
+
+.profile-page-div {
   display: flex;
   justify-content: center;
   text-align: center;
   margin: 65px;
 }
 
-.mat-form-field {
-  min-width: 250px;
-  margin-right: 20px;
-}
-
-.profile_save_button {
+.profile-save-button {
   min-width: 150px;
   position: absolute;
   bottom: 65px;
@@ -18,7 +18,7 @@
   transform: translate(-50%, 0);
 }
 
-.profile_image {
+.profile-image {
   border-radius: 180px;
   width: 180px;
   height: 180px;
@@ -26,20 +26,20 @@
   margin-right: auto;
 }
 
-.profile_main_div {
+.profile-main-div {
   display: flex;
   align-items: center;
 }
 
-.profile_category_div {
+.profile-category-div {
   margin: 15px 20px;
 }
 
 @media all and (max-width: 1200px) {
-  .profile_main_div {
+  .profile-main-div {
     display: block;
   }
-  .profile_save_button {
+  .profile-save-button {
     position: relative;
     bottom: unset;
     left: unset;

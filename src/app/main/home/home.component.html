@@ -11,7 +11,7 @@
   [ngStyle]="{'visibility': homePage === 'list' ? 'visible' : 'collapse'}">
 </app-events-list>
 
-<div class="home_top_info_div">
+<div class="home-top-info-div">
   <mat-card>
     <p>{{totalContentDisplayed}} events displayed</p>
   </mat-card>
@@ -25,50 +25,50 @@
   </mat-card>
 </div>
 
-<div class="home_bottom_bar_div">
-  <mat-card class="home_bottom_bar_mat_card" style="margin-bottom: 10px"
+<div class="home-bottom-bar-div">
+  <mat-card class="home-bottom-bar-mat-card" style="margin-bottom: 10px"
             [ngStyle]="{'visibility': homePage === 'map' ? 'visible' : 'hidden'}">
 
-    <button mat-icon-button class="home_main_bar_button" (click)="onPreviousClicked()">
+    <button mat-icon-button class="home-main-bar-button" (click)="onPreviousClicked()">
       <mat-icon>chevron_left</mat-icon>
       Previous
     </button>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <button mat-icon-button class="home_main_bar_button" (click)="onLocationClicked()">
+    <button mat-icon-button class="home-main-bar-button" (click)="onLocationClicked()">
       <mat-icon>person_pin_circle</mat-icon>
       Location
     </button>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <button mat-icon-button class="home_main_bar_button" (click)="onNextClicked()">
+    <button mat-icon-button class="home-main-bar-button" (click)="onNextClicked()">
       Next
       <mat-icon>chevron_right</mat-icon>
     </button>
 
   </mat-card>
 
-  <mat-card class="home_bottom_bar_mat_card">
+  <mat-card class="home-bottom-bar-mat-card">
 
-    <button mat-icon-button class="home_main_bar_button" (click)="onFilterClicked()">
+    <button mat-icon-button class="home-main-bar-button" (click)="onFilterClicked()">
       <mat-icon>filter_list</mat-icon>
       Filter
     </button>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <button mat-icon-button class="home_main_bar_button" (click)="onPageSwitchClicked()">
+    <button mat-icon-button class="home-main-bar-button" (click)="onPageSwitchClicked()">
       <div style="display: flex; justify-content: center">
         <mat-icon>{{homePage == 'map' ? 'list' : homePage == 'list' ? 'map' : ''}}</mat-icon>
-        <p class="home_page_switch_text">{{homePage == 'map' ? 'List' : homePage == 'list' ? 'Map' : ''}}</p>
+        <p class="home-page-switch-text">{{homePage == 'map' ? 'List' : homePage == 'list' ? 'Map' : ''}}</p>
       </div>
     </button>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <button mat-icon-button class="home_main_bar_button" (click)="onOrderClicked()">
+    <button mat-icon-button class="home-main-bar-button" (click)="onOrderClicked()">
       <mat-icon>sort</mat-icon>
       Sort
     </button>

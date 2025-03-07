@@ -35,8 +35,8 @@
       <mat-select multiple formControlName="typeIds" (selectionChange)="onTypesSelectionChange($event)" required>
 
         <mat-option *ngFor="let type of types" [value]="type.id">
-          <div class="filter_type_option_div">
-            <img [src]="getImage(type.imagePath)" class="filter_type_option_image">
+          <div class="filter-type-option-div">
+            <img [src]="getImage(type.imagePath)" class="filter-type-option-image">
             {{type.label}}
           </div>
         </mat-option>
@@ -55,8 +55,8 @@
                   required>
 
         <mat-option *ngFor="let severity of severities" [value]="severity.id">
-          <div class="filter_severity_option_div">
-            <mat-card class="filter_severity_mat_card"
+          <div class="filter-severity-option-div">
+            <mat-card class="filter-severity-mat-card"
                       [ngStyle]="{'background-color': severity.color}"></mat-card>
             {{severity.label}}
           </div>
@@ -77,8 +77,8 @@
                   required>
 
         <mat-option *ngFor="let status of statuses" [value]="status.id">
-          <div class="filter_status_option_div">
-            <mat-card class="filter_status_mat_card"
+          <div class="filter-status-option-div">
+            <mat-card class="filter-status-mat-card"
                       [ngStyle]="{'background-color': status.color}"></mat-card>
             {{status.label}}
           </div>

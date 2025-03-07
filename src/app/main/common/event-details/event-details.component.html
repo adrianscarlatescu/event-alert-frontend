@@ -1,11 +1,11 @@
 <div *ngIf="isDataLoaded" style="margin: 10px 65px;">
 
-  <div class="event_details_div">
-    <mat-card class="event_details_mat_card">
+  <div class="event-details-div">
+    <mat-card class="event-details-mat-card">
 
       <mat-card-header *ngIf="event">
-        <div *ngIf="eventUserImage" class="event_details_avatar_mat_card" mat-card-avatar>
-          <img [src]="eventUserImage" class="event_details_avatar_image">
+        <div *ngIf="eventUserImage" class="event-details-avatar-mat-card" mat-card-avatar>
+          <img [src]="eventUserImage" class="event-details-avatar-image">
         </div>
         <mat-card-title>
           {{event.user.firstName + ' ' + event.user.lastName}}
@@ -16,36 +16,42 @@
       </mat-card-header>
 
       <div style="display: flex; justify-content: center;">
-        <img *ngIf="eventImage" [src]="eventImage" class="event_details_event_image">
+        <img *ngIf="eventImage" [src]="eventImage" class="event-details-event-image">
       </div>
 
-      <div *ngIf="event" class="event_details_footer_div">
-        <mat-card-header class="event_details_footer_info_div">
-          <div *ngIf="event" class="event_details_type_mat_card" mat-card-avatar
+      <div *ngIf="event" class="event-details-footer-div">
+        <mat-card-header class="event-details-footer-info-div">
+          <div *ngIf="event" class="event-details-type-mat-card" mat-card-avatar
                [ngStyle]="{'background-color': event.severity.color}">
-            <img [src]="getImage(event.type.imagePath)" class="event_details_type_image">
+            <img [src]="getImage(event.type.imagePath)" class="event-details-type-image">
           </div>
           <mat-card-title>
             {{event.type.label}}
           </mat-card-title>
           <mat-card-subtitle>
-            <div >
+            <div>
               {{event.severity.label}}
             </div>
             <div>
-              <div class="event_details_status_circle" [ngStyle]="{'background-color': event.status.color}"></div>
+              <div class="event-details-status-circle" [ngStyle]="{'background-color': event.status.color}"></div>
               {{event.status.label}}: {{event.status.description}}
+            </div>
+            <div>
+              {{event.createdAt | date: 'medium'}}
+            </div>
+            <div *ngIf="event.impactRadius">
+              {{event.impactRadius}} km impact radius
             </div>
             <div>
               {{eventAddress}}
             </div>
-            <div class="event_details_description_div">
+            <div class="event-details-description-div">
               {{event.description}}
             </div>
           </mat-card-subtitle>
         </mat-card-header>
 
-        <button mat-icon-button class="event_details_map_button" (click)="onMapViewClicked()">
+        <button mat-icon-button class="event-details-map-button" (click)="onMapViewClicked()">
           <mat-icon>map</mat-icon>
         </button>
       </div>
@@ -54,12 +60,12 @@
   </div>
 
   <div>
-    <div class="event_details_comments_div">
+    <div class="event-details-comments-div">
       <button mat-raised-button type="button" color="primary" (click)="onNewCommentClicked()" style="min-width: 150px">
         New comment
       </button>
 
-      <mat-card class="event_details_comments_number_mat_card">
+      <mat-card class="event-details-comments-number-mat-card">
         <p>{{comments.length}} comments</p>
       </mat-card>
     </div>

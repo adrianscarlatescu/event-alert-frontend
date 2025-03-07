@@ -1,10 +1,10 @@
-<div class="profile_page_div">
+<div class="profile-page-div">
   <form [formGroup]="profileForm" (ngSubmit)="onSaveClicked()">
 
-    <div class="profile_main_div">
-      <div class="profile_category_div">
-        <mat-card class="profile_image">
-          <img *ngIf="profileImage" [src]="profileImage" class="profile_image">
+    <div class="profile-main-div">
+      <div class="profile-category-div">
+        <mat-card class="profile-image">
+          <img *ngIf="profileImage" [src]="profileImage" class="profile-image">
         </mat-card>
 
         <br>
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="profile_category_div">
+      <div class="profile-category-div">
         <mat-form-field>
           <mat-label>First name</mat-label>
           <input matInput formControlName="firstName" required>
@@ -59,7 +59,7 @@
         </mat-form-field>
       </div>
 
-      <div class="profile_category_div">
+      <div class="profile-category-div">
         <mat-form-field>
           <mat-label>Email</mat-label>
           <input matInput disabled value="{{connectedUser.email}}">
@@ -95,7 +95,7 @@
       </div>
     </div>
 
-    <button mat-raised-button type="submit" color="primary" class="profile_save_button">Save</button>
+    <button mat-raised-button type="submit" color="primary" class="profile-save-button">Save</button>
 
   </form>
 </div>

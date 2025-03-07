@@ -1,10 +1,10 @@
 <app-modal title="Report new event" (onValidate)="onValidateClicked()">
 
-  <mat-card class="new_event_image_mat_card">
-    <div class="new_event_image_div">
-      <img *ngIf="eventImage" [src]="eventImage" class="new_event_image">
+  <mat-card class="event-report-image-mat-card">
+    <div class="event-report-image-div">
+      <img *ngIf="eventImage" [src]="eventImage" class="event-report-image">
       <button type="button" color="primary" mat-raised-button (click)="fileInput.click()"
-              class="new_event_image_button">Set image
+              class="event-report-image-button">Set image
       </button>
       <input hidden (change)="onImageChanged($event)" #fileInput type="file" accept="image/*">
     </div>
@@ -18,8 +18,8 @@
       <mat-select formControlName="type" required style="top: 0">
 
         <mat-option *ngFor="let type of types" [value]="type.id">
-          <div class="new_event_type_option_div">
-            <img [src]="getImage(type.imagePath)" class="new_event_type_option_image">
+          <div class="event-report-type-option-div">
+            <img [src]="getImage(type.imagePath)" class="event-report-type-option-image">
             {{type.label}}
           </div>
         </mat-option>
@@ -35,8 +35,8 @@
       <mat-select formControlName="severity" required>
 
         <mat-option *ngFor="let severity of severities" [value]="severity.id">
-          <div class="new_event_severity_option_div">
-            <mat-card class="new_event_severity_mat_card"
+          <div class="event-report-severity-option-div">
+            <mat-card class="event-report-severity-mat-card"
                       [ngStyle]="{'background-color': severity.color}"></mat-card>
             {{severity.label}}
           </div>
@@ -53,8 +53,8 @@
       <mat-select formControlName="status" required>
 
         <mat-option *ngFor="let status of statuses" [value]="status.id">
-          <div class="new_event_status_option_div">
-            <mat-card class="new_event_status_mat_card" [ngStyle]="{'background-color': status.color}"></mat-card>
+          <div class="event-report-status-option-div">
+            <mat-card class="event-report-status-mat-card" [ngStyle]="{'background-color': status.color}"></mat-card>
             {{status.label}}
           </div>
         </mat-option>

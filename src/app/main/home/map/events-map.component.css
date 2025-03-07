@@ -6,7 +6,7 @@
   bottom: 85px !important;
 }
 
-.map_user_overlay {
+.events-map-user-overlay {
   width: 40px;
   height: 65px;
   background-position: center;
@@ -17,7 +17,7 @@
   right: 10px;
 }
 
-.map_marker_overlay {
+.events-map-marker-overlay {
   width: 80px;
   height: 80px;
   background-position: center;
@@ -29,7 +29,7 @@
   right: 30px;
 }
 
-.map_event_info_div {
+.events-map-event-info-div {
   border-bottom-right-radius: 25px;
   border-bottom-left-radius: 25px;
   padding: 15px;
@@ -42,7 +42,7 @@
   width: 280px;
 }
 
-.map_event_info_pointer_div {
+.events-map-event-info-pointer-div {
   width: 15px;
   height: 15px;
   position: absolute;
@@ -52,19 +52,19 @@
   transform: translate(-50%, 50%) rotate(45deg);
 }
 
-.map_event_info_text {
+.events-map-event-info-text {
   line-height: 12px;
   color: black;
 }
 
-.map_event_info_image {
+.events-map-event-info-image {
   width: 280px;
   height: 280px;
   margin-left: 0;
   margin-right: 0;
 }
 
-.map_event_info_view_button {
+.events-map-event-info-view-button {
   min-width: 150px;
   margin-left: auto;
   margin-right: auto;
@@ -72,16 +72,24 @@
   margin-top: 10px;
 }
 
-.map_event_info_close_button {
+.events-map-event-info-close-button {
   position: absolute;
   right: 0.5%;
   top: 0.5%;
 }
 
-.map_event_type_image {
+.events-map-event-type-image {
   position: absolute;
   width: 80%;
   height: 80%;
   left: 10%;
   top: 5%;
+}
+
+.events-map-event-info-status-circle {
+  height: 10px;
+  width: 10px;
+  margin-right: 5px;
+  border-radius: 50%;
+  display: inline-block;
 }

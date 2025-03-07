@@ -1,4 +1,4 @@
-.new_event_image_mat_card {
+.event-report-image-mat-card {
   margin-left: auto;
   margin-right: auto;
   width: calc(100% - 40px);
@@ -6,57 +6,57 @@
   margin-bottom: 10px;
 }
 
-.new_event_image {
+.event-report-image {
   width: 100%;
   height: 280px;
   object-fit: cover;
 }
 
-.new_event_image_div {
+.event-report-image-div {
   width: 100%;
   height: 280px;
   background-color: gainsboro;
 }
 
-.new_event_image_button {
+.event-report-image-button {
   position: absolute;
   min-width: 150px;
   bottom: 25px;
   right: 25px;
 }
 
-.new_event_severity_option_div {
+.event-report-severity-option-div {
   display: flex;
   vertical-align: center;
   padding: 5px 0;
 }
 
-.new_event_severity_mat_card {
+.event-report-severity-mat-card {
   border-radius: 24px;
   width: 6px;
   height: 6px;
   margin-right: 20px;
 }
 
-.new_event_type_option_div {
+.event-report-type-option-div {
   display: flex;
   vertical-align: center;
   padding: 5px 0;
 }
 
-.new_event_type_option_image {
+.event-report-type-option-image {
   width: 40px;
   height: 40px;
   margin-right: 20px;
 }
 
-.new_event_status_option_div {
+.event-report-status-option-div {
   display: flex;
   vertical-align: center;
   padding: 5px 0;
 }
 
-.new_event_status_mat_card {
+.event-report-status-mat-card {
   border-radius: 24px;
   width: 6px;
   height: 6px;

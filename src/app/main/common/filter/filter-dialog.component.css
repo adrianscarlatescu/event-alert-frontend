@@ -1,35 +1,35 @@
-.filter_type_option_div {
+.filter-type-option-div {
   display: flex;
   vertical-align: center;
   padding: 5px 20px;
 }
 
-.filter_type_option_image {
+.filter-type-option-image {
   width: 40px;
   height: 40px;
   margin-right: 20px;
 }
 
-.filter_severity_option_div {
+.filter-severity-option-div {
   display: flex;
   vertical-align: center;
   padding: 5px 20px;
 }
 
-.filter_severity_mat_card {
+.filter-severity-mat-card {
   border-radius: 24px;
   width: 6px;
   height: 6px;
   margin-right: 20px;
 }
 
-.filter_status_option_div {
+.filter-status-option-div {
   display: flex;
   vertical-align: center;
   padding: 5px 20px;
 }
 
-.filter_status_mat_card {
+.filter-status-mat-card {
   border-radius: 24px;
   width: 6px;
   height: 6px;

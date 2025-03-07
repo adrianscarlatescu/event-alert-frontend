@@ -7,13 +7,13 @@
     <ng-content></ng-content>
   </div>
 
-  <mat-divider *ngIf="showButtons" class="modal-divider"></mat-divider>
-  <div *ngIf="showButtons" class="modal-buttons-div">
+  <mat-divider class="modal-divider"></mat-divider>
+  <div *ngIf="showValidateButton" class="modal-buttons-div"  style="margin-right: 10px;">
     <button mat-mini-fab color="primary" (click)="validate()">
       <mat-icon>check</mat-icon>
     </button>
 
-    <button mat-mini-fab color="primary" style="margin-left: 10px;" (click)="close()">
+    <button mat-mini-fab color="primary" (click)="close()">
       <mat-icon>cancel</mat-icon>
     </button>
   </div>

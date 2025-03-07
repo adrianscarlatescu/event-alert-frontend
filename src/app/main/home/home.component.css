@@ -8,24 +8,24 @@
   background-color: #f0ecf9C0;
 }
 
-.home_top_info_div {
+.home-top-info-div {
   margin-left: 65px;
   margin-top: 10px;
   position: fixed;
 }
 
-.home_map_info_bar_mat_divider {
+.home-map-info-bar-mat-divider {
   margin-left: 10px;
   margin-right: 10px;
 }
 
-.home_map_info_bar_text {
+.home-map-info-bar-text {
   margin: 0;
   padding: 0;
   line-height: 22px;
 }
 
-.home_bottom_bar_div {
+.home-bottom-bar-div {
   position: fixed;
   margin-left: 10px;
   bottom: 25px;
@@ -34,19 +34,19 @@
   align-items: center;
 }
 
-.home_page_switch_text {
+.home-page-switch-text {
   margin: 0 2px;
   line-height: 22px;
 }
 
-.home_bottom_bar_mat_card {
+.home-bottom-bar-mat-card {
   display: flex;
   padding: 0;
   width: 100%;
   justify-content: center;
 }
 
-.home_main_bar_button {
+.home-main-bar-button {
   width: 125px;
 }
 

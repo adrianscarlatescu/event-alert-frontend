@@ -69,7 +69,7 @@ export class EventReportDialogComponent implements OnInit {
   onValidateClicked(): void {
     if (this.newEventForm.invalid) {
       this.toastrService.error('Invalid form');
-      this.newEventForm.markAsTouched();
+      this.newEventForm.markAllAsTouched();
       return;
     }
 

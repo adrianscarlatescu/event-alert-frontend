@@ -5,7 +5,7 @@
       Report new event
     </button>
 
-    <mat-card class="reporter_mat_card">
+    <mat-card class="reporter-mat-card">
       <p>{{dataSource.data.length}} events reported</p>
     </mat-card>
   </div>
@@ -17,9 +17,9 @@
     <ng-container matColumnDef="thumbnail">
       <th mat-header-cell *matHeaderCellDef>Thumbnail</th>
       <td mat-cell *matCellDef="let e">
-        <mat-card class="reporter_mat_card_thumbnail"
+        <mat-card class="reporter-mat-card-thumbnail"
                   [ngStyle]="{'background-color': e.severity.color}">
-          <div class="reporter_thumbnail_image">
+          <div class="reporter-thumbnail-image">
             <img style="width: 100%; height: 100%;" [src]="getImage(e.type.imagePath)">
           </div>
         </mat-card>
@@ -39,7 +39,7 @@
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let e">
-        <div class="reporter_status_circle" [ngStyle]="{'background-color': e.status.color}"></div>
+        <div class="reporter-status-circle" [ngStyle]="{'background-color': e.status.color}"></div>
         {{e.statusLabel}}
       </td>
     </ng-container>
@@ -57,7 +57,7 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row class="reporter_clickable_row"
+    <tr mat-row class="reporter-clickable-row"
         *matRowDef="let e; columns: displayedColumns;"
         (click)="onRowClicked(e.id)">
     </tr>

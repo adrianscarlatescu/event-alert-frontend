@@ -14,7 +14,7 @@
         [latitude]="userLocation.latitude"
         [longitude]="userLocation.longitude">
 
-        <div class="map_user_overlay"
+        <div class="events-map-user-overlay"
              style="background-image: url('../../../../assets/user_marker.png')">
         </div>
 
@@ -28,13 +28,13 @@
         [longitude]="event.longitude"
         (markerClick)="onMarkerClicked(event)">
 
-        <div class="map_marker_overlay"
+        <div class="events-map-marker-overlay"
              style="-webkit-mask-box-image: url('../../../../assets/event_marker.png');"
              [ngStyle]="{'background-color': event.severity.color}">
-          <img [src]="getImage(event.type.imagePath)" class="map_event_type_image">
+          <img [src]="getImage(event.type.imagePath)" class="events-map-event-type-image">
         </div>
 
-        <img src="assets/event_marker_border.png" class="map_marker_overlay"
+        <img src="assets/event_marker_border.png" class="events-map-marker-overlay"
              style="position: absolute"/>
       </agm-overlay>
 
@@ -45,7 +45,7 @@
                 [longitude]="userLocation.longitude"
                 [radius]="filterRadius * 1000"
                 [clickable]="false"
-                [fillColor]="'#C5B1E7'"
+                [fillColor]="'#A88BDA'"
                 [strokeColor]="'#8C8C8C'"
                 [strokePosition]="'OUTSIDE'"
                 [strokeOpacity]="0.5"
@@ -69,23 +69,27 @@
                      [disableAutoPan]="true"
                      [isOpen]="true">
       <div>
-        <img [src]="selectedEventImage" class="map_event_info_image">
-        <p class="map_event_info_text" style="font-size: 16px; margin-top: 10px">{{selectedEvent.type.label}}</p>
-        <p class="map_event_info_text">{{selectedEvent.severity.label}}</p>
-        <p class="map_event_info_text">{{selectedEvent.status.label}}</p>
-        <p class="map_event_info_text">{{selectedEvent.createdAt | date: 'medium'}}</p>
-        <p class="map_event_info_text">
+        <img [src]="selectedEventImage" class="events-map-event-info-image">
+        <p class="events-map-event-info-text" style="font-size: 16px; margin-top: 10px">{{selectedEvent.type.label}}</p>
+        <p class="events-map-event-info-text">{{selectedEvent.severity.label}}</p>
+        <div style="display: flex">
+          <div class="events-map-event-info-status-circle" [ngStyle]="{'background-color': selectedEvent.status.color}"></div>
+          <p class="events-map-event-info-text">{{selectedEvent.status.label}}</p>
+        </div>
+        <p class="events-map-event-info-text">{{selectedEvent.createdAt | date: 'medium'}}</p>
+        <p *ngIf="selectedEvent.impactRadius" class="events-map-event-info-text">{{selectedEvent.impactRadius}} km impact radius</p>
+        <p class="events-map-event-info-text">
           {{selectedEvent.distance.toString()
           .substr(0, selectedEvent.distance.toString().indexOf('.'))}} km away from your location
         </p>
 
         <button mat-raised-button type="button" color="primary" (click)="onEventInfoViewClicked()"
-                class="map_event_info_view_button">
+                class="events-map-event-info-view-button">
           View event
         </button>
 
         <button mat-mini-fab color="primary"
-                (click)="onEventInfoCloseClicked()" class="map_event_info_close_button">
+                (click)="onEventInfoCloseClicked()" class="events-map-event-info-close-button">
           <mat-icon>close</mat-icon>
         </button>
       </div>

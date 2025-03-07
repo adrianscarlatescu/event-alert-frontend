@@ -84,7 +84,7 @@ export class FilterDialogComponent implements OnInit {
   onValidateClicked(): void {
     if (this.filterForm.invalid) {
       this.toastrService.error('Invalid form');
-      this.filterForm.markAsTouched();
+      this.filterForm.markAllAsTouched();
       return;
     }
 
@@ -174,6 +174,7 @@ export class FilterDialogComponent implements OnInit {
       this.filterForm.get('typeIds').setValue(this.types.map(type => type.id));
     } else {
       this.filterForm.get('typeIds').setValue([]);
+      this.filterForm.get('typeIds').markAsTouched({onlySelf: true});
     }
   }
 
@@ -187,6 +188,7 @@ export class FilterDialogComponent implements OnInit {
       this.filterForm.get('severityIds').setValue(this.severities.map(severity => severity.id));
     } else {
       this.filterForm.get('severityIds').setValue([]);
+      this.filterForm.get('severityIds').markAsTouched({onlySelf: true});
     }
   }
 
@@ -200,6 +202,7 @@ export class FilterDialogComponent implements OnInit {
       this.filterForm.get('statusIds').setValue(this.statuses.map(status => status.id));
     } else {
       this.filterForm.get('statusIds').setValue([]);
+      this.filterForm.get('statusIds').markAsTouched({onlySelf: true});
     }
   }
 

@@ -23,7 +23,7 @@ export class ModalComponent implements OnInit {
 
   slideInOut: boolean;
 
-  @Input() showButtons: boolean = true;
+  @Input() showValidateButton: boolean = true;
   @Input() title: string;
 
   @Output() onValidate: EventEmitter<void> = new EventEmitter<void>();

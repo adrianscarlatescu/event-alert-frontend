@@ -4,6 +4,6 @@
       <textarea [formControl]="commentControl" matInput required placeholder="Type below..."
                 style="min-height: 50px"></textarea>
   </mat-form-field>
-  <mat-error *ngIf="commentControl.invalid">{{getCommentErrorMessage()}}</mat-error>
+  <mat-error *ngIf="commentControl.touched && commentControl.invalid">{{getCommentErrorMessage()}}</mat-error>
 
 </app-modal>
