@@ -1,31 +1,34 @@
-<agm-map style="width: 75vw; height: 75vh;" [latitude]="event.latitude" [longitude]="event.longitude"
-         [zoom]="mapZoom" [styles]="mapStyle">
+<app-modal title="Event map" [showValidateButton]="false">
 
-  <agm-marker>
-    <agm-overlay
-      [latitude]="event.latitude"
-      [longitude]="event.longitude">
+  <agm-map style="height: 80vh;" [latitude]="event.latitude" [longitude]="event.longitude"
+           [zoom]="mapZoom" [styles]="mapStyle">
 
-      <div class="event-map-marker-overlay"
-           style="-webkit-mask-box-image: url('../../../../../assets/event_marker.png');"
-           [ngStyle]="{'background-color': event.severity.color}">
-        <img [src]="getImage(event.type.imagePath)" class="event-map-type-image">
-      </div>
-      <img src="assets/event_marker_border.png" class="event-map-marker-overlay" style="position: absolute"/>
+    <agm-marker>
+      <agm-overlay
+        [latitude]="event.latitude"
+        [longitude]="event.longitude">
 
-    </agm-overlay>
-  </agm-marker>
+        <div class="event-map-marker-overlay"
+             style="-webkit-mask-box-image: url('../../../../../assets/event_marker.png');"
+             [ngStyle]="{'background-color': event.severity.color}">
+          <img [src]="getImage(event.type.imagePath)" class="event-map-type-image">
+        </div>
+        <img src="assets/event_marker_border.png" class="event-map-marker-overlay" style="position: absolute"/>
 
-  <agm-circle *ngIf="event.impactRadius"
-              [latitude]="event.latitude"
-              [longitude]="event.longitude"
-              [radius]="event.impactRadius * 1000"
-              [fillColor]="event.severity.color"
-              [strokeColor]="'#8C8C8C'"
-              [fillOpacity]="0.5"
-              [strokePosition]="'OUTSIDE'"
-              [strokeOpacity]="0.5"
-              [strokeWeight]="2.5">
-  </agm-circle>
+      </agm-overlay>
+    </agm-marker>
 
-</agm-map>
+    <agm-circle *ngIf="event.impactRadius"
+                [latitude]="event.latitude"
+                [longitude]="event.longitude"
+                [radius]="event.impactRadius * 1000"
+                [fillColor]="event.severity.color"
+                [strokeColor]="'#8C8C8C'"
+                [fillOpacity]="0.5"
+                [strokePosition]="'OUTSIDE'"
+                [strokeOpacity]="0.5"
+                [strokeWeight]="2.5">
+    </agm-circle>
+
+  </agm-map>
+</app-modal>

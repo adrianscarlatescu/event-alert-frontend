@@ -8,8 +8,8 @@
   </div>
 
   <mat-divider class="modal-divider"></mat-divider>
-  <div *ngIf="showValidateButton" class="modal-buttons-div"  style="margin-right: 10px;">
-    <button mat-mini-fab color="primary" (click)="validate()">
+  <div class="modal-buttons-div">
+    <button *ngIf="showValidateButton" mat-mini-fab color="primary" (click)="validate()" style="margin-right: 10px;">
       <mat-icon>check</mat-icon>
     </button>
 

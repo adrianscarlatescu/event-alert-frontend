@@ -154,7 +154,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   onMapViewClicked(): void {
-    this.dialog.open(EventMapDialogComponent, {data: this.event});
+    this.dialog.open(EventMapDialogComponent, {data: this.event, autoFocus: false});
   }
 
 }
