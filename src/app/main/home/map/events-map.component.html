@@ -71,9 +71,12 @@
       <div>
         <img [src]="selectedEventImage" class="events-map-event-info-image">
         <p class="events-map-event-info-text" style="font-size: 16px; margin-top: 10px">{{selectedEvent.type.label}}</p>
-        <p class="events-map-event-info-text">{{selectedEvent.severity.label}}</p>
         <div style="display: flex">
-          <div class="events-map-event-info-status-circle" [ngStyle]="{'background-color': selectedEvent.status.color}"></div>
+          <div class="events-map-event-color-circle" [ngStyle]="{'background-color': selectedEvent.severity.color}"></div>
+          <p class="events-map-event-info-text">{{selectedEvent.severity.label}}</p>
+        </div>
+        <div style="display: flex">
+          <div class="events-map-event-color-circle" [ngStyle]="{'background-color': selectedEvent.status.color}"></div>
           <p class="events-map-event-info-text">{{selectedEvent.status.label}}</p>
         </div>
         <p class="events-map-event-info-text">{{selectedEvent.createdAt | date: 'medium'}}</p>

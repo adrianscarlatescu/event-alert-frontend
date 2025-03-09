@@ -36,8 +36,8 @@
 }
 
 .event-details-event-image {
-  width: 80vh;
-  height: 400px;
+  width: 35vw;
+  height: 50vh;
   object-fit: cover;
 }
 
@@ -61,13 +61,16 @@
 }
 
 .event-details-description-div {
+  margin-top: 10px;
+  max-height: 60px;
+  overflow-y: auto;
   word-break: break-word;
 }
 
 .event-details-footer-div {
   display: flex;
   width: 100%;
-  max-width: 80vh;
+  max-width: 35vw;
 }
 
 .event-details-footer-info-div {
@@ -75,7 +78,7 @@
   width: 100%;
 }
 
-.event-details-status-circle {
+.event-details-color-circle {
   height: 10px;
   width: 10px;
   border-radius: 50%;

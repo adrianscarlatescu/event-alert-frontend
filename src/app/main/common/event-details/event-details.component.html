@@ -30,10 +30,11 @@
           </mat-card-title>
           <mat-card-subtitle>
             <div>
+              <div class="event-details-color-circle" [ngStyle]="{'background-color': event.severity.color}"></div>
               {{event.severity.label}}
             </div>
             <div>
-              <div class="event-details-status-circle" [ngStyle]="{'background-color': event.status.color}"></div>
+              <div class="event-details-color-circle" [ngStyle]="{'background-color': event.status.color}"></div>
               {{event.status.label}}: {{event.status.description}}
             </div>
             <div>
@@ -42,10 +43,10 @@
             <div *ngIf="event.impactRadius">
               {{event.impactRadius}} km impact radius
             </div>
-            <div>
+            <div *ngIf="eventAddress" style="margin-top: 10px;">
               {{eventAddress}}
             </div>
-            <div class="event-details-description-div">
+            <div *ngIf="event.description" class="event-details-description-div">
               {{event.description}}
             </div>
           </mat-card-subtitle>
