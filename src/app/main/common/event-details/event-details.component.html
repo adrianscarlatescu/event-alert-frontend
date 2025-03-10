@@ -1,6 +1,6 @@
-<div *ngIf="isDataLoaded" style="margin: 10px 65px;">
+<div *ngIf="isDataLoaded" class="event-details-container">
 
-  <div class="event-details-div">
+  <div class="event-details-mat-card-container">
     <mat-card class="event-details-mat-card">
 
       <mat-card-header *ngIf="event">
@@ -15,7 +15,10 @@
         </mat-card-subtitle>
       </mat-card-header>
 
-      <div style="display: flex; justify-content: center;">
+      <div class="event-details-event-image-container">
+        <div *ngIf="eventBackgroundImage" [ngStyle]="{'background-image': eventBackgroundImage}"
+             class="event-details-event-background-image">
+        </div>
         <img *ngIf="eventImage" [src]="eventImage" class="event-details-event-image">
       </div>
 
@@ -37,9 +40,6 @@
               <div class="event-details-color-circle" [ngStyle]="{'background-color': event.status.color}"></div>
               {{event.status.label}}: {{event.status.description}}
             </div>
-            <div>
-              {{event.createdAt | date: 'medium'}}
-            </div>
             <div *ngIf="event.impactRadius">
               {{event.impactRadius}} km impact radius
             </div>
@@ -58,24 +58,14 @@
       </div>
 
     </mat-card>
+
   </div>
 
-  <div>
-    <div class="event-details-comments-div">
-      <button mat-raised-button type="button" color="primary" (click)="onNewCommentClicked()" style="min-width: 150px">
-        New comment
-      </button>
-
-      <mat-card class="event-details-comments-number-mat-card">
-        <p>{{comments.length}} comments</p>
-      </mat-card>
-    </div>
-
-    <div>
-      <p *ngIf="comments.length === 0" style="margin-top: 10px">No comments posted yet</p>
-    </div>
-
-    <div>
+  <div class="event-details-comments-container">
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title> {{comments.length}} comments</mat-panel-title>
+      </mat-expansion-panel-header>
       <mat-list *ngIf="comments.length > 0">
         <mat-list-item *ngFor="let comment of comments" style="height: fit-content;">
           <img matListAvatar [src]="commentsUsersImages.get(comment.user.id)"/>
@@ -83,12 +73,18 @@
           <p matLine>
             <span style="color: grey">{{comment.createdAt | date: 'medium'}}</span>
             <br>
-            <span style="color: dimgrey; white-space: normal;">{{comment.comment}}</span>
+            <span style="color: dimgrey; white-space: normal; word-break: break-word;">{{comment.comment}}</span>
           </p>
           <mat-divider></mat-divider>
         </mat-list-item>
       </mat-list>
-    </div>
+    </mat-expansion-panel>
+  </div>
+
+  <div>
+    <button mat-raised-button type="button" color="primary" (click)="onNewCommentClicked()" style="min-width: 150px;">
+      New comment
+    </button>
   </div>
 
 </div>

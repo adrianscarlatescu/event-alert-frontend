@@ -2,7 +2,7 @@ import {Component, NgZone, OnInit} from '@angular/core';
 import {EventDto} from '../../../model/event.dto';
 import {ActivatedRoute} from '@angular/router';
 import {FileService} from '../../../service/file.service';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {DomSanitizer, SafeStyle, SafeUrl} from '@angular/platform-browser';
 import {CommentDto} from '../../../model/comment.dto';
 import {CommentService} from '../../../service/comment.service';
 import {EventService} from '../../../service/event.service';
@@ -30,6 +30,7 @@ export class EventDetailsComponent implements OnInit {
   eventId: number;
   event: EventDto;
   eventImage: SafeUrl;
+  eventBackgroundImage: SafeStyle;
   eventAddress: string;
   eventUserImage: SafeUrl;
 
@@ -83,7 +84,12 @@ export class EventDetailsComponent implements OnInit {
         const eventImageObservable = this.fileService.getImage(this.event.imagePath)
           .pipe(tap(blob => {
             const url: string = URL.createObjectURL(blob);
+
             this.eventImage = this.domSanitizer.bypassSecurityTrustUrl(url);
+
+            const reader: FileReader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => this.eventBackgroundImage = `url('${reader.result}')`;
           }));
 
         const eventUserImageObservable = this.fileService.getImage(this.event.user.imagePath)

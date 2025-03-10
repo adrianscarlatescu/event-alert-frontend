@@ -1,6 +1,11 @@
-.event-details-div {
+.event-details-container {
+  margin: 10px 65px;
   display: flex;
-  justify-content: center;
+}
+
+.event-details-mat-card-container {
+  width: 100%;
+  margin-right: 10px;
 }
 
 .event-details-avatar-mat-card {
@@ -31,24 +36,38 @@
 
 .event-details-mat-card {
   text-align: start;
-  width: fit-content;
   padding-bottom: 0;
 }
 
-.event-details-event-image {
-  width: 35vw;
+.event-details-event-image-container {
+  position: relative;
   height: 50vh;
-  object-fit: cover;
+}
+
+.event-details-event-image {
+  width: 100%;
+  height: 50vh;
+  object-fit: contain;
+  position: absolute;
+}
+
+.event-details-event-background-image {
+  width: 100%;
+  height: 50vh;
+  position: absolute;
+  background-size: cover;
+  background-repeat: repeat;
+  filter: grayscale(75%) brightness(50%);
 }
 
 .event-details-map-button {
   text-align: right;
 }
 
-.event-details-comments-div {
-  display: flex;
-  height: fit-content;
-  margin-top: 25px;
+.event-details-comments-container {
+  width: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .event-details-comments-number-mat-card {
@@ -70,7 +89,6 @@
 .event-details-footer-div {
   display: flex;
   width: 100%;
-  max-width: 35vw;
 }
 
 .event-details-footer-info-div {
