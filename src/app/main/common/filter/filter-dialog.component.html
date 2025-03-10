@@ -34,17 +34,23 @@
       <mat-label>Types</mat-label>
       <mat-select multiple formControlName="typeIds" (selectionChange)="onTypesSelectionChange($event)" required>
 
-        <mat-option *ngFor="let type of types" [value]="type.id">
-          <div class="filter-type-option-div">
-            <img [src]="getImage(type.imagePath)" class="filter-type-option-image">
-            {{type.label}}
-          </div>
-        </mat-option>
+        <mat-optgroup *ngFor="let category of categories" [label]="category.label">
+
+          <mat-option *ngFor="let type of getTypesByCategory(category.id)" [value]="type.id">
+            <div class="filter-type-option-div">
+              <img [src]="getImage(type.imagePath)" class="filter-type-option-image">
+              {{type.label}}
+            </div>
+          </mat-option>
+
+        </mat-optgroup>
 
       </mat-select>
       <mat-error *ngIf="filterForm.get('typeIds').invalid">{{getTypesErrorMessage()}}</mat-error>
     </mat-form-field>
-    <mat-checkbox color="primary" style="margin-left: 20px" [checked]="withAllTypesSelected" (change)="onAllTypesChanged()">All
+    <mat-checkbox color="primary" style="margin-left: 20px"
+                  [checked]="withAllTypesSelected"
+                  (change)="onAllTypesChanged()">All
     </mat-checkbox>
 
     <br>
@@ -56,8 +62,7 @@
 
         <mat-option *ngFor="let severity of severities" [value]="severity.id">
           <div class="filter-severity-option-div">
-            <mat-card class="filter-severity-mat-card"
-                      [ngStyle]="{'background-color': severity.color}"></mat-card>
+            <mat-card class="filter-severity-mat-card" [ngStyle]="{'background-color': severity.color}"></mat-card>
             {{severity.label}}
           </div>
         </mat-option>
@@ -65,7 +70,8 @@
       </mat-select>
       <mat-error *ngIf="filterForm.get('severityIds').invalid">{{getSeveritiesErrorMessage()}}</mat-error>
     </mat-form-field>
-    <mat-checkbox color="primary" style="margin-left: 20px" [checked]="withAllSeveritiesSelected"
+    <mat-checkbox color="primary" style="margin-left: 20px"
+                  [checked]="withAllSeveritiesSelected"
                   (change)="onAllSeveritiesChanged()">All
     </mat-checkbox>
 
@@ -73,8 +79,7 @@
 
     <mat-form-field appearance="fill" style="width: 80%">
       <mat-label>Statuses</mat-label>
-      <mat-select multiple formControlName="statusIds" (selectionChange)="onStatusesSelectionChange($event)"
-                  required>
+      <mat-select multiple formControlName="statusIds" (selectionChange)="onStatusesSelectionChange($event)" required>
 
         <mat-option *ngFor="let status of statuses" [value]="status.id">
           <div class="filter-status-option-div">
@@ -87,7 +92,8 @@
       </mat-select>
       <mat-error *ngIf="filterForm.get('statusIds').invalid">{{getStatusesErrorMessage()}}</mat-error>
     </mat-form-field>
-    <mat-checkbox color="primary" style="margin-left: 20px" [checked]="withAllStatusesSelected"
+    <mat-checkbox color="primary" style="margin-left: 20px"
+                  [checked]="withAllStatusesSelected"
                   (change)="onAllStatusesChanged()">All
     </mat-checkbox>
   </form>

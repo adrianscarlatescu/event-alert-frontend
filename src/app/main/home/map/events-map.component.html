@@ -40,7 +40,7 @@
 
     </agm-marker>
 
-    <agm-circle *ngIf="userLocation && events && events.length > 0"
+    <agm-circle *ngIf="userLocation && events && events.length > 0 && filterRadius <= 1000"
                 [latitude]="userLocation.latitude"
                 [longitude]="userLocation.longitude"
                 [radius]="filterRadius * 1000"

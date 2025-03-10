@@ -1,4 +1,4 @@
-import {CategoryBaseDto} from './category-base.dto';
+import {CategoryDto} from './category.dto';
 
 export type TypeDto = {
 
@@ -6,6 +6,6 @@ export type TypeDto = {
   label: string;
   imagePath: string;
   position: number;
-  category: CategoryBaseDto;
+  category: CategoryDto;
 
 }

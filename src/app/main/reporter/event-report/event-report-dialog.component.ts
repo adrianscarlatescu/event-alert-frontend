@@ -20,6 +20,7 @@ import {StatusDto} from '../../../model/status.dto';
 import {EventReport} from '../../../types/event-report';
 import {ModalComponent} from '../../../shared/modal/modal.component';
 import {Subject} from 'rxjs';
+import {CategoryDto} from '../../../model/category.dto';
 
 @Component({
   selector: 'app-event-report-dialog',
@@ -35,6 +36,7 @@ export class EventReportDialogComponent implements OnInit {
   file: File;
   eventImage: SafeUrl;
 
+  categories: CategoryDto[];
   types: TypeDto[];
   severities: SeverityDto[];
   statuses: StatusDto[];
@@ -49,6 +51,7 @@ export class EventReportDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.categories = this.sessionService.getCategories();
     this.types = this.sessionService.getTypes();
     this.severities = this.sessionService.getSeverities();
     this.statuses = this.sessionService.getStatuses();
@@ -92,6 +95,12 @@ export class EventReportDialogComponent implements OnInit {
 
   close(): void {
     this.modal.close();
+  }
+
+  getTypesByCategory(categoryId: string): TypeDto[] {
+    return this.types
+      .filter(type => type.category.id == categoryId)
+      .sort((type1, type2) => type1.position > type2.position ? 1 : -1);
   }
 
   getImage(imagePath: string): SafeUrl {

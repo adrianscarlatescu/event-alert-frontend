@@ -62,7 +62,7 @@
   </div>
 
   <div class="event-details-comments-container">
-    <mat-expansion-panel expanded>
+    <mat-expansion-panel [expanded]="comments && comments >0 && comments.length <= 5">
       <mat-expansion-panel-header>
         <mat-panel-title> {{comments.length}} comments</mat-panel-title>
       </mat-expansion-panel-header>

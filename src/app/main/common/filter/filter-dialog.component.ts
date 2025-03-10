@@ -24,6 +24,7 @@ import {SessionService} from '../../../service/session.service';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalComponent} from '../../../shared/modal/modal.component';
 import {Subject} from 'rxjs';
+import {CategoryDto} from '../../../model/category.dto';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -37,6 +38,8 @@ export class FilterDialogComponent implements OnInit {
   onValidate: Subject<FilterOptions> = new Subject<FilterOptions>();
 
   filterForm: FormGroup;
+
+  categories: CategoryDto[];
 
   types: TypeDto[];
   withAllTypesSelected: boolean;
@@ -56,6 +59,8 @@ export class FilterDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.categories = this.sessionService.getCategories();
+
     this.types = this.sessionService.getTypes();
     this.withAllTypesSelected = this.filterOptions.typeIds.length === this.types.length;
 
@@ -102,6 +107,12 @@ export class FilterDialogComponent implements OnInit {
 
   close(): void {
     this.modal.close();
+  }
+
+  getTypesByCategory(categoryId: string): TypeDto[] {
+    return this.types
+      .filter(type => type.category.id == categoryId)
+      .sort((type1, type2) => type1.position > type2.position ? 1 : -1);
   }
 
   getImage(imagePath: string): SafeUrl {
