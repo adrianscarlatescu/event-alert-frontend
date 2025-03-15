@@ -1,6 +1,6 @@
 <app-modal title="Event map" [showValidateButton]="false">
 
-  <agm-map style="height: 80vh;" [latitude]="event.latitude" [longitude]="event.longitude"
+  <agm-map [latitude]="event.latitude" [longitude]="event.longitude"
            [zoom]="mapZoom" [styles]="mapStyle">
 
     <agm-marker>

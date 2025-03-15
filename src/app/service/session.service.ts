@@ -120,7 +120,7 @@ export class SessionService {
     return this.cachedImages.get(imagePath);
   }
 
-  // ###
+  // Sync
 
   public sync(): Observable<any[]> {
     const rolesObservable = this.roleService.getRoles()
@@ -130,16 +130,7 @@ export class SessionService {
       .pipe(tap(genders => this.cachedGenders = genders));
 
     const categoriesObservable = this.categoryService.getCategories()
-      .pipe(tap(categories => this.cachedCategories = categories))
-      .pipe(concatMap(categories => {
-        return forkJoin(categories.map(category => {
-          return this.fileService.getImage(category.imagePath)
-            .pipe(tap(blob => {
-              const url: string = URL.createObjectURL(blob);
-              this.cachedImages.set(category.imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
-            }));
-        }));
-      }));
+      .pipe(tap(categories => this.cachedCategories = categories));
 
     const typesObservable = this.typeService.getTypes()
       .pipe(tap(types => this.cachedTypes = types))
