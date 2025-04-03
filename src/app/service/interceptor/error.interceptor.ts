@@ -5,6 +5,7 @@ import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
+import {ApiFailureDto} from '../../model/api-failure.dto';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -32,7 +33,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   getErrorMessage(errorResponse: HttpErrorResponse): string {
     if (errorResponse && errorResponse.error) {
-      const apiFailure: ApiFailure = errorResponse.error;
+      const apiFailure: ApiFailureDto = errorResponse.error;
 
       if (apiFailure.errors !== undefined && apiFailure.errors.length > 0) {
         let apiErrorMessage: string = '';
@@ -49,13 +50,4 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     return 'An error has occurred';
   }
-}
-
-export class ApiFailure {
-  errors: ApiError[];
-}
-
-export class ApiError {
-  code: string;
-  message: string;
 }
