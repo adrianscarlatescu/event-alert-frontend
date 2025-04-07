@@ -46,10 +46,11 @@
                 [radius]="filterRadius * 1000"
                 [clickable]="false"
                 [fillColor]="'#A88BDA'"
+                [fillOpacity]="0.5"
                 [strokeColor]="'#8C8C8C'"
-                [strokePosition]="'OUTSIDE'"
                 [strokeOpacity]="0.5"
-                [strokeWeight]="2.5">
+                [strokeWeight]="2.5"
+                [strokePosition]="'OUTSIDE'">
     </agm-circle>
 
     <agm-circle *ngIf="selectedEvent && selectedEvent.impactRadius"
@@ -57,10 +58,11 @@
                 [longitude]="selectedEvent.longitude"
                 [radius]="selectedEvent.impactRadius * 1000"
                 [fillColor]="selectedEvent.severity.color"
+                [fillOpacity]="0.5"
                 [strokeColor]="'#8C8C8C'"
-                [strokePosition]="'OUTSIDE'"
                 [strokeOpacity]="0.5"
-                [strokeWeight]="2.5">
+                [strokeWeight]="2.5"
+                [strokePosition]="'OUTSIDE'">
     </agm-circle>
 
     <agm-info-window *ngIf="selectedEvent"

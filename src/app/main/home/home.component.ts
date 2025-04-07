@@ -28,8 +28,8 @@ export class HomeComponent implements OnInit {
   @ViewChild(EventsListComponent) listComponent: EventsListComponent;
 
   totalEvents: number;
+  totalEventsDisplayed: number;
   totalPages: number;
-  totalContentDisplayed: number;
   pageIndex: number;
 
   homePage: HomePage;
@@ -49,8 +49,8 @@ export class HomeComponent implements OnInit {
               private dialog: MatDialog) {
 
     this.totalEvents = 0;
+    this.totalEventsDisplayed = 0;
     this.totalPages = 0;
-    this.totalContentDisplayed = 0;
     this.pageIndex = 0;
 
     this.eventsOrder = EventsOrder.BY_DATE_DESCENDING;
@@ -179,9 +179,9 @@ export class HomeComponent implements OnInit {
     this.spinnerService.show();
     this.eventService.getEventsByFilter(this.eventsFilter, PAGE_SIZE, this.pageIndex, this.eventsOrder)
       .subscribe(page => {
-        this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
-        this.totalContentDisplayed = page.content.length;
+        this.totalEventsDisplayed = page.content.length;
+        this.totalPages = page.totalPages;
         this.events = page.content;
 
         if (this.totalEvents === 0) {
