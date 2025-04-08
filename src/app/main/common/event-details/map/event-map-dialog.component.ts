@@ -13,18 +13,18 @@ import {SafeUrl} from '@angular/platform-browser';
 export class EventMapDialogComponent implements OnInit {
 
   mapStyle = mapTheme;
-  mapZoom: number;
+  zoom: number;
 
   constructor(private sessionService: SessionService,
               @Inject(MAT_DIALOG_DATA) public event: EventDto) {
 
     const impactRadius = event.impactRadius;
     if (!impactRadius) {
-      this.mapZoom = 14;
+      this.zoom = 14;
       return;
     }
 
-    this.mapZoom = 14 - Math.log(event.impactRadius) / Math.log(2);
+    this.zoom = Math.max(2.5, 14.5 - Math.log(this.event.impactRadius) / Math.log(2));
   }
 
   ngOnInit(): void {

@@ -5,7 +5,6 @@ import {EventDto} from '../../../model/event.dto';
 import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {interval, Subscription} from 'rxjs';
 import {UserLocation} from '../../../types/user-location';
 
 @Component({
@@ -21,8 +20,8 @@ export class EventsMapComponent implements OnInit, OnChanges {
 
   @Input()
   events: EventDto[];
-  @Input()
-  filterRadius: number;
+
+  maxDistance: number;
 
   selectedEvent: EventDto;
   selectedEventImage: SafeUrl;
@@ -47,31 +46,15 @@ export class EventsMapComponent implements OnInit, OnChanges {
     }
 
     const distances: number[] = this.events.map(event => event.distance);
-    const radius: number = Math.max(...distances);
+    const originalMaxDistance = Math.max(...distances);
+    this.maxDistance = originalMaxDistance + originalMaxDistance * 0.1; // 10% error margin
 
     setTimeout(() => {
-
-      const targetZoom: number = 15.5 - Math.log(radius) / Math.log(2);
-      const intervalSub: Subscription = interval(500).subscribe(() => {
-
-        if (targetZoom - this.zoom >= 2) {
-          this.zoom += 2;
-        } else if (this.zoom - targetZoom >= 2) {
-          this.zoom -= 2;
-        } else if (targetZoom - this.zoom >= 1) {
-          this.zoom += 1;
-        } else if (this.zoom - targetZoom >= 1) {
-          this.zoom -= 1;
-        } else {
-          intervalSub.unsubscribe();
-        }
-
-      });
+      this.zoom = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
 
       if (this.userLocation.latitude && this.userLocation.longitude) {
         this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
       }
-
     }, 500);
   }
 

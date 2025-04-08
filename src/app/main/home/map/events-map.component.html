@@ -40,10 +40,10 @@
 
     </agm-marker>
 
-    <agm-circle *ngIf="userLocation && events && events.length > 0 && filterRadius <= 1000"
+    <agm-circle *ngIf="userLocation && events && events.length > 0 && maxDistance <= 1000"
                 [latitude]="userLocation.latitude"
                 [longitude]="userLocation.longitude"
-                [radius]="filterRadius * 1000"
+                [radius]="maxDistance * 1000"
                 [clickable]="false"
                 [fillColor]="'#A88BDA'"
                 [fillOpacity]="0.5"
