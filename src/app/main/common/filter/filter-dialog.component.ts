@@ -109,12 +109,6 @@ export class FilterDialogComponent implements OnInit {
     this.modal.close();
   }
 
-  getTypesByCategory(categoryId: string): TypeDto[] {
-    return this.types
-      .filter(type => type.category.id == categoryId)
-      .sort((type1, type2) => type1.position > type2.position ? 1 : -1);
-  }
-
   getImage(imagePath: string): SafeUrl {
     return this.sessionService.getImage(imagePath);
   }
@@ -215,6 +209,21 @@ export class FilterDialogComponent implements OnInit {
       this.filterForm.get('statusIds').setValue([]);
       this.filterForm.get('statusIds').markAsTouched({onlySelf: true});
     }
+  }
+
+  getTypesDropdownLabel(): string {
+    const typeIds = this.filterForm.get('typeIds').value;
+    return typeIds.length + ' types selected';
+  }
+
+  getSeveritiesDropdownLabel(): string {
+    const severityIds = this.filterForm.get('severityIds').value;
+    return severityIds.length + ' severities selected';
+  }
+
+  getStatusesDropdownLabel(): string {
+    const statusIds = this.filterForm.get('statusIds').value;
+    return statusIds.length + ' statuses selected';
   }
 
 }

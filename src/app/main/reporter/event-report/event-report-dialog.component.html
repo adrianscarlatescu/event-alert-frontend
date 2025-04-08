@@ -16,17 +16,19 @@
     <mat-form-field appearance="fill">
       <mat-label>Type</mat-label>
       <mat-select formControlName="type" required style="top: 0">
+        <mat-select-trigger>
+          <span>{{getTypeDropdownLabel()}}</span>
+        </mat-select-trigger>
 
-        <mat-optgroup *ngFor="let category of categories" [label]="category.label">
-
-          <mat-option *ngFor="let type of getTypesByCategory(category.id)" [value]="type.id">
-            <div class="event-report-type-option-div">
-              <img [src]="getImage(type.imagePath)" class="event-report-type-option-image">
-              {{type.label}}
+        <mat-option *ngFor="let type of types" [value]="type.id">
+          <div class="event-report-type-option-div">
+            <img [src]="getImage(type.imagePath)" class="event-report-type-option-image">
+            {{type.label}}
+            <div class="event-report-category-label">
+              {{type.category.label}}
             </div>
-          </mat-option>
-
-        </mat-optgroup>
+          </div>
+        </mat-option>
 
       </mat-select>
       <mat-error *ngIf="newEventForm.get('type').invalid">{{getTypeErrorMessage()}}</mat-error>

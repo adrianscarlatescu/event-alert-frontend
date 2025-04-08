@@ -97,10 +97,12 @@ export class EventReportDialogComponent implements OnInit {
     this.modal.close();
   }
 
-  getTypesByCategory(categoryId: string): TypeDto[] {
-    return this.types
-      .filter(type => type.category.id == categoryId)
-      .sort((type1, type2) => type1.position > type2.position ? 1 : -1);
+  getTypeDropdownLabel(): string {
+    const typeForm = this.newEventForm.get('type');
+    if (!typeForm.value) {
+      return '';
+    }
+    return this.types.find(type => type.id === typeForm.value).label;
   }
 
   getImage(imagePath: string): SafeUrl {
