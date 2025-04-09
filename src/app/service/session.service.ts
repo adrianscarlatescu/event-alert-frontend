@@ -5,13 +5,11 @@ import {RoleDto} from '../model/role.dto';
 import {GenderDto} from '../model/gender.dto';
 import {TypeDto} from '../model/type.dto';
 import {SeverityDto} from '../model/severity.dto';
-import {CategoryDto} from '../model/category.dto';
 import {StatusDto} from '../model/status.dto';
 import {UserDto} from '../model/user.dto';
 import {FileService} from './file.service';
 import {RoleService} from './role.service';
 import {GenderService} from './gender.service';
-import {CategoryService} from './category.service';
 import {TypeService} from './type.service';
 import {SeverityService} from './severity.service';
 import {StatusService} from './status.service';
@@ -29,7 +27,6 @@ export class SessionService {
 
   private cachedRoles: RoleDto[];
   private cachedGenders: GenderDto[];
-  private cachedCategories: CategoryDto[];
   private cachedTypes: TypeDto[];
   private cachedSeverities: SeverityDto[];
   private cachedStatuses: StatusDto[];
@@ -41,7 +38,6 @@ export class SessionService {
               private fileService: FileService,
               private roleService: RoleService,
               private genderService: GenderService,
-              private categoryService: CategoryService,
               private typeService: TypeService,
               private severityService: SeverityService,
               private statusService: StatusService,
@@ -96,10 +92,6 @@ export class SessionService {
     return this.cachedGenders;
   }
 
-  public getCategories(): CategoryDto[] {
-    return this.cachedCategories;
-  }
-
   public getTypes(): TypeDto[] {
     return this.cachedTypes;
   }
@@ -129,9 +121,6 @@ export class SessionService {
     const gendersObservable = this.genderService.getGenders()
       .pipe(tap(genders => this.cachedGenders = genders));
 
-    const categoriesObservable = this.categoryService.getCategories()
-      .pipe(tap(categories => this.cachedCategories = categories));
-
     const typesObservable = this.typeService.getTypes()
       .pipe(tap(types => this.cachedTypes = types))
       .pipe(concatMap(types => {
@@ -156,7 +145,6 @@ export class SessionService {
     return forkJoin([
       rolesObservable,
       gendersObservable,
-      categoriesObservable,
       typesObservable,
       severitiesObservable,
       statusesObservable,
