@@ -39,7 +39,8 @@
 .filter-category-label {
   width: 100%;
   text-align: end;
-  font-size: 10px;
+  font-size: 12px;
+  color: #A0A0A0;
 }
 
 .mat-option:after {
