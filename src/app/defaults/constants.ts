@@ -16,5 +16,5 @@ export const MAX_RADIUS: number = 10_000;
 export const MAX_YEARS_INTERVAL: number = 2;
 export const PAGE_SIZE: number = 10;
 
-export const MIN_IMPACT_RADIUS: number = 0.00;
-export const MAX_IMPACT_RADIUS: number = 1000.00;
+export const MIN_IMPACT_RADIUS: number = 0;
+export const MAX_IMPACT_RADIUS: number = 1000;
