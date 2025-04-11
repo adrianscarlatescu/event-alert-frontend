@@ -76,7 +76,7 @@ export class SessionService {
     localStorage.setItem('homePage', homePage);
   }
 
-  public getHomePage(): string | null {
+  public getHomePage(): string {
     return localStorage.getItem('homePage');
   }
 
