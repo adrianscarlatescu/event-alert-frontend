@@ -54,7 +54,7 @@
 
         <mat-form-field>
           <mat-label>Phone number</mat-label>
-          <input matInput formControlName="phoneNumber" required>
+          <input matInput formControlName="phoneNumber">
           <mat-error *ngIf="profileForm.get('phoneNumber').invalid">{{getPhoneNumberErrorMessage()}}</mat-error>
         </mat-form-field>
       </div>

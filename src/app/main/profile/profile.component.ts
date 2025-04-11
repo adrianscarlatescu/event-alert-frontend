@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit {
       lastName: [this.connectedUser.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
       gender: [this.connectedUser.gender.id],
       dateOfBirth: [this.connectedUser.dateOfBirth],
-      phoneNumber: [this.connectedUser.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_PATTERN)]]
+      phoneNumber: [this.connectedUser.phoneNumber, [Validators.pattern(PHONE_NUMBER_PATTERN)]]
     });
   }
 
@@ -99,7 +99,7 @@ export class ProfileComponent implements OnInit {
       firstName: this.profileForm.value.firstName,
       lastName: this.profileForm.value.lastName,
       dateOfBirth: this.profileForm.value.dateOfBirth,
-      phoneNumber: this.profileForm.value.phoneNumber,
+      phoneNumber: this.profileForm.value.phoneNumber ? this.profileForm.value.phoneNumber : null,
       genderId: this.profileForm.value.gender,
       imagePath: this.connectedUser.imagePath,
       roleIds: this.connectedUser.roles.map(role => role.id)
@@ -141,9 +141,6 @@ export class ProfileComponent implements OnInit {
   }
 
   getPhoneNumberErrorMessage(): string {
-    if (this.profileForm.get('phoneNumber').hasError('required')) {
-      return ERR_MSG_PHONE_NUMBER_REQUIRED;
-    }
     if (this.profileForm.get('phoneNumber').hasError('pattern')) {
       return ERR_MSG_PHONE_PATTERN;
     }
