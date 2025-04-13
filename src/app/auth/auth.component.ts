@@ -20,6 +20,7 @@ import {
 import {AuthLoginDto} from '../model/auth-login.dto';
 import {AuthRegisterDto} from '../model/auth-register.dto';
 import {SpinnerService} from '../service/spinner.service';
+import {AuthTabIndex} from '../enums/auth-tab-index';
 
 @Component({
   selector: 'app-auth',
@@ -34,6 +35,7 @@ export class AuthComponent implements OnInit {
   hidePassword: boolean = true;
   returnUrl: string;
   syncError: boolean = false;
+  selectedTabIndex: AuthTabIndex = AuthTabIndex.LOGIN;
 
   constructor(activatedRoute: ActivatedRoute,
               private sessionService: SessionService,
@@ -154,6 +156,9 @@ export class AuthComponent implements OnInit {
         .subscribe(user => {
           this.toastrService.success('Registration successful');
           this.spinnerService.close();
+          this.selectedTabIndex = AuthTabIndex.LOGIN;
+          this.loginForm.get('email').setValue(authRegister.email);
+          this.loginForm.get('password').setValue(authRegister.password);
         }, () => this.spinnerService.close());
     }
   }

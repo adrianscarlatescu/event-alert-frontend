@@ -112,6 +112,10 @@ export class SessionService {
     return this.cachedImages.get(imagePath);
   }
 
+  public setConnectedUser(user: UserDto): void {
+    this.cachedConnectedUser = user;
+  }
+
   // Sync
 
   public sync(): Observable<any[]> {

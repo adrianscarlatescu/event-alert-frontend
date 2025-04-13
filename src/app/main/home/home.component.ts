@@ -15,7 +15,7 @@ import {FilterOptions} from '../../types/filter-options';
 import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
-import {HomePage} from '../../types/home-page';
+import {HomePage} from '../../enums/home-page';
 
 @Component({
   selector: 'app-home',

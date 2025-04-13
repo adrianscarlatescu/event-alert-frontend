@@ -19,6 +19,7 @@ import {UserUpdateDto} from '../../model/user-update.dto';
 import {GenderDto} from '../../model/gender.dto';
 import {ImageType} from '../../enums/image-type';
 import {SpinnerService} from '../../service/spinner.service';
+import {tap} from 'rxjs/operators';
 
 
 @Component({
@@ -50,10 +51,12 @@ export class ProfileComponent implements OnInit {
     this.genders = this.sessionService.getGenders();
     this.connectedUser = this.sessionService.getConnectedUser();
 
-    this.fileService.getImage(this.connectedUser.imagePath)
-      .subscribe(blob => {
-        this.setImage(blob);
-      });
+    if (this.connectedUser.imagePath) {
+      this.fileService.getImage(this.connectedUser.imagePath)
+        .subscribe(blob => {
+          this.setImage(blob);
+        });
+    }
 
     this.initForm();
   }
@@ -62,7 +65,7 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.formBuilder.group({
       firstName: [this.connectedUser.firstName, [Validators.required, Validators.maxLength(LENGTH_50)]],
       lastName: [this.connectedUser.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
-      gender: [this.connectedUser.gender.id],
+      gender: [this.connectedUser.gender ? this.connectedUser.gender.id : null],
       dateOfBirth: [this.connectedUser.dateOfBirth],
       phoneNumber: [this.connectedUser.phoneNumber, [Validators.pattern(PHONE_NUMBER_PATTERN)]]
     });
@@ -106,6 +109,7 @@ export class ProfileComponent implements OnInit {
     };
 
     this.userService.putProfile(userUpdate)
+      .pipe(tap(user => this.sessionService.setConnectedUser(user)))
       .subscribe(user => {
         this.toastrService.success('Profile updated');
         this.connectedUser = user;
