@@ -81,7 +81,7 @@
           <div class="events-map-event-color-circle" [ngStyle]="{'background-color': selectedEvent.status.color}"></div>
           <p class="events-map-event-info-text">{{selectedEvent.status.label}}</p>
         </div>
-        <p class="events-map-event-info-text">{{selectedEvent.createdAt | date: 'medium'}}</p>
+        <p class="events-map-event-info-text">{{selectedEvent.createdAt | date: 'dd/MM/yyyy hh:mm:ss'}}</p>
         <p *ngIf="selectedEvent.impactRadius" class="events-map-event-info-text">{{selectedEvent.impactRadius}} km impact radius</p>
         <p class="events-map-event-info-text">
           {{selectedEvent.distance.toString()

@@ -76,7 +76,7 @@
 
         <mat-form-field *ngIf="connectedUser.joinedAt">
           <mat-label>Join date</mat-label>
-          <input matInput disabled value="{{connectedUser.joinedAt | date: 'medium'}}">
+          <input matInput disabled value="{{connectedUser.joinedAt | date: 'dd/MM/yyyy'}}">
         </mat-form-field>
 
         <br>
