@@ -1,5 +1,4 @@
 import {RoleDto} from './role.dto';
-import {GenderDto} from './gender.dto';
 
 export type UserDto = {
 
@@ -9,7 +8,6 @@ export type UserDto = {
   email: string;
   firstName: string;
   lastName: string;
-  gender: GenderDto;
   dateOfBirth: Date;
   phoneNumber: string;
   imagePath: string;

@@ -5,7 +5,6 @@ export type UserUpdateDto = {
   dateOfBirth: Date;
   phoneNumber: string;
   imagePath: string;
-  genderId: string;
   roleIds: string[];
 
 }

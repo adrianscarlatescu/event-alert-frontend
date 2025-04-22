@@ -2,14 +2,12 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
 import {UserLocation} from '../types/user-location';
 import {RoleDto} from '../model/role.dto';
-import {GenderDto} from '../model/gender.dto';
 import {TypeDto} from '../model/type.dto';
 import {SeverityDto} from '../model/severity.dto';
 import {StatusDto} from '../model/status.dto';
 import {UserDto} from '../model/user.dto';
 import {FileService} from './file.service';
 import {RoleService} from './role.service';
-import {GenderService} from './gender.service';
 import {TypeService} from './type.service';
 import {SeverityService} from './severity.service';
 import {StatusService} from './status.service';
@@ -26,7 +24,6 @@ export class SessionService {
   private userLocationSubject: BehaviorSubject<UserLocation> = new BehaviorSubject<UserLocation>(undefined);
 
   private cachedRoles: RoleDto[];
-  private cachedGenders: GenderDto[];
   private cachedTypes: TypeDto[];
   private cachedSeverities: SeverityDto[];
   private cachedStatuses: StatusDto[];
@@ -37,7 +34,6 @@ export class SessionService {
   constructor(private domSanitizer: DomSanitizer,
               private fileService: FileService,
               private roleService: RoleService,
-              private genderService: GenderService,
               private typeService: TypeService,
               private severityService: SeverityService,
               private statusService: StatusService,
@@ -88,10 +84,6 @@ export class SessionService {
     return this.cachedRoles;
   }
 
-  public getGenders(): GenderDto[] {
-    return this.cachedGenders;
-  }
-
   public getTypes(): TypeDto[] {
     return this.cachedTypes;
   }
@@ -122,9 +114,6 @@ export class SessionService {
     const rolesObservable = this.roleService.getRoles()
       .pipe(tap(roles => this.cachedRoles = roles));
 
-    const gendersObservable = this.genderService.getGenders()
-      .pipe(tap(genders => this.cachedGenders = genders));
-
     const typesObservable = this.typeService.getTypes()
       .pipe(tap(types => this.cachedTypes = types))
       .pipe(concatMap(types => {
@@ -148,7 +137,6 @@ export class SessionService {
 
     return forkJoin([
       rolesObservable,
-      gendersObservable,
       typesObservable,
       severitiesObservable,
       statusesObservable,

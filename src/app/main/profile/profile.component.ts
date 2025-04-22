@@ -12,11 +12,9 @@ import {
   ERR_MSG_FIRST_NAME_REQUIRED,
   ERR_MSG_LAST_NAME_LENGTH,
   ERR_MSG_LAST_NAME_REQUIRED,
-  ERR_MSG_PHONE_NUMBER_REQUIRED,
   ERR_MSG_PHONE_PATTERN
 } from '../../defaults/field-validation-messages';
 import {UserUpdateDto} from '../../model/user-update.dto';
-import {GenderDto} from '../../model/gender.dto';
 import {ImageType} from '../../enums/image-type';
 import {SpinnerService} from '../../service/spinner.service';
 import {tap} from 'rxjs/operators';
@@ -30,7 +28,6 @@ import {tap} from 'rxjs/operators';
 export class ProfileComponent implements OnInit {
 
   connectedUser: UserDto;
-  genders: GenderDto[];
 
   profileImage: SafeUrl;
   profileImageFile: File;
@@ -48,7 +45,6 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.genders = this.sessionService.getGenders();
     this.connectedUser = this.sessionService.getConnectedUser();
 
     if (this.connectedUser.imagePath) {
@@ -65,7 +61,6 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.formBuilder.group({
       firstName: [this.connectedUser.firstName, [Validators.required, Validators.maxLength(LENGTH_50)]],
       lastName: [this.connectedUser.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
-      gender: [this.connectedUser.gender ? this.connectedUser.gender.id : null],
       dateOfBirth: [this.connectedUser.dateOfBirth],
       phoneNumber: [this.connectedUser.phoneNumber, [Validators.pattern(PHONE_NUMBER_PATTERN)]]
     });
@@ -103,7 +98,6 @@ export class ProfileComponent implements OnInit {
       lastName: this.profileForm.value.lastName,
       dateOfBirth: this.profileForm.value.dateOfBirth,
       phoneNumber: this.profileForm.value.phoneNumber ? this.profileForm.value.phoneNumber : null,
-      genderId: this.profileForm.value.gender,
       imagePath: this.connectedUser.imagePath,
       roleIds: this.connectedUser.roles.map(role => role.id)
     };

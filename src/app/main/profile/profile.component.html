@@ -35,15 +35,6 @@
         <br>
 
         <mat-form-field>
-          <mat-label>Gender</mat-label>
-          <mat-select formControlName="gender">
-            <mat-option *ngFor="let gender of genders" [value]="gender.id">{{gender.label}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <br>
-
-        <mat-form-field>
           <mat-label>Date of birth</mat-label>
           <input matInput formControlName="dateOfBirth" [matDatepicker]="picker">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
