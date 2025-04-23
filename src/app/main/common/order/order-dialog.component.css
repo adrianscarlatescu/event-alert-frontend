@@ -4,6 +4,24 @@
 }
 
 .order-name-text {
-  padding-left: 15px;
+  padding-left: 20px;
   padding-top: 15px;
+}
+
+.order-circle-div {
+  position: absolute;
+  left: 30px;
+  bottom: 10px;
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  box-shadow: 3px 3px 5px lightgray;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.order-arrow-icon {
+  transform: scale(70%);
 }

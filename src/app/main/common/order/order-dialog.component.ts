@@ -18,9 +18,7 @@ export class OrderDialogComponent implements OnInit {
   order: EventsOrder;
 
   constructor(@Inject(MAT_DIALOG_DATA) order: EventsOrder) {
-
     this.order = order;
-
   }
 
   ngOnInit(): void {
