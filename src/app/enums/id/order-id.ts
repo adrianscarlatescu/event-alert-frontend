@@ -1,4 +1,4 @@
-export enum EventsOrder {
+export enum OrderId {
 
   BY_DATE_ASCENDING = 'BY_DATE_ASCENDING',
   BY_DATE_DESCENDING = 'BY_DATE_DESCENDING',

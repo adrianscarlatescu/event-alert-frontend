@@ -10,16 +10,21 @@
 
 .order-circle-div {
   position: absolute;
-  left: 30px;
-  bottom: 10px;
-  height: 18px;
-  width: 18px;
+  left: 37px;
+  bottom: 0;
+  height: 22px;
+  width: 22px;
   background-color: white;
-  box-shadow: 3px 3px 5px lightgray;
+  box-shadow: 2px 2px 2px lightgray;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.order-icon {
+  width: 36px;
+  height: 36px;
 }
 
 .order-arrow-icon {

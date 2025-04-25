@@ -1,4 +1,4 @@
-export type EventsFilterDto = {
+export type FilterDto = {
 
   radius: number;
   startDate: Date;

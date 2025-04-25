@@ -7,15 +7,15 @@ import {ToastrService} from 'ngx-toastr';
 import {OrderDialogComponent} from '../common/order/order-dialog.component';
 import {EventsListComponent} from './list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
-import {EventsOrder} from '../../enums/events-order';
 import {PAGE_SIZE} from '../../defaults/constants';
-import {EventsFilterDto} from '../../model/events-filter.dto';
+import {FilterDto} from '../../model/filter.dto';
 import {EventDto} from '../../model/event.dto';
 import {FilterOptions} from '../../types/filter-options';
 import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
 import {SpinnerService} from '../../service/spinner.service';
 import {UserLocation} from '../../types/user-location';
 import {HomePage} from '../../enums/home-page';
+import {OrderId} from '../../enums/id/order-id';
 
 @Component({
   selector: 'app-home',
@@ -37,8 +37,8 @@ export class HomeComponent implements OnInit {
   events: EventDto[];
 
   filterOptions: FilterOptions;
-  eventsFilter: EventsFilterDto;
-  eventsOrder: EventsOrder;
+  filter: FilterDto;
+  orderId: OrderId;
 
   userLocation: UserLocation;
 
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
     this.totalPages = 0;
     this.pageIndex = 0;
 
-    this.eventsOrder = EventsOrder.BY_DATE_DESCENDING;
+    this.orderId = OrderId.BY_DATE_DESCENDING;
 
   }
 
@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit {
 
       this.filterOptions = filterOptions;
 
-      this.eventsFilter = {
+      this.filter = {
         radius: this.filterOptions.radius,
         startDate: this.filterOptions.startDate,
         endDate: this.filterOptions.endDate,
@@ -158,18 +158,18 @@ export class HomeComponent implements OnInit {
     }
 
     const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
-      data: this.eventsOrder,
+      data: this.orderId,
     });
 
     dialogRef.componentInstance.onValidate.subscribe(newOrder => {
       dialogRef.componentInstance.close();
 
-      if (this.totalEvents === 0 || newOrder === this.eventsOrder) {
+      if (this.totalEvents === 0 || newOrder === this.orderId) {
         this.toastrService.info('Order not applied');
         return;
       }
 
-      this.eventsOrder = newOrder;
+      this.orderId = newOrder;
       this.pageIndex = 0;
       this.requestNewSearch();
     });
@@ -177,7 +177,7 @@ export class HomeComponent implements OnInit {
 
   private requestNewSearch(): void {
     this.spinnerService.show();
-    this.eventService.getEventsByFilter(this.eventsFilter, PAGE_SIZE, this.pageIndex, this.eventsOrder)
+    this.eventService.getEventsByFilter(this.filter, PAGE_SIZE, this.pageIndex, this.orderId)
       .subscribe(page => {
         this.totalEvents = page.totalElements;
         this.totalEventsDisplayed = page.content.length;

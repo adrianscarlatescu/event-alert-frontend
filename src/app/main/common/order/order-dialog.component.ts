@@ -1,8 +1,11 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {EventsOrder} from '../../../enums/events-order';
 import {ModalComponent} from '../../../shared/modal/modal.component';
 import {Subject} from 'rxjs';
+import {OrderDto} from '../../../model/order.dto';
+import {SessionService} from '../../../service/session.service';
+import {SafeUrl} from '@angular/platform-browser';
+import {OrderId} from '../../../enums/id/order-id';
 
 @Component({
   selector: 'app-order-dialog',
@@ -13,19 +16,36 @@ export class OrderDialogComponent implements OnInit {
 
   @ViewChild(ModalComponent) modal: ModalComponent;
 
-  onValidate: Subject<EventsOrder> = new Subject<EventsOrder>();
+  onValidate: Subject<OrderId> = new Subject<OrderId>();
 
-  order: EventsOrder;
+  orders: OrderDto[];
 
-  constructor(@Inject(MAT_DIALOG_DATA) order: EventsOrder) {
-    this.order = order;
+  selectedOrderId: OrderId;
+
+  constructor(private sessionService: SessionService,
+              @Inject(MAT_DIALOG_DATA) selectedOrderId: OrderId) {
+    this.selectedOrderId = selectedOrderId;
   }
 
   ngOnInit(): void {
+    this.orders = this.sessionService.getEventOrders();
+  }
+
+  getImage(imagePath: string): SafeUrl {
+    return this.sessionService.getImage(imagePath);
+  }
+
+  getArrowIcon(order: OrderDto): string {
+    if (order.id.toString().endsWith('ASCENDING')) {
+      return 'arrow_upward';
+    }
+    if (order.id.toString().endsWith('DESCENDING')) {
+      return 'arrow_downward';
+    }
   }
 
   onValidateClicked(): void {
-    this.onValidate.next(this.order);
+    this.onValidate.next(this.selectedOrderId);
   }
 
   close(): void {

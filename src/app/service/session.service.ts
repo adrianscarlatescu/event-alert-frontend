@@ -12,9 +12,11 @@ import {TypeService} from './type.service';
 import {SeverityService} from './severity.service';
 import {StatusService} from './status.service';
 import {UserService} from './user.service';
-import {concatMap, tap} from 'rxjs/operators';
+import {concatMap, map, tap} from 'rxjs/operators';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {RoleId} from '../enums/id/role-id';
+import {OrderDto} from '../model/order.dto';
+import {OrderService} from './order.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +30,7 @@ export class SessionService {
   private cachedSeverities: SeverityDto[];
   private cachedStatuses: StatusDto[];
   private cachedConnectedUser: UserDto;
+  private cachedEventOrders: OrderDto[];
 
   private cachedImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
 
@@ -37,7 +40,8 @@ export class SessionService {
               private typeService: TypeService,
               private severityService: SeverityService,
               private statusService: StatusService,
-              private userService: UserService) {
+              private userService: UserService,
+              private eventOrderService: OrderService) {
   }
 
   public clearStorage(): void {
@@ -108,8 +112,11 @@ export class SessionService {
     this.cachedConnectedUser = user;
   }
 
-  // Sync
+  public getEventOrders(): OrderDto[] {
+    return this.cachedEventOrders;
+  }
 
+  // Sync
   public sync(): Observable<any[]> {
     const rolesObservable = this.roleService.getRoles()
       .pipe(tap(roles => this.cachedRoles = roles));
@@ -135,12 +142,32 @@ export class SessionService {
     const userObservable = this.userService.getProfile()
       .pipe(tap(user => this.cachedConnectedUser = user));
 
+    const ordersObservable = this.eventOrderService.getOrders()
+      .pipe(tap(orders => this.cachedEventOrders = orders))
+      .pipe(concatMap(orders => {
+        return forkJoin(
+          orders
+            .map(order => order.imagePath)
+            .filter(function(item, index, inputArray) {
+              return inputArray.indexOf(item) == index;
+            })
+            .map(imagePath => {
+              return this.fileService.getImage(imagePath)
+                .pipe(tap(blob => {
+                  const url: string = URL.createObjectURL(blob);
+                  this.cachedImages.set(imagePath, this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob)));
+                }));
+            })
+        );
+      }));
+
     return forkJoin([
       rolesObservable,
       typesObservable,
       severitiesObservable,
       statusesObservable,
-      userObservable
+      userObservable,
+      ordersObservable
     ]);
   }
 
