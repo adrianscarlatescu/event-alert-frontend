@@ -163,13 +163,17 @@ export class HomeComponent implements OnInit {
 
     dialogRef.componentInstance.onValidate.subscribe(newOrder => {
       dialogRef.componentInstance.close();
-
-      if (this.totalEvents === 0 || newOrder === this.orderId) {
-        this.toastrService.info('Order not applied');
+      if (newOrder === this.orderId) {
         return;
       }
 
       this.orderId = newOrder;
+
+      if (this.totalEvents === 0) {
+        this.toastrService.info('Order not applied');
+        return;
+      }
+
       this.pageIndex = 0;
       this.requestNewSearch();
     });
