@@ -169,13 +169,12 @@ export class HomeComponent implements OnInit {
 
       this.orderId = newOrder;
 
-      if (this.totalEvents === 0) {
+      if (this.totalEvents > 1) {
+        this.pageIndex = 0;
+        this.requestNewSearch();
+      } else {
         this.toastrService.info('Order not applied');
-        return;
       }
-
-      this.pageIndex = 0;
-      this.requestNewSearch();
     });
   }
 
