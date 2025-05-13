@@ -72,8 +72,8 @@ export class HomeComponent implements OnInit {
       radius: 1000,
 
       // Cover the events recorded in the database
-      startDate: new Date(2020, 0, 1),
-      endDate: new Date(2020, 11, 31)
+      startDate: new Date(2025, 0, 1),
+      endDate: new Date(2025, 11, 31)
     }
   }
 

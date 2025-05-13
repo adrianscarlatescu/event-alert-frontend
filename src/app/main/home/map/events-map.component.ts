@@ -47,7 +47,7 @@ export class EventsMapComponent implements OnInit, OnChanges {
 
     const distances: number[] = this.events.map(event => event.distance);
     const originalMaxDistance = Math.max(...distances);
-    this.maxDistance = originalMaxDistance + originalMaxDistance * 0.1; // 10% error margin
+    this.maxDistance = originalMaxDistance + originalMaxDistance * 0.05; // 5% error margin
 
     setTimeout(() => {
       this.zoom = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
