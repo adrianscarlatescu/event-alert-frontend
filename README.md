@@ -26,7 +26,7 @@ In order to run the application locally, the following steps must be set:
 The YouTube link is available [here](https://youtu.be/AutvBfRmnWM).
 
 ## Main features
-Register and login
+Register, login, view/update profile
 <table>
  <tr>
   <td><img src="src/assets/readme/capture_auth_register.png" width="auto"></td>
@@ -34,10 +34,6 @@ Register and login
  <tr>
   <td><img src="src/assets/readme/capture_auth_login.png" width="auto"></td>
  </tr>
-</table>
-
-View/update profile
-<table>
  <tr>
   <td><img src="src/assets/readme/capture_profile.png" width="auto"></td>
  </tr>
@@ -63,20 +59,13 @@ Filter result (map and list mode)
  </tr>
 </table>
 
-View event marker info
+View event marker info and check event details
 <table>
  <tr>
   <td><img src="src/assets/readme/capture_map_marker.png" width="auto"></td>
  </tr>
-</table>
-
-Check event details and comments
-<table>
  <tr>
   <td><img src="src/assets/readme/capture_event_details.png" width="auto"></td>
- </tr>
- <tr>
-  <td><img src="src/assets/readme/capture_event_comments.png" width="auto"></td>
  </tr>
 </table>
 
@@ -87,5 +76,18 @@ View reported events and report new event
  </tr>
  <tr>
   <td><img src="src/assets/readme/capture_report_new_event.png" width="auto"></td>
+ </tr>
+</table>
+
+Form validation across all pages
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_validation_filter.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_validation_report_new_event.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_validation_profile.png" width="auto"></td>
  </tr>
 </table>
