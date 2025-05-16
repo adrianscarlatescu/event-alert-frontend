@@ -70,10 +70,13 @@ View event marker info
  </tr>
 </table>
 
-Check event details
+Check event details and comments
 <table>
  <tr>
   <td><img src="src/assets/readme/capture_event_details.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_event_comments.png" width="auto"></td>
  </tr>
 </table>
 
