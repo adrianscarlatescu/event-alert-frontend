@@ -22,9 +22,6 @@ In order to run the application locally, the following steps must be set:
 * A Google Maps API key must be generated and put in [main.module.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/app/main/main.module.ts#L48).
 * If the server IP is different, it must be set in [environment.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/environments/environment.ts#L9).
 
-## Video demonstration
-The YouTube link is available [here](https://youtu.be/AutvBfRmnWM).
-
 ## Main features
 Register, login, view/update profile
 <table>
@@ -91,3 +88,6 @@ Form validation across all pages
   <td><img src="src/assets/readme/capture_validation_profile.png" width="auto"></td>
  </tr>
 </table>
+
+## Video demonstration
+The YouTube link is available [here](https://youtu.be/AutvBfRmnWM).
