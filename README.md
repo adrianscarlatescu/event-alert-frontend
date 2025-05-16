@@ -24,3 +24,65 @@ In order to run the application locally, the following steps must be set:
 
 ## Video demonstration
 The YouTube link is available [here](https://youtu.be/AutvBfRmnWM).
+
+## Main features
+Register and login
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_auth_register.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_auth_login.png" width="auto"></td>
+ </tr>
+</table>
+
+View/update profile
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_profile.png" width="auto"></td>
+ </tr>
+</table>
+
+Filter and sort events by certain criteria
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_filter.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_order.png" width="auto"></td>
+ </tr>
+</table>
+
+Filter result (map and list mode)
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_map.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_list.png" width="auto"></td>
+ </tr>
+</table>
+
+View event marker info
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_map_marker.png" width="auto"></td>
+ </tr>
+</table>
+
+Check event details
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_event_details.png" width="auto"></td>
+ </tr>
+</table>
+
+View reported events and report new event
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_reporter.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_report_new_event.png" width="auto"></td>
+ </tr>
+</table>
