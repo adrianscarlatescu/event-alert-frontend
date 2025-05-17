@@ -11,7 +11,7 @@
           {{event.user.firstName + ' ' + event.user.lastName}}
         </mat-card-title>
         <mat-card-subtitle>
-          {{event.createdAt | date: 'dd/MM/yyyy hh:mm:ss'}}
+          {{event.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}
         </mat-card-subtitle>
       </mat-card-header>
 
@@ -76,7 +76,7 @@
           <img matListAvatar [src]="commentsUsersImages.get(comment.user.id)"/>
           <h3 matLine>{{comment.user.firstName + ' ' + comment.user.lastName}}</h3>
           <p matLine>
-            <span style="color: grey">{{comment.createdAt | date: 'dd/MM/yyyy hh:mm:ss'}}</span>
+            <span style="color: grey">{{comment.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</span>
             <br>
             <span style="color: dimgrey; white-space: normal; word-break: break-word;">{{comment.comment}}</span>
           </p>
