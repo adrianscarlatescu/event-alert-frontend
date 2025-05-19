@@ -169,14 +169,20 @@ class PasswordValidator {
   static validate(control: AbstractControl): ValidationErrors | null {
     const password: string = control.get('password')?.value;
     const confirmPassword: string = control.get('confirmPassword')?.value;
+
     if (!password || !confirmPassword) {
+      control.get('confirmPassword')?.setErrors(null);
       return null;
     }
+
     if (password !== confirmPassword) {
       control.get('confirmPassword')?.setErrors({not_the_same: true});
       return ({not_the_same: true});
     }
+
+    control.get('confirmPassword')?.setErrors(null);
     return null;
   }
+
 }
 
