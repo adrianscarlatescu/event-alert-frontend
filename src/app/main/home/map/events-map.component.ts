@@ -81,7 +81,7 @@ export class EventsMapComponent implements OnInit, OnChanges {
 
   onMarkerClicked(event: EventDto): void {
     this.map.panTo({lat: event.latitude, lng: event.longitude});
-    this.map.panBy(0, -230);
+    this.map.panBy(0, -250);
 
     this.selectedEvent = event;
     this.fileService.getImage(event.imagePath)
