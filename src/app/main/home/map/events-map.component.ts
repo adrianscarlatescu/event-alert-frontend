@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {UserLocation} from '../../../types/user-location';
+import {interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-events-map',
@@ -50,11 +51,24 @@ export class EventsMapComponent implements OnInit, OnChanges {
     this.maxDistance = originalMaxDistance + originalMaxDistance * 0.05; // 5% error margin
 
     setTimeout(() => {
-      this.zoom = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
 
-      if (this.userLocation.latitude && this.userLocation.longitude) {
-        this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
-      }
+      const targetZoom: number = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
+      const intervalSub: Subscription = interval(500).subscribe(() => {
+
+        console.log(this.zoom);
+        if (targetZoom - this.zoom >= 3) {
+          this.zoom += 3;
+        } else if (this.zoom - targetZoom >= 3) {
+          this.zoom -= 3;
+        } else {
+          this.zoom = targetZoom;
+          intervalSub.unsubscribe();
+        }
+
+      });
+
+      this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
+
     }, 500);
   }
 
