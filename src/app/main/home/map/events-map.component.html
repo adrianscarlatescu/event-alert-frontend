@@ -7,6 +7,7 @@
            [latitude]="userLocation.latitude"
            [longitude]="userLocation.longitude"
            [zoom]="zoom"
+           [gestureHandling]="'greedy'"
            [styles]="mapStyle">
 
     <agm-marker *ngIf="userLocation">
@@ -21,7 +22,7 @@
       </agm-overlay>
     </agm-marker>
 
-    <agm-marker *ngFor="let event of events;">
+    <agm-marker *ngFor="let event of events; trackBy: trackEventsId">
 
       <agm-overlay
         [latitude]="event.latitude"

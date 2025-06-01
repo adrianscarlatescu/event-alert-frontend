@@ -53,13 +53,12 @@ export class EventsMapComponent implements OnInit, OnChanges {
     setTimeout(() => {
 
       const targetZoom: number = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
-      const intervalSub: Subscription = interval(500).subscribe(() => {
+      const intervalSub: Subscription = interval(400).subscribe(() => {
 
-        console.log(this.zoom);
-        if (targetZoom - this.zoom >= 3) {
-          this.zoom += 3;
-        } else if (this.zoom - targetZoom >= 3) {
-          this.zoom -= 3;
+        if (targetZoom - this.zoom >= 2) {
+          this.zoom += 2;
+        } else if (this.zoom - targetZoom >= 2) {
+          this.zoom -= 2;
         } else {
           this.zoom = targetZoom;
           intervalSub.unsubscribe();
@@ -91,6 +90,10 @@ export class EventsMapComponent implements OnInit, OnChanges {
 
   zoomChange(value: number): void {
     this.zoom = value;
+  }
+
+  trackEventsId(index: number, item: EventDto) {
+    return item.id;
   }
 
   onMarkerClicked(event: EventDto): void {
