@@ -1,0 +1,23 @@
+agm-map {
+  height: 100%;
+}
+
+.event-map-marker-overlay {
+  width: 80px;
+  height: 80px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 60px;
+  background-position-y: 5px;
+  position: relative;
+  bottom: 60px;
+  right: 30px;
+}
+
+.event-map-type-image {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 5%;
+}

@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {User} from '../model/user';
+import {UserDto} from '../model/user.dto';
 import {HttpClient} from '@angular/common/http';
 import {baseUrl} from '../../environments/environment';
-import {UserRequest} from '../model/request/user.request';
+import {UserUpdateDto} from '../model/user-update.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +13,12 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  getProfile(): Observable<User> {
-    return this.http.get<User>(`${baseUrl}/profile`);
+  getProfile(): Observable<UserDto> {
+    return this.http.get<UserDto>(`${baseUrl}/users/profile`);
   }
 
-  putProfile(userRequest: UserRequest): Observable<User> {
-    return this.http.put<User>(`${baseUrl}/profile`, userRequest);
+  putProfile(userUpdate: UserUpdateDto): Observable<UserDto> {
+    return this.http.put<UserDto>(`${baseUrl}/users/profile`, userUpdate);
   }
 
 }

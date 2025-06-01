@@ -1,0 +1,9 @@
+<app-modal title="Post comment" (onValidate)="onValidateClicked()">
+
+  <mat-form-field style="width: 100%">
+      <textarea [formControl]="commentControl" matInput required placeholder="Type below..."
+                style="min-height: 50px"></textarea>
+  </mat-form-field>
+  <mat-error *ngIf="commentControl.touched && commentControl.invalid">{{getCommentErrorMessage()}}</mat-error>
+
+</app-modal>

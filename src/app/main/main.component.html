@@ -8,9 +8,9 @@
         <mat-icon aria-hidden="false" color="primary">map</mat-icon>
       </a>
 
-      <a matLine mat-list-item routerLink="creator" routerLinkActive="active-list-item" (click)="onCreator()">
-        <span>Creator</span>
-        <mat-icon aria-hidden="false" color="primary">create</mat-icon>
+      <a matLine mat-list-item routerLink="reporter" routerLinkActive="active-list-item" (click)="onReporter()">
+        <span>Reporter</span>
+        <mat-icon aria-hidden="false" color="primary">report</mat-icon>
       </a>
 
       <a matLine mat-list-item routerLink="notifications" routerLinkActive="active-list-item" (click)="onNotifications()">
@@ -23,7 +23,7 @@
         <mat-icon aria-hidden="false" color="primary">person</mat-icon>
       </a>
 
-      <a matLine mat-list-item routerLink="admin" routerLinkActive="active-list-item" *ngIf="isUserAdmin"
+      <a matLine mat-list-item routerLink="admin" routerLinkActive="active-list-item" *ngIf="isConnectedUserAdmin"
          (click)="onAdmin()">
         <span>Admin</span>
         <mat-icon aria-hidden="false" color="primary">people</mat-icon>
@@ -39,9 +39,9 @@
     </mat-nav-list>
   </mat-sidenav>
 
-  <div class="sidenav-content">
+  <div *ngIf="isDataSynced" class="sidenav-content">
     <router-outlet></router-outlet>
-    <button mat-mini-fab color="primary" class="main_menu_fab" (click)="toggleSidenav()">
+    <button mat-mini-fab color="primary" class="main-menu-fab" (click)="toggleSidenav()">
       <mat-icon>menu</mat-icon>
     </button>
   </div>

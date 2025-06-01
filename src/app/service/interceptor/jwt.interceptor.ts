@@ -1,25 +1,30 @@
 import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {AuthService} from '../auth.service';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {concatMap} from 'rxjs/operators';
+import {filter, switchMap, take} from 'rxjs/operators';
 import {SessionService} from '../session.service';
 import {Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
 import {JWT_OFFSET_SECONDS, LOGIN_URL_REGEX, REFRESH_TOKEN_URL_REGEX, REGISTER_URL_REGEX} from '../../defaults/constants';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
+import {SpinnerService} from '../spinner.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
+  private isRedirectingToAuth = false; // To handle forkJoin cases
+
+  private isRefreshing = false; // To handle forkJoin cases
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+
   private jwtHelper: JwtHelperService = new JwtHelperService();
 
-  constructor(private router: Router,
-              private toast: ToastrService,
+  constructor(private sessionService: SessionService,
+              private authService: AuthService,
               private spinnerService: SpinnerService,
-              private sessionService: SessionService,
-              private authService: AuthService) {
+              private toastrService: ToastrService,
+              private router: Router) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -38,8 +43,12 @@ export class JwtInterceptor implements HttpInterceptor {
     const refreshToken: string = this.sessionService.getRefreshToken();
 
     if (!accessToken || !refreshToken) {
-      this.toast.warning('Authorization tokens required, please re-login');
-      this.clearAndRedirect();
+      if (!this.isRedirectingToAuth) {
+        console.log('Tokens required, redirect /auth');
+        this.isRedirectingToAuth = true;
+        this.toastrService.warning('Authorization tokens required, please re-login');
+        this.clearAndRedirect();
+      }
       return of();
     }
 
@@ -48,25 +57,45 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (isRefreshTokenRequest) {
       if (isRefreshTokenExpired) {
-        this.toast.warning('Authorization expired, please re-login');
-        this.clearAndRedirect();
+        if (!this.isRedirectingToAuth) {
+          console.log('Refresh token expired, redirect /auth');
+          this.isRedirectingToAuth = true;
+          this.toastrService.warning('Authorization expired, please re-login');
+          this.clearAndRedirect();
+        }
         return of();
       }
-      request = this.createRequestWithAuthHeader(request, refreshToken);
-      return next.handle(request);
+      return next.handle(this.createRequestWithAuthHeader(request, refreshToken));
     }
 
     if (isAccessTokenExpired) {
-      return this.authService.refresh()
-        .pipe(concatMap(tokens => {
-          console.log('Using new access token for current request');
-          request = this.createRequestWithAuthHeader(request, tokens.accessToken);
-          return next.handle(request);
-        }));
+      return this.handleTokenRefresh(request, next);
     }
 
-    request = this.createRequestWithAuthHeader(request, accessToken);
-    return next.handle(request);
+    return next.handle(this.createRequestWithAuthHeader(request, accessToken));
+  }
+
+  private handleTokenRefresh(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      return this.authService.refresh().pipe(
+        switchMap((authTokens) => {
+          this.isRefreshing = false;
+          this.refreshTokenSubject.next(authTokens.accessToken);
+          this.sessionService.setAccessToken(authTokens.accessToken);
+          this.sessionService.setRefreshToken(authTokens.refreshToken);
+          return next.handle(this.createRequestWithAuthHeader(request, authTokens.accessToken));
+        })
+      );
+    } else {
+      return this.refreshTokenSubject.pipe(
+        filter(accessToken => accessToken !== null),
+        take(1),
+        switchMap(accessToken => next.handle(this.createRequestWithAuthHeader(request, accessToken)))
+      );
+    }
   }
 
   private createRequestWithAuthHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {

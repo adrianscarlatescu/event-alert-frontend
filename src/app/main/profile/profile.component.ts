@@ -5,18 +5,19 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
 import {SessionService} from '../../service/session.service';
-import {UserRequest} from '../../model/request/user.request';
-import {User} from '../../model/user';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {MAX_USER_NAME_LENGTH, PHONE_NUMBER_REGEX, USER_IMAGE_FILE_PREFIX} from '../../defaults/constants';
+import {UserDto} from '../../model/user.dto';
+import {LENGTH_50, PHONE_NUMBER_PATTERN} from '../../defaults/constants';
 import {
   ERR_MSG_FIRST_NAME_LENGTH,
   ERR_MSG_FIRST_NAME_REQUIRED,
   ERR_MSG_LAST_NAME_LENGTH,
   ERR_MSG_LAST_NAME_REQUIRED,
-  ERR_MSG_PHONE_NUMBER_REQUIRED,
   ERR_MSG_PHONE_PATTERN
 } from '../../defaults/field-validation-messages';
+import {UserUpdateDto} from '../../model/user-update.dto';
+import {ImageType} from '../../enums/image-type';
+import {SpinnerService} from '../../service/spinner.service';
+import {tap} from 'rxjs/operators';
 
 
 @Component({
@@ -26,59 +27,64 @@ import {
 })
 export class ProfileComponent implements OnInit {
 
-  user: User;
+  connectedUser: UserDto;
+
   profileImage: SafeUrl;
+  profileImageFile: File;
+
   profileForm: FormGroup;
-  file: File;
 
-  constructor(private userService: UserService,
+  constructor(private sessionService: SessionService,
               private fileService: FileService,
-              private sessionService: SessionService,
+              private userService: UserService,
               private spinnerService: SpinnerService,
-              private toast: ToastrService,
-              private formBuilder: FormBuilder,
-              private domSanitizer: DomSanitizer) {
-
-    this.user = this.sessionService.getUser();
+              private toastrService: ToastrService,
+              private domSanitizer: DomSanitizer,
+              private formBuilder: FormBuilder) {
 
   }
 
   ngOnInit(): void {
-    this.profileForm = this.formBuilder.group({
-      firstName: [this.user.firstName, [Validators.required, Validators.maxLength(MAX_USER_NAME_LENGTH)]],
-      lastName: [this.user.lastName, [Validators.required, Validators.maxLength(MAX_USER_NAME_LENGTH)]],
-      gender: [this.user.gender],
-      dateOfBirth: [this.user.dateOfBirth],
-      phoneNumber: [this.user.phoneNumber, [Validators.required, Validators.pattern(PHONE_NUMBER_REGEX)]]
-    });
+    this.connectedUser = this.sessionService.getConnectedUser();
 
-    if (this.user.imagePath) {
-      this.fileService.getImage(this.user.imagePath)
-        .subscribe(image => {
-          this.setImage(image);
+    if (this.connectedUser.imagePath) {
+      this.fileService.getImage(this.connectedUser.imagePath)
+        .subscribe(blob => {
+          this.setImage(blob);
         });
     }
+
+    this.initForm();
+  }
+
+  initForm(): void {
+    this.profileForm = this.formBuilder.group({
+      firstName: [this.connectedUser.firstName, [Validators.required, Validators.maxLength(LENGTH_50)]],
+      lastName: [this.connectedUser.lastName, [Validators.required, Validators.maxLength(LENGTH_50)]],
+      dateOfBirth: [this.connectedUser.dateOfBirth],
+      phoneNumber: [this.connectedUser.phoneNumber, [Validators.pattern(PHONE_NUMBER_PATTERN)]]
+    });
   }
 
   onImageChanged(event: any): void {
     if (event.target.files && event.target.files[0]) {
-      this.file = event.target.files[0];
-      this.setImage(this.file);
+      this.profileImageFile = event.target.files[0];
+      this.setImage(this.profileImageFile);
     }
   }
 
   onSaveClicked(): void {
     if (!this.profileForm.valid) {
-      this.toast.error('Invalid form');
+      this.toastrService.error('Invalid form');
       this.profileForm.markAsTouched();
       return;
     }
 
     this.spinnerService.show();
-    if (this.file) {
-      this.fileService.postImage(this.file, USER_IMAGE_FILE_PREFIX)
+    if (this.profileImageFile) {
+      this.fileService.postImage(this.profileImageFile, ImageType.USER)
         .subscribe(imagePath => {
-          this.user.imagePath = imagePath.toString();
+          this.connectedUser.imagePath = imagePath.toString();
           this.updateUser();
         }, () => this.spinnerService.close());
     } else {
@@ -87,26 +93,31 @@ export class ProfileComponent implements OnInit {
   }
 
   private updateUser(): void {
-    const userRequest: UserRequest = new UserRequest();
-    userRequest.firstName = this.profileForm.value.firstName;
-    userRequest.lastName = this.profileForm.value.lastName;
-    userRequest.dateOfBirth = this.profileForm.value.dateOfBirth;
-    userRequest.phoneNumber = this.profileForm.value.phoneNumber;
-    userRequest.gender = this.profileForm.value.gender;
-    userRequest.imagePath = this.user.imagePath;
-    userRequest.roles = this.user.userRoles.map(userRole => userRole.name);
+    const userUpdate: UserUpdateDto = {
+      firstName: this.profileForm.value.firstName,
+      lastName: this.profileForm.value.lastName,
+      dateOfBirth: this.profileForm.value.dateOfBirth,
+      phoneNumber: this.profileForm.value.phoneNumber ? this.profileForm.value.phoneNumber : null,
+      imagePath: this.connectedUser.imagePath,
+      roleIds: this.connectedUser.roles.map(role => role.id)
+    };
 
-    this.userService.putProfile(userRequest)
+    this.userService.putProfile(userUpdate)
+      .pipe(tap(user => this.sessionService.setConnectedUser(user)))
       .subscribe(user => {
-        this.toast.success('Profile updated');
-        this.sessionService.setUser(user);
+        this.toastrService.success('Profile updated');
+        this.connectedUser = user;
         this.spinnerService.close();
       }, () => this.spinnerService.close());
   }
 
-  private setImage(file: any): void {
-    const url: string = URL.createObjectURL(file);
+  private setImage(blob: Blob): void {
+    const url: string = URL.createObjectURL(blob);
     this.profileImage = this.domSanitizer.bypassSecurityTrustUrl(url);
+  }
+
+  getRoles(): string {
+    return this.connectedUser.roles.map(role => role.label).join(', ');
   }
 
   getFirstNameErrorMessage(): string {
@@ -128,9 +139,6 @@ export class ProfileComponent implements OnInit {
   }
 
   getPhoneNumberErrorMessage(): string {
-    if (this.profileForm.get('phoneNumber').hasError('required')) {
-      return ERR_MSG_PHONE_NUMBER_REQUIRED;
-    }
     if (this.profileForm.get('phoneNumber').hasError('pattern')) {
       return ERR_MSG_PHONE_PATTERN;
     }

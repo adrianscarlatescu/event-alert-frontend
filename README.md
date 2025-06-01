@@ -1,5 +1,5 @@
 ## Getting Started
-Event Alert - Frontend is the client application which uses the endpoints provided by [event-alert-backend](https://github.com/adrianscarlatescu/event-alert-backend).
+Event Alert - Frontend is the client application which uses the endpoints provided by [event-alert-backend](https://github.com/adrianscarlatescu/event-alert-backend).<br/>
 The technology stack consits of:
 * [TypeScript](https://www.typescriptlang.org/) - The programming language used to develop the JavaScript side.
 * [Angular](https://angular.io/docs) - The framework used to develop the web components, manage routing, perform client-server communication and more.
@@ -21,6 +21,73 @@ In order to run the application locally, the following steps must be set:
 
 * A Google Maps API key must be generated and put in [main.module.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/app/main/main.module.ts#L48).
 * If the server IP is different, it must be set in [environment.ts](https://github.com/adrianscarlatescu/event-alert-frontend/blob/master/src/environments/environment.ts#L9).
+
+## Main features
+Register, login, view/update profile
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_auth_register.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_auth_login.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_profile.png" width="auto"></td>
+ </tr>
+</table>
+
+Filter and sort events by certain criteria
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_filter.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_order.png" width="auto"></td>
+ </tr>
+</table>
+
+Filter result (map and list mode)
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_map.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_list.png" width="auto"></td>
+ </tr>
+</table>
+
+View event marker info and check event details
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_map_marker.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_event_details.png" width="auto"></td>
+ </tr>
+</table>
+
+View reported events and report new event
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_reporter.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_report_new_event.png" width="auto"></td>
+ </tr>
+</table>
+
+Form validation across all pages
+<table>
+ <tr>
+  <td><img src="src/assets/readme/capture_validation_filter.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_validation_report_new_event.png" width="auto"></td>
+ </tr>
+ <tr>
+  <td><img src="src/assets/readme/capture_validation_profile.png" width="auto"></td>
+ </tr>
+</table>
 
 ## Video demonstration
 The YouTube link is available [here](https://youtu.be/AutvBfRmnWM).

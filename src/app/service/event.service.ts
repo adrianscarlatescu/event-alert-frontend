@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Event} from '../model/event';
+import {EventDto} from '../model/event.dto';
 import {Observable} from 'rxjs';
 import {baseUrl} from '../../environments/environment';
-import {Page} from '../model/page';
-import {Order} from '../enums/order';
-import {EventRequest} from '../model/request/event.request';
-import {EventFilterRequest} from '../model/request/event.filter.request';
+import {PageDto} from '../model/page.dto';
+import {EventCreateDto} from '../model/event-create.dto';
+import {FilterDto} from '../model/filter.dto';
+import {OrderId} from '../enums/id/order-id';
 
 @Injectable({
   providedIn: 'root'
@@ -16,25 +16,25 @@ export class EventService {
   constructor(private http: HttpClient) {
   }
 
-  getEventById(id: number): Observable<Event> {
-    return this.http.get<Event>(`${baseUrl}/events/${id}`);
+  getEventById(id: number): Observable<EventDto> {
+    return this.http.get<EventDto>(`${baseUrl}/events/${id}`);
   }
 
-  getEventsByUserId(userId: number): Observable<Event[]> {
-    return this.http.get<Event[]>(`${baseUrl}/events`, {params: {'userId': userId.toString()}});
+  getEventsByUserId(userId: number): Observable<EventDto[]> {
+    return this.http.get<EventDto[]>(`${baseUrl}/events`, {params: {'userId': userId.toString()}});
   }
 
-  postEvent(eventRequest: EventRequest): Observable<Event> {
-    return this.http.post<Event>(`${baseUrl}/events`, eventRequest);
+  postEvent(eventCreate: EventCreateDto): Observable<EventDto> {
+    return this.http.post<EventDto>(`${baseUrl}/events`, eventCreate);
   }
 
-  getEventsByFilter(filterRequest: EventFilterRequest, pageSize: number, pageNumber: number, order: Order): Observable<Page<Event>> {
-    return this.http.post<Page<Event>>(`${baseUrl}/events/filter`, filterRequest,
+  getEventsByFilter(filter: FilterDto, pageSize: number, pageNumber: number, orderId: OrderId): Observable<PageDto<EventDto>> {
+    return this.http.post<PageDto<EventDto>>(`${baseUrl}/events/filter`, filter,
       {
         params: {
           'pageSize': pageSize.toString(),
           'pageNumber': pageNumber.toString(),
-          'order': order.toString()
+          'orderId': orderId.toString()
         }
       });
   }

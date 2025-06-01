@@ -1,0 +1,109 @@
+<app-modal title="Filter events" (onValidate)="onValidateClicked()">
+
+  <form [formGroup]="filterForm">
+    <mat-form-field style="min-width: 60%">
+      <mat-label>Radius (km)</mat-label>
+      <input matInput type="number" formControlName="radius" required>
+      <mat-error *ngIf="filterForm.get('radius').invalid">{{getRadiusErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field style="min-width: 60%">
+      <mat-label>Start date</mat-label>
+      <input matInput formControlName="startDate" [matDatepicker]="startPicker"
+             required>
+      <mat-error *ngIf="filterForm.get('startDate').invalid">{{getStartDateErrorMessage()}}</mat-error>
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field style="min-width: 60%">
+      <mat-label>End date</mat-label>
+      <input matInput formControlName="endDate" [matDatepicker]="endPicker" required>
+      <mat-error *ngIf="filterForm.get('endDate').invalid">{{getEndDateErrorMessage()}}</mat-error>
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field appearance="fill" style="width: 80%">
+      <mat-label>Types</mat-label>
+      <mat-select multiple formControlName="typeIds" (selectionChange)="onTypesSelectionChange($event)" required>
+        <mat-select-trigger>
+          <span>{{getTypesDropdownLabel()}}</span>
+        </mat-select-trigger>
+
+        <mat-option *ngFor="let type of types" [value]="type.id">
+          <div class="filter-type-option-div">
+            <img [src]="getImage(type.imagePath)" class="filter-type-option-image">
+            {{type.label}}
+            <div class="filter-category-label">
+              {{type.category.label}}
+            </div>
+          </div>
+        </mat-option>
+
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('typeIds').invalid">{{getTypesErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox color="primary" style="margin-left: 20px"
+                  [checked]="withAllTypesSelected"
+                  (change)="onAllTypesChanged()">All
+    </mat-checkbox>
+
+    <br>
+
+    <mat-form-field appearance="fill" style="width: 80%">
+      <mat-label>Severities</mat-label>
+      <mat-select multiple formControlName="severityIds" (selectionChange)="onSeveritiesSelectionChange($event)"
+                  required>
+        <mat-select-trigger>
+          <span>{{getSeveritiesDropdownLabel()}}</span>
+        </mat-select-trigger>
+
+        <mat-option *ngFor="let severity of severities" [value]="severity.id">
+          <div class="filter-severity-option-div">
+            <mat-card class="filter-severity-mat-card" [ngStyle]="{'background-color': severity.color}"></mat-card>
+            {{severity.label}}
+          </div>
+        </mat-option>
+
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('severityIds').invalid">{{getSeveritiesErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox color="primary" style="margin-left: 20px"
+                  [checked]="withAllSeveritiesSelected"
+                  (change)="onAllSeveritiesChanged()">All
+    </mat-checkbox>
+
+    <br>
+
+    <mat-form-field appearance="fill" style="width: 80%">
+      <mat-label>Statuses</mat-label>
+      <mat-select multiple formControlName="statusIds" (selectionChange)="onStatusesSelectionChange($event)" required>
+        <mat-select-trigger>
+          <span>{{getStatusesDropdownLabel()}}</span>
+        </mat-select-trigger>
+
+        <mat-option *ngFor="let status of statuses" [value]="status.id">
+          <div class="filter-status-option-div">
+            <mat-card class="filter-status-mat-card"
+                      [ngStyle]="{'background-color': status.color}"></mat-card>
+            {{status.label}}
+          </div>
+        </mat-option>
+
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('statusIds').invalid">{{getStatusesErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-checkbox color="primary" style="margin-left: 20px"
+                  [checked]="withAllStatusesSelected"
+                  (change)="onAllStatusesChanged()">All
+    </mat-checkbox>
+  </form>
+
+</app-modal>

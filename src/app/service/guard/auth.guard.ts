@@ -1,21 +1,22 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
-import {SessionService} from '../session.service';
 import {ToastrService} from 'ngx-toastr';
+import {SessionService} from '../session.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthGuard implements CanActivate {
 
-  constructor(
-    private toast: ToastrService,
-    private sessionService: SessionService) {
+  constructor(private sessionService: SessionService,
+              private toastrService: ToastrService) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const isUserAdmin: boolean = this.sessionService.isUserAdmin();
+    if (state.url !== '/admin') {
+      return true;
+    }
 
-    if (state.url == '/admin' && !isUserAdmin) {
-      this.toast.error('Admin role required');
+    if (!this.sessionService.isConnectedUserAdmin()) {
+      this.toastrService.error('Admin role required');
       return false;
     }
 

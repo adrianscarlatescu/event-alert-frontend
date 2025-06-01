@@ -1,10 +1,10 @@
-<div class="profile_page_div">
+<div class="profile-page-div">
   <form [formGroup]="profileForm" (ngSubmit)="onSaveClicked()">
 
-    <div class="profile_main_div">
-      <div class="profile_category_div">
-        <mat-card class="profile_image">
-          <img *ngIf="profileImage" [src]="profileImage" class="profile_image">
+    <div class="profile-main-div">
+      <div class="profile-category-div">
+        <mat-card class="profile-image">
+          <img *ngIf="profileImage" [src]="profileImage" class="profile-image">
         </mat-card>
 
         <br>
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="profile_category_div">
+      <div class="profile-category-div">
         <mat-form-field>
           <mat-label>First name</mat-label>
           <input matInput formControlName="firstName" required>
@@ -35,16 +35,6 @@
         <br>
 
         <mat-form-field>
-          <mat-label>Gender</mat-label>
-          <mat-select formControlName="gender">
-            <mat-option value="MALE">Male</mat-option>
-            <mat-option value="FEMALE">Female</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <br>
-
-        <mat-form-field>
           <mat-label>Date of birth</mat-label>
           <input matInput formControlName="dateOfBirth" [matDatepicker]="picker">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -55,22 +45,15 @@
 
         <mat-form-field>
           <mat-label>Phone number</mat-label>
-          <input matInput formControlName="phoneNumber" required>
+          <input matInput formControlName="phoneNumber">
           <mat-error *ngIf="profileForm.get('phoneNumber').invalid">{{getPhoneNumberErrorMessage()}}</mat-error>
         </mat-form-field>
       </div>
 
-      <div class="profile_category_div">
-        <mat-form-field>
-          <mat-label>ID</mat-label>
-          <input matInput disabled value="{{user.id}}">
-        </mat-form-field>
-
-        <br>
-
+      <div class="profile-category-div">
         <mat-form-field>
           <mat-label>Email</mat-label>
-          <input matInput disabled value="{{user.email}}">
+          <input matInput disabled value="{{connectedUser.email}}">
         </mat-form-field>
 
         <br>
@@ -82,21 +65,28 @@
 
         <br>
 
-        <mat-form-field *ngIf="user.joinDateTime">
+        <mat-form-field *ngIf="connectedUser.joinedAt">
           <mat-label>Join date</mat-label>
-          <input matInput disabled value="{{user.joinDateTime | date: 'medium'}}">
+          <input matInput disabled value="{{connectedUser.joinedAt | date: 'dd/MM/yyyy'}}">
         </mat-form-field>
 
         <br>
 
         <mat-form-field>
           <mat-label>Reports number</mat-label>
-          <input matInput disabled value="{{user.reportsNumber}}">
+          <input matInput disabled value="{{connectedUser.reportsNumber}}">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field>
+          <mat-label>Roles</mat-label>
+          <input matInput disabled value="{{getRoles()}}">
         </mat-form-field>
       </div>
     </div>
 
-    <button mat-raised-button type="submit" color="primary" class="profile_save_button">Save</button>
+    <button mat-raised-button type="submit" color="primary" class="profile-save-button">Save</button>
 
   </form>
 </div>

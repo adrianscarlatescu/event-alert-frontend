@@ -1,0 +1,18 @@
+<app-modal title="Sort events" (onValidate)="onValidateClicked()">
+
+  <mat-button-toggle-group vertical name="fontStyle" aria-label="Font Style" style="width: 100%"
+                           [(value)]="selectedOrderId">
+
+    <mat-button-toggle *ngFor="let order of orders" [value]="order.id" style="padding-bottom: 5px;">
+      <div class="order-item-div">
+        <img class="order-icon" [src]="getImage(order.imagePath)">
+        <div class="order-circle-div">
+          <mat-icon class="order-arrow-icon">{{getArrowIcon(order)}}</mat-icon>
+        </div>
+        <h3 class="order-name-text">{{order.label}}</h3>
+      </div>
+    </mat-button-toggle>
+
+  </mat-button-toggle-group>
+
+</app-modal>

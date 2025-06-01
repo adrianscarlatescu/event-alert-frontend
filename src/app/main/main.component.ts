@@ -5,6 +5,8 @@ import {Router} from '@angular/router';
 import {SessionService} from '../service/session.service';
 import {ToastrService} from 'ngx-toastr';
 import {CustomReuseStrategy} from './common/custom.reuse.strategy';
+import {SpinnerService} from '../service/spinner.service';
+import {catchError, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
@@ -15,19 +17,42 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSidenav) sidenav: MatSidenav;
 
-  isUserAdmin: boolean = false;
+  isDataSynced: boolean = false;
+  isConnectedUserAdmin: boolean = false;
   geoWatchId: number;
 
-  constructor(private authService: AuthService,
-              private sessionService: SessionService,
-              private toast: ToastrService,
+  constructor(private sessionService: SessionService,
+              private authService: AuthService,
+              private spinnerService: SpinnerService,
+              private toastrService: ToastrService,
               private router: Router) {
-
-    this.isUserAdmin = this.sessionService.isUserAdmin();
 
   }
 
   ngOnInit(): void {
+    this.spinnerService.show();
+    this.sessionService.sync()
+      .pipe(
+        tap(() => {
+          console.log('Server sync completed');
+          this.spinnerService.close();
+          this.isDataSynced = true;
+          this.isConnectedUserAdmin = this.sessionService.isConnectedUserAdmin();
+          this.initLocation();
+        }),
+        catchError(() => {
+          this.spinnerService.close();
+          return this.authService.logout()
+            .pipe(tap(() => {
+              console.error('Server sync error, redirect /auth');
+              this.clearCache();
+              this.router.navigate(['/auth'], {queryParams: {syncError: true}});
+            }));
+        }))
+      .subscribe();
+  }
+
+  initLocation(): void {
     navigator.permissions.query({
       name: 'geolocation'
     }).then(result => {
@@ -36,16 +61,15 @@ export class MainComponent implements OnInit, OnDestroy {
           position => {
             const latitude: number = position.coords.latitude;
             const longitude: number = position.coords.longitude;
-            this.sessionService.setUserLatitude(latitude);
-            this.sessionService.setUserLongitude(longitude);
+            this.sessionService.setUserLocation({latitude, longitude});
             console.log('Location updated');
           },
           positionError => {
-            console.log(positionError);
-            this.toast.error('Could not retrieve your location');
+            console.error(positionError);
+            this.toastrService.error('Could not retrieve your location');
           });
       } else if (result.state == 'denied') {
-        this.toast.warning('Allow access to your location in order to find and report events');
+        this.toastrService.warning('Allow access to your location in order to find and report events');
       }
     });
   }
@@ -62,8 +86,8 @@ export class MainComponent implements OnInit, OnDestroy {
     this.router.navigate(['/home']);
   }
 
-  onCreator(): void {
-    this.router.navigate(['/creator']);
+  onReporter(): void {
+    this.router.navigate(['/reporter']);
   }
 
   onNotifications(): void {
@@ -81,11 +105,16 @@ export class MainComponent implements OnInit, OnDestroy {
   onLogout(): void {
     this.authService.logout()
       .subscribe(() => {
-        const reuseStrategy: CustomReuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
-        reuseStrategy.routesToCache = [];
-        reuseStrategy.storedRouteHandles.clear();
+        this.clearCache();
         this.router.navigate(['/auth']);
       });
+  }
+
+  clearCache(): void {
+    const reuseStrategy: CustomReuseStrategy = this.router.routeReuseStrategy as CustomReuseStrategy;
+    reuseStrategy.routesToCache = [];
+    reuseStrategy.storedRouteHandles.clear();
+    this.sessionService.clearStorage();
   }
 
 }

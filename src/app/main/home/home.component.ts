@@ -1,18 +1,21 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {SessionService} from '../../service/session.service';
-import {MapComponent} from './map/map.component';
-import {FilterOptions} from './filter/filter.options';
+import {EventsMapComponent} from './map/events-map.component';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FilterDialogComponent} from './filter/filter-dialog.component';
 import {EventService} from '../../service/event.service';
 import {ToastrService} from 'ngx-toastr';
-import {OrderDialogComponent} from '../common/order/order.dialog.component';
-import {ListComponent} from './list/list.component';
+import {OrderDialogComponent} from '../common/order/order-dialog.component';
+import {EventsListComponent} from './list/events-list.component';
 import {PageEvent} from '@angular/material/paginator';
-import {SpinnerService} from '../../shared/spinner/spinner.service';
-import {Order} from '../../enums/order';
-import {EventFilterRequest} from '../../model/request/event.filter.request';
 import {PAGE_SIZE} from '../../defaults/constants';
+import {FilterDto} from '../../model/filter.dto';
+import {EventDto} from '../../model/event.dto';
+import {FilterOptions} from '../../types/filter-options';
+import {FilterDialogComponent} from '../common/filter/filter-dialog.component';
+import {SpinnerService} from '../../service/spinner.service';
+import {UserLocation} from '../../types/user-location';
+import {HomePage} from '../../enums/home-page';
+import {OrderId} from '../../enums/id/order-id';
 
 @Component({
   selector: 'app-home',
@@ -21,44 +24,57 @@ import {PAGE_SIZE} from '../../defaults/constants';
 })
 export class HomeComponent implements OnInit {
 
-  @ViewChild(MapComponent) mapComponent: MapComponent;
-  @ViewChild(ListComponent) listComponent: ListComponent;
+  @ViewChild(EventsMapComponent) mapComponent: EventsMapComponent;
+  @ViewChild(EventsListComponent) listComponent: EventsListComponent;
 
   totalEvents: number;
+  totalEventsDisplayed: number;
   totalPages: number;
   pageIndex: number;
 
   homePage: HomePage;
 
-  filterOptions: FilterOptions;
-  filterRequest: EventFilterRequest;
-  order: Order;
+  events: EventDto[];
 
-  constructor(private eventService: EventService,
-              private sessionService: SessionService,
+  filterOptions: FilterOptions;
+  filter: FilterDto;
+  orderId: OrderId;
+
+  userLocation: UserLocation;
+
+  constructor(private sessionService: SessionService,
+              private eventService: EventService,
               private spinnerService: SpinnerService,
-              private toast: ToastrService,
+              private toastrService: ToastrService,
               private dialog: MatDialog) {
 
-    this.filterOptions = new FilterOptions();
-    this.filterOptions.tags = this.sessionService.getTags();
-    this.filterOptions.severities = this.sessionService.getSeverities();
-
-    this.filterRequest = new EventFilterRequest();
-
     this.totalEvents = 0;
+    this.totalEventsDisplayed = 0;
     this.totalPages = 0;
     this.pageIndex = 0;
 
-    this.order = Order.BY_DATE_DESCENDING;
-
-    const storageHomePage: string = this.sessionService.getHomePage();
-    this.homePage = storageHomePage == 'list' ? HomePage.LIST : HomePage.MAP;
+    this.orderId = OrderId.BY_DATE_DESCENDING;
 
   }
 
   ngOnInit(): void {
+    this.sessionService.getUserLocation()
+      .subscribe(userLocation => this.userLocation = userLocation);
 
+    const sessionHomePage = this.sessionService.getHomePage();
+    this.homePage = sessionHomePage && sessionHomePage === HomePage.LIST ? HomePage.LIST : HomePage.MAP;
+
+    this.filterOptions = {
+      typeIds: this.sessionService.getTypes().map(type => type.id),
+      severityIds: this.sessionService.getSeverities().map(severity => severity.id),
+      statusIds: this.sessionService.getStatuses().map(status => status.id),
+
+      radius: 1000,
+
+      // Cover the events recorded in the database
+      startDate: new Date(2025, 0, 1),
+      endDate: new Date(2025, 11, 31)
+    }
   }
 
   onPreviousClicked(): void {
@@ -74,6 +90,10 @@ export class HomeComponent implements OnInit {
   }
 
   onLocationClicked(): void {
+    if (!this.userLocation) {
+      this.toastrService.warning('Location not provided');
+      return;
+    }
     this.mapComponent.setDefaultViewValues();
   }
 
@@ -90,23 +110,31 @@ export class HomeComponent implements OnInit {
   }
 
   onFilterClicked(): void {
+    if (!this.userLocation) {
+      this.toastrService.warning('Location not provided');
+      return;
+    }
+
     const dialogRef: MatDialogRef<FilterDialogComponent> = this.dialog.open(FilterDialogComponent, {
       data: this.filterOptions,
       autoFocus: false
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      const isNewSearch: boolean = dialogRef.componentInstance.isNewSearch;
-      if (!isNewSearch) {
-        return;
-      }
-      this.filterRequest.radius = this.filterOptions.radius;
-      this.filterRequest.startDate = this.filterOptions.startDate;
-      this.filterRequest.endDate = this.filterOptions.endDate;
-      this.filterRequest.latitude = this.sessionService.getUserLatitude();
-      this.filterRequest.longitude = this.sessionService.getUserLongitude();
-      this.filterRequest.tagsIds = this.filterOptions.tags.map(tag => tag.id);
-      this.filterRequest.severitiesIds = this.filterOptions.severities.map(severity => severity.id);
+    dialogRef.componentInstance.onValidate.subscribe(filterOptions => {
+      dialogRef.componentInstance.close();
+
+      this.filterOptions = filterOptions;
+
+      this.filter = {
+        radius: this.filterOptions.radius,
+        startDate: this.filterOptions.startDate,
+        endDate: this.filterOptions.endDate,
+        latitude: this.userLocation.latitude,
+        longitude: this.userLocation.longitude,
+        typeIds: this.filterOptions.typeIds,
+        severityIds: this.filterOptions.severityIds,
+        statusIds: this.filterOptions.statusIds
+      };
 
       this.pageIndex = 0;
       this.requestNewSearch();
@@ -124,34 +152,43 @@ export class HomeComponent implements OnInit {
   }
 
   onOrderClicked(): void {
+    if (!this.userLocation) {
+      this.toastrService.warning('Location not provided');
+      return;
+    }
+
     const dialogRef: MatDialogRef<OrderDialogComponent> = this.dialog.open(OrderDialogComponent, {
-      data: this.order
+      data: this.orderId,
     });
 
-    dialogRef.afterClosed().subscribe(newOrder => {
-      if (!newOrder || this.totalEvents === 0 || newOrder === this.order) {
-        this.toast.info('Order not applied');
+    dialogRef.componentInstance.onValidate.subscribe(newOrder => {
+      dialogRef.componentInstance.close();
+      if (newOrder === this.orderId) {
         return;
       }
-      this.order = newOrder;
-      this.pageIndex = 0;
-      this.requestNewSearch();
+
+      this.orderId = newOrder;
+
+      if (this.totalEvents > 1) {
+        this.pageIndex = 0;
+        this.requestNewSearch();
+      } else {
+        this.toastrService.info('Order not applied');
+      }
     });
   }
 
   private requestNewSearch(): void {
     this.spinnerService.show();
-    this.mapComponent.selectedEvent = undefined;
-    this.eventService.getEventsByFilter(this.filterRequest, PAGE_SIZE, this.pageIndex, this.order)
+    this.eventService.getEventsByFilter(this.filter, PAGE_SIZE, this.pageIndex, this.orderId)
       .subscribe(page => {
-        this.totalPages = page.totalPages;
         this.totalEvents = page.totalElements;
-
-        this.mapComponent.setEvents(page.content);
-        this.listComponent.setData(page.content, page.totalElements, this.pageIndex);
+        this.totalEventsDisplayed = page.content.length;
+        this.totalPages = page.totalPages;
+        this.events = page.content;
 
         if (this.totalEvents === 0) {
-          this.toast.info('No events found');
+          this.toastrService.info('No events found');
         }
 
         this.spinnerService.close();
@@ -163,8 +200,4 @@ export class HomeComponent implements OnInit {
     this.requestNewSearch();
   }
 
-}
-
-export enum HomePage {
-  MAP = 'map', LIST = 'list'
 }

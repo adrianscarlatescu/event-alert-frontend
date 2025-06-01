@@ -1,0 +1,106 @@
+<div style="position: absolute; width: 100%; height: 100%">
+
+  <agm-map *ngIf="userLocation"
+           id="map_container" style="width: 100%; height: 100%"
+           (mapReady)="mapReady($event)"
+           (zoomChange)="zoomChange($event)"
+           [latitude]="userLocation.latitude"
+           [longitude]="userLocation.longitude"
+           [zoom]="zoom"
+           [gestureHandling]="'greedy'"
+           [styles]="mapStyle">
+
+    <agm-marker *ngIf="userLocation">
+      <agm-overlay
+        [latitude]="userLocation.latitude"
+        [longitude]="userLocation.longitude">
+
+        <div class="events-map-user-overlay"
+             style="background-image: url('../../../../assets/user_marker.png')">
+        </div>
+
+      </agm-overlay>
+    </agm-marker>
+
+    <agm-marker *ngFor="let event of events; trackBy: trackEventsId">
+
+      <agm-overlay
+        [latitude]="event.latitude"
+        [longitude]="event.longitude"
+        (markerClick)="onMarkerClicked(event)">
+
+        <div class="events-map-marker-overlay"
+             style="-webkit-mask-box-image: url('../../../../assets/event_marker.png');"
+             [ngStyle]="{'background-color': event.severity.color}">
+          <img [src]="getImage(event.type.imagePath)" class="events-map-event-type-image">
+        </div>
+
+        <img src="assets/event_marker_border.png" class="events-map-marker-overlay"
+             style="position: absolute"/>
+      </agm-overlay>
+
+    </agm-marker>
+
+    <agm-circle *ngIf="userLocation && events && events.length > 0 && maxDistance <= 1000"
+                [latitude]="userLocation.latitude"
+                [longitude]="userLocation.longitude"
+                [radius]="maxDistance * 1000"
+                [clickable]="false"
+                [fillColor]="'#A88BDA'"
+                [fillOpacity]="0.5"
+                [strokeColor]="'#8C8C8C'"
+                [strokeOpacity]="0.5"
+                [strokeWeight]="2.5"
+                [strokePosition]="'OUTSIDE'">
+    </agm-circle>
+
+    <agm-circle *ngIf="selectedEvent && selectedEvent.impactRadius"
+                [latitude]="selectedEvent.latitude"
+                [longitude]="selectedEvent.longitude"
+                [radius]="selectedEvent.impactRadius * 1000"
+                [fillColor]="selectedEvent.severity.color"
+                [fillOpacity]="0.5"
+                [strokeColor]="'#8C8C8C'"
+                [strokeOpacity]="0.5"
+                [strokeWeight]="2.5"
+                [strokePosition]="'OUTSIDE'">
+    </agm-circle>
+
+    <agm-info-window *ngIf="selectedEvent"
+                     [latitude]="selectedEvent.latitude"
+                     [longitude]="selectedEvent.longitude"
+                     [disableAutoPan]="true"
+                     [isOpen]="true">
+      <div>
+        <img [src]="selectedEventImage" class="events-map-event-info-image">
+        <p class="events-map-event-info-text" style="font-size: 16px; margin-top: 10px">{{selectedEvent.type.label}}</p>
+        <div style="display: flex">
+          <div class="events-map-event-color-circle" [ngStyle]="{'background-color': selectedEvent.severity.color}"></div>
+          <p class="events-map-event-info-text">{{selectedEvent.severity.label}}</p>
+        </div>
+        <div style="display: flex">
+          <div class="events-map-event-color-circle" [ngStyle]="{'background-color': selectedEvent.status.color}"></div>
+          <p class="events-map-event-info-text">{{selectedEvent.status.label}}</p>
+        </div>
+        <p class="events-map-event-info-text">{{selectedEvent.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</p>
+        <p *ngIf="selectedEvent.impactRadius" class="events-map-event-info-text">{{selectedEvent.impactRadius}} km impact radius</p>
+        <p class="events-map-event-info-text">
+          {{selectedEvent.distance.toString()
+          .substr(0, selectedEvent.distance.toString().indexOf('.'))}} km away from your location
+        </p>
+
+        <button mat-raised-button type="button" color="primary" (click)="onEventInfoViewClicked()"
+                class="events-map-event-info-view-button">
+          View event
+        </button>
+
+        <button mat-mini-fab color="primary"
+                (click)="onEventInfoCloseClicked()" class="events-map-event-info-close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </agm-info-window>
+
+  </agm-map>
+
+</div>

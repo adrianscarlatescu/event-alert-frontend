@@ -1,0 +1,53 @@
+.filter-type-option-div {
+  display: flex;
+  vertical-align: center;
+  padding: 5px 20px;
+}
+
+.filter-type-option-image {
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+}
+
+.filter-severity-option-div {
+  display: flex;
+  vertical-align: center;
+  padding: 5px 20px;
+}
+
+.filter-severity-mat-card {
+  border-radius: 24px;
+  width: 6px;
+  height: 6px;
+  margin-right: 20px;
+}
+
+.filter-status-option-div {
+  display: flex;
+  vertical-align: center;
+  padding: 5px 20px;
+}
+
+.filter-status-mat-card {
+  border-radius: 24px;
+  width: 6px;
+  height: 6px;
+  margin-right: 20px;
+}
+
+.filter-category-label {
+  width: 100%;
+  text-align: end;
+  font-size: 12px;
+  color: #B0B0B0;
+}
+
+.mat-option:after {
+  content: '';
+  width: 90%;
+  border-bottom: solid 1px lightgrey;
+  position: absolute;
+  bottom: 1px;
+}
+

@@ -1,70 +1,51 @@
 import {Injectable} from '@angular/core';
-import {User} from '../model/user';
+import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
+import {UserLocation} from '../types/user-location';
+import {RoleDto} from '../model/role.dto';
+import {TypeDto} from '../model/type.dto';
+import {SeverityDto} from '../model/severity.dto';
+import {StatusDto} from '../model/status.dto';
+import {UserDto} from '../model/user.dto';
 import {FileService} from './file.service';
-import {EMPTY, forkJoin, from, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {RoleService} from './role.service';
+import {TypeService} from './type.service';
+import {SeverityService} from './severity.service';
+import {StatusService} from './status.service';
 import {UserService} from './user.service';
-import {EventTagService} from './event.tag.service';
-import {EventSeverityService} from './event.severity.service';
-import {EventTag} from '../model/event.tag';
-import {EventSeverity} from '../model/event.severity';
-import {Role} from '../enums/role';
+import {concatMap, map, tap} from 'rxjs/operators';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {RoleId} from '../enums/id/role-id';
+import {OrderDto} from '../model/order.dto';
+import {OrderService} from './order.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  constructor(private fileService: FileService,
+  private userLocationSubject: BehaviorSubject<UserLocation> = new BehaviorSubject<UserLocation>(undefined);
+
+  private cachedRoles: RoleDto[];
+  private cachedTypes: TypeDto[];
+  private cachedSeverities: SeverityDto[];
+  private cachedStatuses: StatusDto[];
+  private cachedConnectedUser: UserDto;
+  private cachedEventOrders: OrderDto[];
+
+  private cachedImages: Map<string, SafeUrl> = new Map<string, SafeUrl>();
+
+  constructor(private domSanitizer: DomSanitizer,
+              private fileService: FileService,
+              private roleService: RoleService,
+              private typeService: TypeService,
+              private severityService: SeverityService,
+              private statusService: StatusService,
               private userService: UserService,
-              private tagService: EventTagService,
-              private severityService: EventSeverityService) {
+              private eventOrderService: OrderService) {
   }
 
-  public setUser(user: User) {
-    localStorage.setItem('user', JSON.stringify(user));
-  }
-
-  public getUser(): User {
-    return JSON.parse(localStorage.getItem('user'));
-  }
-
-  public isUserAdmin(): boolean {
-    return this.getUser().userRoles
-      .map(userRole => userRole.name)
-      .includes(Role.ROLE_ADMIN);
-  }
-
-  public setUserLatitude(latitude: number) {
-    localStorage.setItem('userLatitude', latitude.toString());
-  }
-
-  public getUserLatitude(): number {
-    return +localStorage.getItem('userLatitude');
-  }
-
-  public setUserLongitude(longitude: number) {
-    localStorage.setItem('userLongitude', longitude.toString());
-  }
-
-  public getUserLongitude(): number {
-    return +localStorage.getItem('userLongitude');
-  }
-
-  public setTags(tags: EventTag[]) {
-    localStorage.setItem('tags', JSON.stringify(tags));
-  }
-
-  public getTags(): EventTag[] {
-    return JSON.parse(localStorage.getItem('tags'));
-  }
-
-  public setSeverities(severities: EventSeverity[]) {
-    localStorage.setItem('severities', JSON.stringify(severities));
-  }
-
-  public getSeverities(): EventSeverity[] {
-    return JSON.parse(localStorage.getItem('severities'));
+  public clearStorage(): void {
+    localStorage.clear();
   }
 
   public setAccessToken(accessToken: string): void {
@@ -83,12 +64,12 @@ export class SessionService {
     return localStorage.getItem('refreshToken');
   }
 
-  public setCacheImage(url: string, b64blob: string | ArrayBuffer) {
-    localStorage.setItem(url, JSON.stringify(b64blob));
+  public setUserLocation(userLocation: UserLocation): void {
+    this.userLocationSubject.next(userLocation);
   }
 
-  public getCacheImageByUrl(url: string): string | ArrayBuffer {
-    return JSON.parse(localStorage.getItem(url));
+  public getUserLocation(): Observable<UserLocation> {
+    return this.userLocationSubject.asObservable();
   }
 
   public setHomePage(homePage: string): void {
@@ -99,43 +80,95 @@ export class SessionService {
     return localStorage.getItem('homePage');
   }
 
-  public sync(): Observable<any[]> {
-    const userObs: Observable<void> = this.userService.getProfile()
-      .pipe(map(user => {
-        this.setUser(user);
-      }));
-
-    const tagsObs: Observable<void> = this.tagService.getTags()
-      .pipe(mergeMap(tags => {
-        this.setTags(tags);
-
-        return from(tags)
-          .pipe(mergeMap((tag) => {
-            if (tag.imagePath) {
-              return this.fileService.getImage(tag.imagePath)
-                .pipe(map(blob => {
-                  const reader: FileReader = new FileReader();
-                  reader.readAsDataURL(blob);
-                  reader.onloadend = () => {
-                    this.setCacheImage(tag.imagePath, reader.result);
-                  };
-                }));
-            } else {
-              return EMPTY;
-            }
-          }));
-      }));
-
-    const severitiesObs: Observable<void> = this.severityService.getSeverities()
-      .pipe(map(severities => {
-        this.setSeverities(severities);
-      }));
-
-    return forkJoin([userObs, tagsObs, severitiesObs]);
+  public isConnectedUserAdmin(): boolean {
+    return this.cachedConnectedUser.roles.map(role => role.id).includes(RoleId.ROLE_ADMIN);
   }
 
-  public clearStorage(): void {
-    localStorage.clear();
+  public getRoles(): RoleDto[] {
+    return this.cachedRoles;
+  }
+
+  public getTypes(): TypeDto[] {
+    return this.cachedTypes;
+  }
+
+  public getSeverities(): SeverityDto[] {
+    return this.cachedSeverities;
+  }
+
+  public getStatuses(): StatusDto[] {
+    return this.cachedStatuses;
+  }
+
+  public getConnectedUser(): UserDto {
+    return this.cachedConnectedUser;
+  }
+
+  public getImage(imagePath: string): SafeUrl {
+    return this.cachedImages.get(imagePath);
+  }
+
+  public setConnectedUser(user: UserDto): void {
+    this.cachedConnectedUser = user;
+  }
+
+  public getEventOrders(): OrderDto[] {
+    return this.cachedEventOrders;
+  }
+
+  // Sync
+  public sync(): Observable<any[]> {
+    const rolesObservable = this.roleService.getRoles()
+      .pipe(tap(roles => this.cachedRoles = roles));
+
+    const typesObservable = this.typeService.getTypes()
+      .pipe(tap(types => this.cachedTypes = types))
+      .pipe(concatMap(types => {
+        return forkJoin(types.map(type => {
+          return this.fileService.getImage(type.imagePath)
+            .pipe(tap(blob => {
+              const url: string = URL.createObjectURL(blob);
+              this.cachedImages.set(type.imagePath, this.domSanitizer.bypassSecurityTrustUrl(url));
+            }));
+        }));
+      }));
+
+    const severitiesObservable = this.severityService.getSeverities()
+      .pipe(tap(severities => this.cachedSeverities = severities));
+
+    const statusesObservable = this.statusService.getStatuses()
+      .pipe(tap(statuses => this.cachedStatuses = statuses));
+
+    const userObservable = this.userService.getProfile()
+      .pipe(tap(user => this.cachedConnectedUser = user));
+
+    const ordersObservable = this.eventOrderService.getOrders()
+      .pipe(tap(orders => this.cachedEventOrders = orders))
+      .pipe(concatMap(orders => {
+        return forkJoin(
+          orders
+            .map(order => order.imagePath)
+            .filter(function(item, index, inputArray) {
+              return inputArray.indexOf(item) == index;
+            })
+            .map(imagePath => {
+              return this.fileService.getImage(imagePath)
+                .pipe(tap(blob => {
+                  const url: string = URL.createObjectURL(blob);
+                  this.cachedImages.set(imagePath, this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob)));
+                }));
+            })
+        );
+      }));
+
+    return forkJoin([
+      rolesObservable,
+      typesObservable,
+      severitiesObservable,
+      statusesObservable,
+      userObservable,
+      ordersObservable
+    ]);
   }
 
 }
