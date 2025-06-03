@@ -6,7 +6,6 @@ import {Router} from '@angular/router';
 import {FileService} from '../../../service/file.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {UserLocation} from '../../../types/user-location';
-import {interval, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-events-map',
@@ -16,7 +15,6 @@ import {interval, Subscription} from 'rxjs';
 export class EventsMapComponent implements OnInit, OnChanges {
 
   mapStyle = mapTheme;
-  zoom: number = 13;
   map: google.maps.Map;
 
   @Input()
@@ -50,24 +48,10 @@ export class EventsMapComponent implements OnInit, OnChanges {
     const originalMaxDistance = Math.max(...distances);
     this.maxDistance = originalMaxDistance + originalMaxDistance * 0.05; // 5% error margin
 
+    const targetZoom: number = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
     setTimeout(() => {
-
-      const targetZoom: number = Math.max(2.5, 14.5 - Math.log(this.maxDistance) / Math.log(2));
-      const intervalSub: Subscription = interval(400).subscribe(() => {
-
-        if (targetZoom - this.zoom >= 2) {
-          this.zoom += 2;
-        } else if (this.zoom - targetZoom >= 2) {
-          this.zoom -= 2;
-        } else {
-          this.zoom = targetZoom;
-          intervalSub.unsubscribe();
-        }
-
-      });
-
       this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
-
+      this.map.setZoom(targetZoom);
     }, 500);
   }
 
@@ -80,16 +64,13 @@ export class EventsMapComponent implements OnInit, OnChanges {
       console.error('Location not provided');
       return;
     }
-    this.zoom = 15;
+    this.map.setZoom(15);
     this.map.panTo({lat: this.userLocation.latitude, lng: this.userLocation.longitude});
   }
 
   mapReady(map: google.maps.Map): void {
     this.map = map;
-  }
-
-  zoomChange(value: number): void {
-    this.zoom = value;
+    this.map.setZoom(12);
   }
 
   trackEventsId(index: number, item: EventDto) {

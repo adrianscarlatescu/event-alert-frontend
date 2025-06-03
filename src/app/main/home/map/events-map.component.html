@@ -3,10 +3,8 @@
   <agm-map *ngIf="userLocation"
            id="map_container" style="width: 100%; height: 100%"
            (mapReady)="mapReady($event)"
-           (zoomChange)="zoomChange($event)"
            [latitude]="userLocation.latitude"
            [longitude]="userLocation.longitude"
-           [zoom]="zoom"
            [gestureHandling]="'greedy'"
            [styles]="mapStyle">
 

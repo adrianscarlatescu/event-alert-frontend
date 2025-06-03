@@ -36,6 +36,15 @@ export const mapTheme = [
     ]
   },
   {
+    "featureType": "administrative.locality",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
     "featureType": "landscape",
     "elementType": "geometry.stroke",
     "stylers": [
