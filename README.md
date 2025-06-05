@@ -88,6 +88,3 @@ Form validation across all pages
   <td><img src="src/assets/readme/capture_validation_profile.png" width="auto"></td>
  </tr>
 </table>
-
-## Video demonstration
-The YouTube link is available [here](https://youtu.be/J7lD5OPb_7I).
